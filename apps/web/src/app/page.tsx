@@ -92,7 +92,7 @@ export default function Page(): React.ReactElement {
         onOver: (message) => setResult(message)
     });
 
-    const { room, status, ping, call, sendInput, notice } = socket;
+    const { room, status, ping, call, sendInput, notice, forgetSession } = socket;
 
     // Build the netcode client once the server has declared the match.
     useEffect(() => {
@@ -145,6 +145,15 @@ export default function Page(): React.ReactElement {
         [call]
     );
 
+    /** Every deliberate exit: drop the seat token first, then tell the server,
+     *  so a reconnection does not drag the player back in. */
+    const leave = useCallback((): void => {
+        forgetSession();
+        setMatch(null);
+        setResult(null);
+        void call('room:leave');
+    }, [call, forgetSession]);
+
     const join = useCallback(
         async (code: string): Promise<void> => {
             setBusy(true);
@@ -196,7 +205,7 @@ export default function Page(): React.ReactElement {
                 slot={mySlot}
                 onPick={(characterId) => void call('select:character', { characterId })}
                 onReady={(value) => void call('select:ready', { ready: value })}
-                onBack={() => void call('room:leave')}
+                onBack={leave}
                 waitingFor={room.players.length < 2 ? "En attente d'un adversaire…" : null}
             />
         );
@@ -207,7 +216,7 @@ export default function Page(): React.ReactElement {
         return (
             <main className="flex min-h-dvh flex-col items-center justify-center gap-3 p-2 sm:p-4">
                 <div className="flex w-full max-w-[960px] items-center justify-between">
-                    <Link href="/" className="label hover:text-text" onClick={() => void call('room:leave')}>
+                    <Link href="/" className="label hover:text-text" onClick={leave}>
                         ← Quitter
                     </Link>
                     <span className="label">
@@ -245,11 +254,7 @@ export default function Page(): React.ReactElement {
                                 setRematchRequested(true);
                                 void call('match:rematch');
                             }}
-                            onMenu={() => {
-                                setMatch(null);
-                                setResult(null);
-                                void call('room:leave');
-                            }}
+                            onMenu={leave}
                         />
                     ) : null}
                 </div>
@@ -271,11 +276,7 @@ export default function Page(): React.ReactElement {
             onCreate={() => void action('room:create', { nickname: nickname.trim() })}
             onQuick={() => void action('room:quick', { nickname: nickname.trim() })}
             onJoin={(code) => void join(code)}
-            onLeave={() => {
-                setMatch(null);
-                setResult(null);
-                void call('room:leave');
-            }}
+            onLeave={leave}
             onLocal={() => {
                 window.location.href = '/entrainement';
             }}

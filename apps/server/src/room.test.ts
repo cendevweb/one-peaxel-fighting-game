@@ -318,13 +318,48 @@ describe('disconnections', () => {
         ).toBe(true);
     });
 
-    it('lets a player come back inside the grace period', () => {
+    it('lets a player come back on a new socket inside the grace period', () => {
         start();
         room.markDisconnected('p1', clock.value);
         runFrames(room, clock, 30);
-        expect(room.reconnect('p1', 'socket-2')).toBe(true);
+        transport.clear();
+
+        // The browser comes back with a different socket id, which is the
+        // whole difficulty: the seat cannot be found by identity.
+        expect(room.rebind('p1', 'socket-2')).toBe(true);
+        expect(room.has('socket-2')).toBe(true);
+        expect(room.has('p1')).toBe(false);
         expect(transport.last<RoomView>('room:state')?.players[0]?.connected).toBe(true);
         expect(room.phase).toBe('fight');
+
+        // And they are handed the match parameters again, from the frame the
+        // fight has actually reached.
+        const begin = transport.beginFor('socket-2');
+        expect(begin?.slot).toBe(0);
+        expect(begin?.characters).toEqual(['luffy', 'enel']);
+        expect(begin?.startFrame).toBeGreaterThan(0);
+        expect(
+            transport.toPlayerMessages.some(
+                (message) => message.playerId === 'p2' && message.event === 'opponent:reconnected'
+            )
+        ).toBe(true);
+    });
+
+    it('keeps the returning player\'s slot, character and rounds', () => {
+        start();
+        runFrames(room, clock, 60);
+        room.markDisconnected('p2', clock.value);
+        room.rebind('p2', 'socket-9');
+        const view = transport.last<RoomView>('room:state');
+        expect(view?.players.find((player) => player.slot === 1)?.characterId).toBe('enel');
+        expect(view?.players).toHaveLength(2);
+    });
+
+    it('refuses to rebind onto an id the room already holds', () => {
+        start();
+        room.markDisconnected('p1', clock.value);
+        expect(room.rebind('p1', 'p2')).toBe(false);
+        expect(room.has('p1')).toBe(true);
     });
 
     it('awards the match once the grace period runs out', () => {
@@ -386,6 +421,58 @@ describe('matchmaking', () => {
         const third = registry.quickMatch('p3', 'Nami');
         expect(registry.size).toBe(2);
         expect(third.playerCount).toBe(1);
+    });
+
+    /** A seat is only held open during a fight, so a resume test has to get
+     *  the room into one first. */
+    const startMatch = (registry: RoomRegistry, room: Room, now: number): void => {
+        room.selectCharacter('p1', 'luffy');
+        room.selectCharacter('p2', 'enel');
+        room.setReady('p1', true);
+        room.setReady('p2', true);
+        room.tick(now + 2000);
+        expect(room.phase).toBe('fight');
+        void registry;
+    };
+
+    it('trades a token back for the seat after a drop mid-match', () => {
+        const registry = makeRegistry();
+        const room = registry.create('p1', 'Dylan');
+        registry.join('p2', 'Zoro', room.code);
+        const token = registry.issueToken('p1');
+        expect(token).toMatch(/^[a-z0-9]{32}$/);
+
+        const now = Date.now();
+        startMatch(registry, room, now);
+        registry.disconnect('p1', now + 2000);
+        expect(room.playerCount).toBe(2); // the seat is held, not freed
+
+        const resumed = registry.resume(token!, 'socket-2');
+        expect(resumed).toBe(room);
+        expect(registry.roomOfPlayer('socket-2')).toBe(room);
+        expect(registry.roomOfPlayer('p1')).toBeUndefined();
+        expect(room.playerCount).toBe(2);
+        expect(room.phase).toBe('fight');
+    });
+
+    it('refuses a token whose seat is gone, rather than inventing one', () => {
+        const registry = makeRegistry();
+        const room = registry.create('p1', 'Dylan');
+        const token = registry.issueToken('p1')!;
+        registry.leave('p1');
+        expect(registry.resume(token, 'socket-2')).toBeNull();
+        expect(room.playerCount).toBe(0);
+        expect(registry.resume('nope'.repeat(8), 'socket-3')).toBeNull();
+    });
+
+    it('forgets a token once its player is gone for good', () => {
+        const registry = makeRegistry();
+        const room = registry.create('p1', 'Dylan');
+        registry.join('p2', 'Zoro', room.code);
+        const token = registry.issueToken('p1')!;
+        // Out of a match, a disconnection frees the seat outright.
+        registry.disconnect('p1', Date.now());
+        expect(registry.resume(token, 'socket-2')).toBeNull();
     });
 
     it('collects a room once it has been empty long enough', () => {

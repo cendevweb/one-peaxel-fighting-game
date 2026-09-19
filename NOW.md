@@ -15,7 +15,7 @@ Le jeu est jouable de bout en bout, en local comme en ligne.
   publiés dans `apps/web/public`. 5 tests de cohérence données ↔ ressources.
 - `packages/shared` — protocole zod partagé.
 - `apps/server` — serveur Socket.IO autoritaire, 60 Hz, instantanés,
-  déconnexions, revanche. 27 tests.
+  déconnexions, reprise de siège par jeton, revanche. 32 tests.
 - `apps/web` — lobby, sélection, arène Phaser, HUD, résultats, entraînement
   local. Build de production propre.
 - Documentation : `CLAUDE.md`, `docs/`.
@@ -23,7 +23,8 @@ Le jeu est jouable de bout en bout, en local comme en ligne.
 Vérifié dans un vrai navigateur : deux contextes indépendants ont créé et
 rejoint un salon, choisi leurs personnages, combattu avec des chronos et des
 barres de vie concordants, sans erreur console ; un match d'entraînement est
-allé jusqu'au KO, au résultat et à la revanche.
+allé jusqu'au KO, au résultat et à la revanche ; un joueur a rechargé sa page
+en plein combat et a retrouvé son siège et son round.
 
 ## Bloqué
 
@@ -37,8 +38,9 @@ allé jusqu'au KO, au résultat et à la revanche.
 ## Reprendre par
 
 1. Vérifier si l'accès GitHub est passé (`git push -u origin main`).
-2. Si oui, pousser, puis préparer le déploiement en demandant à Dylan de
-   connecter Render au dépôt et Vercel au dossier `apps/web`.
+2. Si oui, pousser, puis suivre `docs/DEPLOIEMENT.md` : Render d'abord, Vercel
+   ensuite, parce que le client a besoin de l'adresse du serveur à la
+   compilation.
 3. Sinon, continuer sur `docs/ROADMAP.md`, section « Ensuite ».
 
 ## Ne pas oublier

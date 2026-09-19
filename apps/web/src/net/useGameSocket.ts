@@ -25,6 +25,37 @@ const serverUrl = (): string =>
     process.env.NEXT_PUBLIC_GAME_SERVER_URL ?? 'http://localhost:8080';
 
 /**
+ * The resume credential, in `sessionStorage` rather than `localStorage`.
+ *
+ * It belongs to this tab and to this tab only: two tabs on one machine are two
+ * players, and sharing the token between them would let the second steal the
+ * first's seat. It is also meant to die with the tab, which `sessionStorage`
+ * does and `localStorage` does not.
+ */
+const TOKEN_KEY = 'opfg.session';
+
+const readToken = (): string | null => {
+    try {
+        return window.sessionStorage.getItem(TOKEN_KEY);
+    } catch {
+        return null; // Private browsing, or storage the user has blocked.
+    }
+};
+
+const writeToken = (token: string | null): void => {
+    try {
+        if (token === null) {
+            window.sessionStorage.removeItem(TOKEN_KEY);
+        } else {
+            window.sessionStorage.setItem(TOKEN_KEY, token);
+        }
+    } catch {
+        // Not being able to remember the token costs a reconnection, not a
+        // crash: the player falls back to the lobby.
+    }
+};
+
+/**
  * One socket for the whole session.
  *
  * The handlers are kept in a ref rather than in the effect's dependency list:
@@ -49,14 +80,41 @@ export function useGameSocket(handlers: GameSocketHandlers) {
         });
         socketRef.current = socket;
 
-        socket.on('connect', () => setStatus('online'));
+        // Socket.IO reconnects on its own, but the server sees a new socket id
+        // and therefore a stranger. The token is what says "this is the seat I
+        // left": it is traded back on every connect, including the first,
+        // where there is simply nothing to trade.
+        socket.on('connect', () => {
+            setStatus('online');
+            const token = readToken();
+            if (!token) {
+                return;
+            }
+            (socket.emit as (e: string, p: unknown, ack: unknown) => void)(
+                'room:resume',
+                { token },
+                (result: Ack<{ room: RoomView }>) => {
+                    if (result.ok) {
+                        setRoom(result.data.room);
+                        setNotice('Reconnecté à la partie.');
+                    } else {
+                        writeToken(null);
+                        if (result.code === 'seat-expired') {
+                            setNotice("La partie ne t'a pas attendu.");
+                        }
+                    }
+                }
+            );
+        });
         socket.on('disconnect', () => setStatus('offline'));
         socket.on('connect_error', () => setStatus('error'));
+        socket.on('session:token', ({ token }) => writeToken(token));
 
         socket.on('room:state', (view) => setRoom(view));
         socket.on('room:closed', ({ reason }) => {
             setNotice(reason);
             setRoom(null);
+            writeToken(null);
         });
         socket.on('match:begin', (message) => handlersRef.current.onBegin?.(message));
         socket.on('match:snapshot', (message) => handlersRef.current.onSnapshot?.(message));
@@ -99,12 +157,27 @@ export function useGameSocket(handlers: GameSocketHandlers) {
         []
     );
 
+    /** Leaving on purpose forgets the seat, so the next connection does not
+     *  drag the player back into a room they walked out of. */
+    const forgetSession = useCallback((): void => {
+        writeToken(null);
+    }, []);
+
     const sendInput = useCallback((payload: InputPayload): void => {
         socketRef.current?.emit('match:input', payload);
     }, []);
 
     return useMemo(
-        () => ({ status, room, notice, ping, call, sendInput, clearNotice: () => setNotice(null) }),
-        [status, room, notice, ping, call, sendInput]
+        () => ({
+            status,
+            room,
+            notice,
+            ping,
+            call,
+            sendInput,
+            forgetSession,
+            clearNotice: () => setNotice(null)
+        }),
+        [status, room, notice, ping, call, sendInput, forgetSession]
     );
 }

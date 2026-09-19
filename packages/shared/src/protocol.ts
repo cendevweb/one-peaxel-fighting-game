@@ -93,6 +93,7 @@ export const joinRoomSchema = z.object({ nickname: nicknameSchema, code: roomCod
 export const quickMatchSchema = z.object({ nickname: nicknameSchema });
 export const selectCharacterSchema = z.object({ characterId: z.string().min(1).max(32) });
 export const readySchema = z.object({ ready: z.boolean() });
+export const resumeSchema = z.object({ token: z.string().min(16).max(64) });
 
 /**
  * Inputs are sent with a short tail of previous frames. A dropped packet then
@@ -113,6 +114,7 @@ export type JoinRoomPayload = z.infer<typeof joinRoomSchema>;
 export type QuickMatchPayload = z.infer<typeof quickMatchSchema>;
 export type SelectCharacterPayload = z.infer<typeof selectCharacterSchema>;
 export type ReadyPayload = z.infer<typeof readySchema>;
+export type ResumePayload = z.infer<typeof resumeSchema>;
 export type InputPayload = z.infer<typeof inputSchema>;
 export type PingPayload = z.infer<typeof pingSchema>;
 
@@ -124,6 +126,7 @@ export type ErrorCode =
     | 'room-full'
     | 'already-in-room'
     | 'not-in-room'
+    | 'seat-expired'
     | 'wrong-phase'
     | 'unknown-character'
     | 'rate-limited'
@@ -134,6 +137,8 @@ export interface ClientToServerEvents {
     'room:join': (payload: JoinRoomPayload, ack: (result: Ack<{ room: RoomView }>) => void) => void;
     'room:quick': (payload: QuickMatchPayload, ack: (result: Ack<{ room: RoomView }>) => void) => void;
     'room:leave': (ack: (result: Ack<Record<string, never>>) => void) => void;
+    /** Claims a seat held open after a drop, with the token issued on joining. */
+    'room:resume': (payload: ResumePayload, ack: (result: Ack<{ room: RoomView }>) => void) => void;
     'select:character': (payload: SelectCharacterPayload, ack: (result: Ack<Record<string, never>>) => void) => void;
     'select:ready': (payload: ReadyPayload, ack: (result: Ack<Record<string, never>>) => void) => void;
     'match:input': (payload: InputPayload) => void;
@@ -149,6 +154,8 @@ export interface ServerToClientEvents {
     'match:over': (payload: MatchOverMessage) => void;
     'opponent:disconnected': (payload: { nickname: string; graceMs: number }) => void;
     'opponent:reconnected': (payload: { nickname: string }) => void;
+    /** Sent once on joining a room: the credential for `room:resume`. */
+    'session:token': (payload: { token: string }) => void;
 }
 
 /** Default tuning, overridable by environment on the server. */

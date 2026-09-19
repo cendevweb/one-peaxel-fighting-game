@@ -39,6 +39,7 @@ export interface Outbound {
     'match:over': MatchOverMessage;
     'opponent:disconnected': { nickname: string; graceMs: number };
     'opponent:reconnected': { nickname: string };
+    'session:token': { token: string };
 }
 
 export interface RoomOptions {
@@ -90,6 +91,9 @@ export class Room {
     private seed: number;
 
     private match: MatchState | null = null;
+    /** Kept so a player who reconnects mid-match can be handed the same
+     *  parameters the match started with. */
+    private characters: [string, string] | null = null;
     private frame = 0;
     private startAt = 0;
     private accumulatorMs = 0;
@@ -334,17 +338,9 @@ export class Room {
         this.lateInputs = 0;
         this.roundResults = [];
 
+        this.characters = characters;
         for (const player of this.players.values()) {
-            const message: MatchBeginMessage = {
-                slot: player.slot,
-                characters,
-                stageId: this.stageIdValue,
-                seed: this.seed,
-                inputDelay: this.options.inputDelay,
-                startFrame: 0,
-                round: 1
-            };
-            this.transport.toPlayer(player.id, 'match:begin', message);
+            this.transport.toPlayer(player.id, 'match:begin', this.beginMessage(player.slot));
         }
         log('info', 'match starting', { room: this.code, characters: characters.join(' vs '), stage: this.stageIdValue });
         this.publish();
@@ -508,18 +504,47 @@ export class Room {
         }
     }
 
-    reconnect(playerId: string, socketId: string): boolean {
-        const player = this.players.get(playerId);
-        if (!player) {
+    private beginMessage(slot: 0 | 1): MatchBeginMessage {
+        return {
+            slot,
+            characters: this.characters ?? [DEFAULT_CHARACTER, DEFAULT_CHARACTER],
+            stageId: this.stageIdValue,
+            seed: this.seed,
+            inputDelay: this.options.inputDelay,
+            startFrame: this.frame,
+            round: this.match?.round ?? 1
+        };
+    }
+
+    /**
+     * Moves a held seat onto a new socket.
+     *
+     * A browser that drops gets a new socket id, so the seat cannot be found
+     * by identity alone — the registry matches it by token and calls this. The
+     * player keeps their slot, their character and their rounds; only the id
+     * changes. If a match is running they are handed the same parameters it
+     * started with, and the next snapshot pulls their simulation back in line.
+     */
+    rebind(oldPlayerId: string, newPlayerId: string): boolean {
+        const player = this.players.get(oldPlayerId);
+        if (!player || (oldPlayerId !== newPlayerId && this.players.has(newPlayerId))) {
             return false;
         }
+
+        this.players.delete(oldPlayerId);
+        player.id = newPlayerId;
         player.connected = true;
         player.disconnectedAt = null;
+        this.players.set(newPlayerId, player);
+
         const other = this.opponentOf(player);
         if (other) {
             this.transport.toPlayer(other.id, 'opponent:reconnected', { nickname: player.nickname });
         }
-        log('info', 'player reconnected', { room: this.code, player: playerId, socket: socketId });
+        if (this.match && (this.phaseValue === 'fight' || this.phaseValue === 'countdown')) {
+            this.transport.toPlayer(newPlayerId, 'match:begin', this.beginMessage(player.slot));
+        }
+        log('info', 'player reconnected', { room: this.code, player: newPlayerId });
         this.publish();
         return true;
     }
@@ -529,6 +554,7 @@ export class Room {
     private reset(phase: RoomPhase): void {
         this.phaseValue = phase;
         this.match = null;
+        this.characters = null;
         this.frame = 0;
         this.pending = [new Map(), new Map()];
         this.lastMask = [0, 0];

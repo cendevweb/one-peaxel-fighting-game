@@ -10,6 +10,7 @@ import {
     pingSchema,
     quickMatchSchema,
     readySchema,
+    resumeSchema,
     selectCharacterSchema,
     type Ack,
     type ClientToServerEvents,
@@ -60,8 +61,15 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(http, {
     // Long-polling first would work, but a fighting game has no use for it and
     // the upgrade dance costs the first second of every connection.
     transports: ['websocket', 'polling'],
-    pingInterval: 10_000,
-    pingTimeout: 20_000
+    // A player whose connection is cut, rather than closed, is only noticed
+    // when the heartbeat runs out. With the library's defaults that takes up
+    // to thirty seconds — longer than the twelve-second grace period the room
+    // holds their seat for, so the opponent would sit in a frozen fight
+    // waiting for a countdown that had not started. Four and eight seconds
+    // puts detection inside the grace period, which is what the room's rules
+    // assume, and the extra heartbeat traffic is a few bytes a second.
+    pingInterval: 4_000,
+    pingTimeout: 8_000
 });
 
 /**
@@ -103,7 +111,8 @@ const _outboundCheck: OutboundMatchesProtocol = {
     'match:snapshot': true,
     'match:over': true,
     'opponent:disconnected': true,
-    'opponent:reconnected': true
+    'opponent:reconnected': true,
+    'session:token': true
 };
 void _outboundCheck;
 
@@ -132,6 +141,16 @@ io.on('connection', (socket: GameSocket) => {
         void socket.join(socket.id);
     };
 
+    /** Hands the tab the credential it will need if its socket ever drops. */
+    const issueToken = (): void => {
+        const token = registry.issueToken(socket.id);
+        if (token) {
+            (socket as unknown as { emit: (event: string, payload: unknown) => void }).emit('session:token', {
+                token
+            });
+        }
+    };
+
     socket.on('room:create', (payload, ack) => {
         const parsed = createRoomSchema.safeParse(payload);
         if (!parsed.success) {
@@ -140,6 +159,7 @@ io.on('connection', (socket: GameSocket) => {
         }
         const room = registry.create(socket.id, parsed.data.nickname);
         joinRoomChannel(room.view());
+        issueToken();
         room.publish();
         ack(done({ room: room.view() }));
     });
@@ -161,6 +181,7 @@ io.on('connection', (socket: GameSocket) => {
             return;
         }
         joinRoomChannel(room.view());
+        issueToken();
         room.publish();
         ack(done({ room: room.view() }));
     });
@@ -172,6 +193,26 @@ io.on('connection', (socket: GameSocket) => {
             return;
         }
         const room = registry.quickMatch(socket.id, parsed.data.nickname);
+        joinRoomChannel(room.view());
+        issueToken();
+        room.publish();
+        ack(done({ room: room.view() }));
+    });
+
+    // A tab that lost its socket mid-match comes back here. The seat is only
+    // still there if the grace period has not run out; otherwise the match was
+    // already forfeited and there is nothing honest to return.
+    socket.on('room:resume', (payload, ack) => {
+        const parsed = resumeSchema.safeParse(payload);
+        if (!parsed.success) {
+            ack(fail('invalid-payload', 'Jeton de reprise invalide.'));
+            return;
+        }
+        const room = registry.resume(parsed.data.token, socket.id);
+        if (!room) {
+            ack(fail('seat-expired', 'La partie ne t\'attend plus.'));
+            return;
+        }
         joinRoomChannel(room.view());
         room.publish();
         ack(done({ room: room.view() }));

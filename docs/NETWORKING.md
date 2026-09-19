@@ -80,9 +80,31 @@ revanche. Le client n'a aucune notion locale de « on est probablement en
 train de se battre » : l'écran affiché découle de la phase que le serveur
 annonce.
 
-Une déconnexion ouvre un délai de grâce de 12 secondes. Le joueur qui revient
-reprend son siège ; sinon, forfait. Un salon vide disparaît au bout d'une
-minute.
+## Reprendre son siège
+
+Une déconnexion ouvre un délai de grâce de douze secondes. Le joueur qui
+revient reprend son siège ; sinon, forfait. Un salon vide disparaît au bout
+d'une minute.
+
+Reprendre le siège demande un détour, parce qu'un joueur est identifié par son
+socket et qu'un navigateur qui se reconnecte en obtient un nouveau : le serveur
+voit un inconnu, pas un revenant. Un **jeton de reprise** est donc remis au
+moment où le joueur entre dans un salon. L'onglet le garde dans
+`sessionStorage` — pas `localStorage`, parce que deux onglets sur une machine
+sont deux joueurs et que partager le jeton laisserait le second voler le siège
+du premier — et le représente à chaque connexion. Le salon rattache alors le
+siège au nouveau socket, avec son slot, son personnage et ses rounds, et
+renvoie au joueur les paramètres du match ; l'instantané suivant remet sa
+simulation en phase.
+
+Quitter volontairement efface le jeton, sinon la connexion suivante ramènerait
+le joueur dans une partie dont il vient de sortir.
+
+Le battement de cœur est réglé à quatre secondes d'intervalle et huit secondes
+d'attente, au lieu des dix et vingt de la bibliothèque. Avec les valeurs par
+défaut, une connexion coupée net n'était constatée qu'au bout d'une trentaine
+de secondes, soit plus que le délai de grâce : l'adversaire attendait devant
+une arène figée un décompte qui n'avait pas commencé.
 
 ## Les réglages
 
@@ -106,3 +128,6 @@ minute.
 - Deux onglets sur la même machine ne prouvent rien de la latence. Le parcours
   a été vérifié avec deux contextes de navigateur indépendants ; un vrai test
   à deux machines reste à faire.
+- La reprise rattrape une coupure, pas une absence : au-delà des douze
+  secondes le siège est perdu et le match est donné à l'adversaire. C'est
+  délibéré — un salon qui attendrait indéfiniment bloquerait le joueur resté.

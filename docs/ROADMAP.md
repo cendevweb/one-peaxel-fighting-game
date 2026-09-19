@@ -20,8 +20,6 @@
 - **Des coups aériens propres** pour les trois personnages qui n'en ont pas.
 - **Un vrai mode entraînement** : affichage des frames d'avantage, répétition
   de la dernière séquence, adversaire qui garde.
-- **Reconnexion en cours de match** côté client. Le serveur tient déjà le
-  siège douze secondes ; le client ne sait pas encore le reprendre.
 - **Tactile et format portrait**, si le jeu doit sortir du bureau.
 
 ## Ce qui n'est pas prévu
