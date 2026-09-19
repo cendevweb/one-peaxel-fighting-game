@@ -41,9 +41,12 @@ joueurs.
 Importer le dépôt. Vercel détecte l'application Next.js et place le **dossier
 racine du projet sur `apps/web`** : c'est le réglage attendu, il ne faut pas le
 ramener à la racine du dépôt. `vercel.json`, à la racine, fixe l'installation
-et la compilation, et **ce fichier prime sur les réglages de l'interface** : si
-la commande de compilation affichée dans « Build and Deployment » ne correspond
-pas, c'est `vercel.json` qui gagne, inutile d'y toucher.
+la compilation et le dossier de sortie, et **ce fichier prime sur les réglages
+de l'interface** : ce que montre « Build and Deployment » peut dater de
+l'import, c'est `vercel.json` qui gagne, inutile d'y toucher.
+
+Les trois valeurs sont écrites pour un dossier racine sur `apps/web`, donc
+`outputDirectory` vaut `.next` et non `apps/web/.next`.
 
 Ce qui rend cela possible est le script `prebuild` de `apps/web/package.json` :
 

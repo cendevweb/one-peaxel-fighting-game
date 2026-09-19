@@ -3,6 +3,7 @@
   "framework": "nextjs",
   "installCommand": "test -f ../../package-lock.json && cd ../.. ; npm install --legacy-peer-deps",
   "buildCommand": "npm run build",
+  "outputDirectory": ".next",
   "github": {
     "silent": true
   }
