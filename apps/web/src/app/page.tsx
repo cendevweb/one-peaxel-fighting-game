@@ -92,7 +92,7 @@ export default function Page(): React.ReactElement {
         onOver: (message) => setResult(message)
     });
 
-    const { room, status, ping, call, sendInput, notice, forgetSession } = socket;
+    const { room, status, ping, call, sendInput, notice, forgetRoom } = socket;
 
     // Build the netcode client once the server has declared the match.
     useEffect(() => {
@@ -148,11 +148,11 @@ export default function Page(): React.ReactElement {
     /** Every deliberate exit: drop the seat token first, then tell the server,
      *  so a reconnection does not drag the player back in. */
     const leave = useCallback((): void => {
-        forgetSession();
+        forgetRoom();
         setMatch(null);
         setResult(null);
         void call('room:leave');
-    }, [call, forgetSession]);
+    }, [call, forgetRoom]);
 
     const join = useCallback(
         async (code: string): Promise<void> => {

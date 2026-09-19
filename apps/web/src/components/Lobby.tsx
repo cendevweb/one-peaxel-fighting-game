@@ -119,6 +119,11 @@ export function Lobby({
                         })}
                     </ul>
 
+                    {/* The player left behind when their opponent walks out
+                        lands back here; without this they are told nothing
+                        about why the fight stopped. */}
+                    {error ? <p className="text-accent-2 mt-4 text-sm">{error}</p> : null}
+
                     <button type="button" className="btn mt-5 w-full" onClick={onLeave}>
                         Quitter la partie
                     </button>
@@ -174,6 +179,10 @@ export function Lobby({
                         </button>
                     </div>
 
+                    {/* Under the code field, not at the foot of the panel: a
+                        mistyped code is read where it was typed. */}
+                    {error ? <p className="text-danger mt-3 text-sm">{error}</p> : null}
+
                     <div className="mt-6 border-t border-line/60 pt-5">
                         <button type="button" className="btn w-full" onClick={onLocal}>
                             Entraînement local · deux joueurs, un clavier
@@ -183,7 +192,6 @@ export function Lobby({
                         </p>
                     </div>
 
-                    {error ? <p className="text-danger mt-4 text-sm">{error}</p> : null}
                 </section>
             )}
 

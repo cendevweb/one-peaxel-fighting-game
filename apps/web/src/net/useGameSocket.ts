@@ -157,10 +157,16 @@ export function useGameSocket(handlers: GameSocketHandlers) {
         []
     );
 
-    /** Leaving on purpose forgets the seat, so the next connection does not
-     *  drag the player back into a room they walked out of. */
-    const forgetSession = useCallback((): void => {
+    /**
+     * Leaving on purpose: forget the seat token, so the next connection does
+     * not drag the player back into a room they walked out of, and drop the
+     * room locally rather than waiting to be told. The server confirms a
+     * moment later; until it does, showing the room the player just left is
+     * worse than showing the menu.
+     */
+    const forgetRoom = useCallback((): void => {
         writeToken(null);
+        setRoom(null);
     }, []);
 
     const sendInput = useCallback((payload: InputPayload): void => {
@@ -175,9 +181,9 @@ export function useGameSocket(handlers: GameSocketHandlers) {
             ping,
             call,
             sendInput,
-            forgetSession,
+            forgetRoom,
             clearNotice: () => setNotice(null)
         }),
-        [status, room, notice, ping, call, sendInput, forgetSession]
+        [status, room, notice, ping, call, sendInput, forgetRoom]
     );
 }

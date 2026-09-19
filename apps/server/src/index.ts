@@ -219,6 +219,13 @@ io.on('connection', (socket: GameSocket) => {
     });
 
     socket.on('room:leave', (ack) => {
+        // Leaving the broadcast channel matters as much as leaving the room:
+        // a socket still subscribed to it keeps receiving the room's state and
+        // the client keeps rendering a room the player has walked out of.
+        const room = registry.roomOfPlayer(socket.id);
+        if (room) {
+            void socket.leave(room.code);
+        }
         registry.leave(socket.id);
         ack(done({}));
     });
