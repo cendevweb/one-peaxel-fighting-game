@@ -19,6 +19,7 @@ export interface LobbyProps {
     onQuick: () => void;
     onLeave: () => void;
     onLocal: () => void;
+    onArcade: () => void;
 }
 
 const STATUS_TEXT: Record<ConnectionStatus, string> = {
@@ -48,7 +49,8 @@ export function Lobby({
     onJoin,
     onQuick,
     onLeave,
-    onLocal
+    onLocal,
+    onArcade
 }: LobbyProps): React.ReactElement {
     const [code, setCode] = useState('');
     const [copied, setCopied] = useState(false);
@@ -183,12 +185,15 @@ export function Lobby({
                         mistyped code is read where it was typed. */}
                     {error ? <p className="text-danger mt-3 text-sm">{error}</p> : null}
 
-                    <div className="mt-6 border-t border-line/60 pt-5">
+                    <div className="mt-6 grid gap-3 border-t border-line/60 pt-5">
+                        <button type="button" className="btn w-full" onClick={onArcade}>
+                            Mode arcade · seul contre tout le roster
+                        </button>
                         <button type="button" className="btn w-full" onClick={onLocal}>
                             Entraînement local · deux joueurs, un clavier
                         </button>
-                        <p className="mt-2 text-xs text-muted">
-                            Ne nécessite aucune connexion : la même simulation tourne entièrement dans ce navigateur.
+                        <p className="text-xs text-muted">
+                            Ne nécessitent aucune connexion : la même simulation tourne entièrement dans ce navigateur.
                         </p>
                     </div>
 

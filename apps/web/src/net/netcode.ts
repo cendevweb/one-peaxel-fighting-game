@@ -256,9 +256,14 @@ export class NetcodeClient {
 }
 
 /**
- * Offline driver for the training room. Same simulation, both seats read from
- * this machine, no socket involved — which also makes it the quickest way to
- * check that a change to the engine feels right before taking it online.
+ * Offline driver for the training room and the arcade ladder. Same simulation,
+ * both seats read from this machine, no socket involved — which also makes it
+ * the quickest way to check that a change to the engine feels right before
+ * taking it online.
+ *
+ * The reader is handed the state it is about to be stepped from, because a
+ * computer opponent needs to see the fight to answer it, and a keyboard reader
+ * is free to ignore the argument.
  */
 export class LocalDriver {
     private current: MatchState;
@@ -270,7 +275,7 @@ export class LocalDriver {
         private readonly characters: [string, string],
         stageId: string,
         seed: number,
-        private readonly readInputs: () => [number, number]
+        private readonly readInputs: (state: MatchState) => [number, number]
     ) {
         this.current = createMatch({ characters, stageId, seed }, ROSTER);
     }
@@ -289,7 +294,7 @@ export class LocalDriver {
         while (this.accumulator >= FRAME_MS && steps < 8) {
             this.accumulator -= FRAME_MS;
             steps += 1;
-            const result = stepMatch(this.current, this.readInputs(), ROSTER);
+            const result = stepMatch(this.current, this.readInputs(this.current), ROSTER);
             this.current = result.state;
             this.events.push(...result.events);
             this.frame += 1;
