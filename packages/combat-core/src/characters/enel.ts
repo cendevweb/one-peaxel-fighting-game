@@ -39,9 +39,9 @@ export const enel: CharacterDefinition = {
         land: 'enel-idle',
         hurt: 'enel-hurt',
         guard: 'enel-guard',
-        knockdown: 'enel-hurt',
+        knockdown: 'enel-knockdown',
         victory: 'enel-idle',
-        defeat: 'enel-hurt'
+        defeat: 'enel-knockdown'
     },
     moves: [
         move({
@@ -100,7 +100,7 @@ export const enel: CharacterDefinition = {
                 lifetime: 70,
                 box: { x: -22, y: -24, width: 48, height: 52 },
                 hit: hit({ damage: 64, hitstun: 22, blockstun: 12, knockbackX: 4.8, hitstop: 8 }),
-                animation: 'fx-bolt',
+                animation: 'enel-fx-bolt',
                 hits: 1,
                 scale: 2
             },

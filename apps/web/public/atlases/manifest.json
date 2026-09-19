@@ -1,0 +1,1870 @@
+{
+  "generatedAt": "2026-09-19T19:55:28.960Z",
+  "characters": [
+    {
+      "id": "luffy",
+      "texture": "luffy",
+      "source": "luffy.png",
+      "frameWidth": 174,
+      "frameHeight": 112,
+      "plate": {
+        "r": 73,
+        "g": 85,
+        "b": 125
+      },
+      "bands": [
+        {
+          "index": 0,
+          "top": 18,
+          "bottom": 80,
+          "frameCount": 13,
+          "animation": "idle"
+        },
+        {
+          "index": 1,
+          "top": 95,
+          "bottom": 145,
+          "frameCount": 4,
+          "animation": "jab"
+        },
+        {
+          "index": 2,
+          "top": 157,
+          "bottom": 207,
+          "frameCount": 7,
+          "animation": "pistol"
+        },
+        {
+          "index": 3,
+          "top": 223,
+          "bottom": 274,
+          "frameCount": 12,
+          "animation": "fx-spark"
+        },
+        {
+          "index": 4,
+          "top": 282,
+          "bottom": 332,
+          "frameCount": 11
+        },
+        {
+          "index": 5,
+          "top": 348,
+          "bottom": 401,
+          "frameCount": 6,
+          "animation": "fx-burst"
+        },
+        {
+          "index": 6,
+          "top": 415,
+          "bottom": 473,
+          "frameCount": 9,
+          "animation": "whip"
+        },
+        {
+          "index": 7,
+          "top": 486,
+          "bottom": 540,
+          "frameCount": 6
+        },
+        {
+          "index": 8,
+          "top": 555,
+          "bottom": 606,
+          "frameCount": 7
+        },
+        {
+          "index": 9,
+          "top": 613,
+          "bottom": 670,
+          "frameCount": 9
+        },
+        {
+          "index": 10,
+          "top": 696,
+          "bottom": 759,
+          "frameCount": 8,
+          "animation": "gatling"
+        },
+        {
+          "index": 11,
+          "top": 770,
+          "bottom": 829,
+          "frameCount": 10
+        },
+        {
+          "index": 12,
+          "top": 849,
+          "bottom": 960,
+          "frameCount": 13,
+          "animation": "axe"
+        },
+        {
+          "index": 13,
+          "top": 970,
+          "bottom": 1097,
+          "frameCount": 13
+        },
+        {
+          "index": 14,
+          "top": 1117,
+          "bottom": 1198,
+          "frameCount": 15,
+          "animation": "gear3"
+        },
+        {
+          "index": 15,
+          "top": 1212,
+          "bottom": 1273,
+          "frameCount": 10
+        },
+        {
+          "index": 16,
+          "top": 1288,
+          "bottom": 1375,
+          "frameCount": 8
+        },
+        {
+          "index": 17,
+          "top": 1393,
+          "bottom": 1449,
+          "frameCount": 11
+        },
+        {
+          "index": 18,
+          "top": 1462,
+          "bottom": 1499,
+          "frameCount": 3
+        },
+        {
+          "index": 19,
+          "top": 1523,
+          "bottom": 1560,
+          "frameCount": 3
+        },
+        {
+          "index": 20,
+          "top": 1576,
+          "bottom": 1632,
+          "frameCount": 11
+        },
+        {
+          "index": 21,
+          "top": 1659,
+          "bottom": 1709,
+          "frameCount": 9
+        },
+        {
+          "index": 22,
+          "top": 1715,
+          "bottom": 1766,
+          "frameCount": 6
+        },
+        {
+          "index": 23,
+          "top": 1797,
+          "bottom": 1841,
+          "frameCount": 3
+        },
+        {
+          "index": 24,
+          "top": 1845,
+          "bottom": 1917,
+          "frameCount": 11
+        },
+        {
+          "index": 25,
+          "top": 1930,
+          "bottom": 1998,
+          "frameCount": 6,
+          "animation": "jump"
+        },
+        {
+          "index": 26,
+          "top": 2014,
+          "bottom": 2065,
+          "frameCount": 7
+        },
+        {
+          "index": 27,
+          "top": 2081,
+          "bottom": 2174,
+          "frameCount": 9
+        },
+        {
+          "index": 28,
+          "top": 2187,
+          "bottom": 2296,
+          "frameCount": 6
+        },
+        {
+          "index": 29,
+          "top": 2323,
+          "bottom": 2440,
+          "frameCount": 14
+        },
+        {
+          "index": 30,
+          "top": 2454,
+          "bottom": 2507,
+          "frameCount": 6
+        },
+        {
+          "index": 31,
+          "top": 2518,
+          "bottom": 2610,
+          "frameCount": 9
+        },
+        {
+          "index": 32,
+          "top": 2629,
+          "bottom": 2704,
+          "frameCount": 11
+        },
+        {
+          "index": 33,
+          "top": 2743,
+          "bottom": 2801,
+          "frameCount": 8
+        },
+        {
+          "index": 34,
+          "top": 2812,
+          "bottom": 2862,
+          "frameCount": 5
+        },
+        {
+          "index": 35,
+          "top": 2873,
+          "bottom": 3056,
+          "frameCount": 7
+        },
+        {
+          "index": 36,
+          "top": 3062,
+          "bottom": 3174,
+          "frameCount": 9
+        },
+        {
+          "index": 37,
+          "top": 3194,
+          "bottom": 3449,
+          "frameCount": 2
+        },
+        {
+          "index": 38,
+          "top": 3463,
+          "bottom": 3519,
+          "frameCount": 11
+        },
+        {
+          "index": 39,
+          "top": 3532,
+          "bottom": 3623,
+          "frameCount": 7
+        },
+        {
+          "index": 40,
+          "top": 3638,
+          "bottom": 4146,
+          "frameCount": 3
+        },
+        {
+          "index": 41,
+          "top": 4157,
+          "bottom": 4368,
+          "frameCount": 7
+        },
+        {
+          "index": 42,
+          "top": 4378,
+          "bottom": 4501,
+          "frameCount": 7
+        },
+        {
+          "index": 43,
+          "top": 4511,
+          "bottom": 4602,
+          "frameCount": 6
+        },
+        {
+          "index": 44,
+          "top": 4621,
+          "bottom": 4713,
+          "frameCount": 5
+        },
+        {
+          "index": 45,
+          "top": 4729,
+          "bottom": 4817,
+          "frameCount": 5
+        },
+        {
+          "index": 46,
+          "top": 4870,
+          "bottom": 4960,
+          "frameCount": 5
+        },
+        {
+          "index": 47,
+          "top": 4986,
+          "bottom": 5064,
+          "frameCount": 9
+        },
+        {
+          "index": 48,
+          "top": 5092,
+          "bottom": 5151,
+          "frameCount": 10
+        },
+        {
+          "index": 49,
+          "top": 5185,
+          "bottom": 5239,
+          "frameCount": 16
+        },
+        {
+          "index": 50,
+          "top": 5256,
+          "bottom": 5334,
+          "frameCount": 19
+        },
+        {
+          "index": 51,
+          "top": 5350,
+          "bottom": 5409,
+          "frameCount": 12
+        },
+        {
+          "index": 52,
+          "top": 5418,
+          "bottom": 5474,
+          "frameCount": 12
+        },
+        {
+          "index": 53,
+          "top": 5490,
+          "bottom": 5550,
+          "frameCount": 10
+        },
+        {
+          "index": 54,
+          "top": 5564,
+          "bottom": 5725,
+          "frameCount": 2
+        }
+      ],
+      "animations": [
+        {
+          "key": "luffy-idle",
+          "frames": [
+            "b0f0",
+            "b0f1",
+            "b0f2"
+          ],
+          "frameRate": 5,
+          "repeat": -1
+        },
+        {
+          "key": "luffy-walk",
+          "frames": [
+            "b0f3",
+            "b0f4",
+            "b0f5",
+            "b0f6",
+            "b0f7",
+            "b0f8",
+            "b0f9",
+            "b0f10"
+          ],
+          "frameRate": 13,
+          "repeat": -1
+        },
+        {
+          "key": "luffy-hurt",
+          "frames": [
+            "b0f11",
+            "b0f12"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-guard",
+          "frames": [
+            "b0f11"
+          ],
+          "frameRate": 1,
+          "repeat": -1
+        },
+        {
+          "key": "luffy-knockdown",
+          "frames": [
+            "b0f12",
+            "b0f12"
+          ],
+          "frameRate": 4,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-jump",
+          "frames": [
+            "b25f0",
+            "b25f1",
+            "b25f2",
+            "b25f3",
+            "b25f4",
+            "b25f5"
+          ],
+          "frameRate": 9,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-jab",
+          "frames": [
+            "b1f0",
+            "b1f1",
+            "b1f2",
+            "b1f3"
+          ],
+          "frameRate": 16,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-pistol",
+          "frames": [
+            "b2f0",
+            "b2f1",
+            "b2f2",
+            "b2f3",
+            "b2f4",
+            "b2f5",
+            "b2f6"
+          ],
+          "frameRate": 14,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-whip",
+          "frames": [
+            "b6f0",
+            "b6f1",
+            "b6f2",
+            "b6f3",
+            "b6f4",
+            "b6f5",
+            "b6f6",
+            "b6f7",
+            "b6f8"
+          ],
+          "frameRate": 15,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-gatling",
+          "frames": [
+            "b10f0",
+            "b10f1",
+            "b10f2",
+            "b10f3",
+            "b10f4",
+            "b10f5",
+            "b10f6",
+            "b10f7"
+          ],
+          "frameRate": 16,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-axe",
+          "frames": [
+            "b12f0",
+            "b12f1",
+            "b12f2",
+            "b12f3",
+            "b12f4",
+            "b12f5",
+            "b12f6",
+            "b12f7",
+            "b12f8",
+            "b12f9"
+          ],
+          "frameRate": 12,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-gear3",
+          "frames": [
+            "b14f0",
+            "b14f1",
+            "b14f2",
+            "b14f3",
+            "b14f4",
+            "b14f5"
+          ],
+          "frameRate": 9,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-fx-spark",
+          "frames": [
+            "b3f0",
+            "b3f1",
+            "b3f2",
+            "b3f3",
+            "b3f4",
+            "b3f5"
+          ],
+          "frameRate": 22,
+          "repeat": 0
+        },
+        {
+          "key": "luffy-fx-burst",
+          "frames": [
+            "b5f2",
+            "b5f3",
+            "b5f4",
+            "b5f5"
+          ],
+          "frameRate": 20,
+          "repeat": 0
+        }
+      ],
+      "unusedFrames": [],
+      "skippedBands": [
+        4,
+        7,
+        8,
+        9,
+        11,
+        13,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lucci",
+      "texture": "lucci",
+      "source": "lucci.png",
+      "frameWidth": 132,
+      "frameHeight": 92,
+      "plate": {
+        "r": 0,
+        "g": 64,
+        "b": 128
+      },
+      "bands": [
+        {
+          "index": 0,
+          "top": 32,
+          "bottom": 104,
+          "frameCount": 3,
+          "animation": "idle"
+        },
+        {
+          "index": 1,
+          "top": 135,
+          "bottom": 206,
+          "frameCount": 10,
+          "animation": "walk"
+        },
+        {
+          "index": 2,
+          "top": 216,
+          "bottom": 229,
+          "frameCount": 1
+        },
+        {
+          "index": 3,
+          "top": 239,
+          "bottom": 310,
+          "frameCount": 7,
+          "animation": "jump"
+        },
+        {
+          "index": 4,
+          "top": 347,
+          "bottom": 406,
+          "frameCount": 2
+        },
+        {
+          "index": 5,
+          "top": 441,
+          "bottom": 503,
+          "frameCount": 8,
+          "animation": "hurt"
+        },
+        {
+          "index": 6,
+          "top": 542,
+          "bottom": 612,
+          "frameCount": 5,
+          "animation": "guard"
+        },
+        {
+          "index": 7,
+          "top": 645,
+          "bottom": 710,
+          "frameCount": 5,
+          "animation": "shigan"
+        },
+        {
+          "index": 8,
+          "top": 752,
+          "bottom": 817,
+          "frameCount": 7,
+          "animation": "fx-slash"
+        },
+        {
+          "index": 9,
+          "top": 831,
+          "bottom": 844,
+          "frameCount": 3
+        },
+        {
+          "index": 10,
+          "top": 862,
+          "bottom": 943,
+          "frameCount": 8,
+          "animation": "rankyaku"
+        },
+        {
+          "index": 11,
+          "top": 985,
+          "bottom": 1051,
+          "frameCount": 5,
+          "animation": "leopard"
+        },
+        {
+          "index": 12,
+          "top": 1076,
+          "bottom": 1146,
+          "frameCount": 10
+        },
+        {
+          "index": 13,
+          "top": 1178,
+          "bottom": 1269,
+          "frameCount": 11,
+          "animation": "rokuogan"
+        },
+        {
+          "index": 14,
+          "top": 1276,
+          "bottom": 1289,
+          "frameCount": 3
+        },
+        {
+          "index": 15,
+          "top": 1299,
+          "bottom": 1406,
+          "frameCount": 8
+        },
+        {
+          "index": 16,
+          "top": 1445,
+          "bottom": 1520,
+          "frameCount": 7
+        },
+        {
+          "index": 17,
+          "top": 1534,
+          "bottom": 1547,
+          "frameCount": 3
+        },
+        {
+          "index": 18,
+          "top": 1573,
+          "bottom": 1636,
+          "frameCount": 5
+        },
+        {
+          "index": 19,
+          "top": 1660,
+          "bottom": 1673,
+          "frameCount": 3
+        },
+        {
+          "index": 20,
+          "top": 1696,
+          "bottom": 1760,
+          "frameCount": 12
+        },
+        {
+          "index": 21,
+          "top": 1808,
+          "bottom": 1836,
+          "frameCount": 3
+        },
+        {
+          "index": 22,
+          "top": 1857,
+          "bottom": 1936,
+          "frameCount": 15
+        },
+        {
+          "index": 23,
+          "top": 1968,
+          "bottom": 2004,
+          "frameCount": 6
+        },
+        {
+          "index": 24,
+          "top": 2016,
+          "bottom": 2051,
+          "frameCount": 2
+        },
+        {
+          "index": 25,
+          "top": 2066,
+          "bottom": 2133,
+          "frameCount": 7
+        },
+        {
+          "index": 26,
+          "top": 2170,
+          "bottom": 2280,
+          "frameCount": 10
+        },
+        {
+          "index": 27,
+          "top": 2285,
+          "bottom": 2313,
+          "frameCount": 3
+        },
+        {
+          "index": 28,
+          "top": 2336,
+          "bottom": 2461,
+          "frameCount": 11
+        },
+        {
+          "index": 29,
+          "top": 2477,
+          "bottom": 2550,
+          "frameCount": 6
+        },
+        {
+          "index": 30,
+          "top": 2585,
+          "bottom": 2700,
+          "frameCount": 7
+        },
+        {
+          "index": 31,
+          "top": 2752,
+          "bottom": 2851,
+          "frameCount": 7
+        },
+        {
+          "index": 32,
+          "top": 2858,
+          "bottom": 2896,
+          "frameCount": 5
+        },
+        {
+          "index": 33,
+          "top": 2931,
+          "bottom": 3021,
+          "frameCount": 12
+        },
+        {
+          "index": 34,
+          "top": 3043,
+          "bottom": 3071,
+          "frameCount": 6
+        },
+        {
+          "index": 35,
+          "top": 3100,
+          "bottom": 3459,
+          "frameCount": 5
+        },
+        {
+          "index": 36,
+          "top": 3480,
+          "bottom": 3750,
+          "frameCount": 6
+        },
+        {
+          "index": 37,
+          "top": 3787,
+          "bottom": 3838,
+          "frameCount": 4
+        },
+        {
+          "index": 38,
+          "top": 3870,
+          "bottom": 3960,
+          "frameCount": 12
+        },
+        {
+          "index": 39,
+          "top": 3973,
+          "bottom": 4008,
+          "frameCount": 3
+        },
+        {
+          "index": 40,
+          "top": 4029,
+          "bottom": 4231,
+          "frameCount": 5
+        },
+        {
+          "index": 41,
+          "top": 4275,
+          "bottom": 4314,
+          "frameCount": 6
+        },
+        {
+          "index": 42,
+          "top": 4387,
+          "bottom": 4457,
+          "frameCount": 6
+        },
+        {
+          "index": 43,
+          "top": 4506,
+          "bottom": 4569,
+          "frameCount": 3
+        },
+        {
+          "index": 44,
+          "top": 4593,
+          "bottom": 4621,
+          "frameCount": 1
+        },
+        {
+          "index": 45,
+          "top": 4637,
+          "bottom": 4767,
+          "frameCount": 3
+        }
+      ],
+      "animations": [
+        {
+          "key": "lucci-idle",
+          "frames": [
+            "b0f0",
+            "b0f1",
+            "b0f2"
+          ],
+          "frameRate": 5,
+          "repeat": -1
+        },
+        {
+          "key": "lucci-walk",
+          "frames": [
+            "b1f0",
+            "b1f1",
+            "b1f2",
+            "b1f3",
+            "b1f4",
+            "b1f5",
+            "b1f6",
+            "b1f7"
+          ],
+          "frameRate": 12,
+          "repeat": -1
+        },
+        {
+          "key": "lucci-jump",
+          "frames": [
+            "b3f0",
+            "b3f1",
+            "b3f2",
+            "b3f3",
+            "b3f4",
+            "b3f5",
+            "b3f6"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-guard",
+          "frames": [
+            "b6f0",
+            "b6f1"
+          ],
+          "frameRate": 8,
+          "repeat": -1
+        },
+        {
+          "key": "lucci-hurt",
+          "frames": [
+            "b5f0",
+            "b5f1",
+            "b5f2"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-knockdown",
+          "frames": [
+            "b5f3",
+            "b5f4",
+            "b5f5"
+          ],
+          "frameRate": 8,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-shigan",
+          "frames": [
+            "b7f0",
+            "b7f1",
+            "b7f2",
+            "b7f3",
+            "b7f4"
+          ],
+          "frameRate": 17,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-leopard",
+          "frames": [
+            "b11f0",
+            "b11f1",
+            "b11f2",
+            "b11f3",
+            "b11f4"
+          ],
+          "frameRate": 13,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-rankyaku",
+          "frames": [
+            "b10f0",
+            "b10f1",
+            "b10f2",
+            "b10f3",
+            "b10f4",
+            "b10f5",
+            "b10f6",
+            "b10f7"
+          ],
+          "frameRate": 14,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-rokuogan",
+          "frames": [
+            "b13f0",
+            "b13f1",
+            "b13f2",
+            "b13f3",
+            "b13f4",
+            "b13f5",
+            "b13f6",
+            "b13f7",
+            "b13f8",
+            "b13f9",
+            "b13f10"
+          ],
+          "frameRate": 12,
+          "repeat": 0
+        },
+        {
+          "key": "lucci-fx-slash",
+          "frames": [
+            "b8f1",
+            "b8f2",
+            "b8f3",
+            "b8f4",
+            "b8f5"
+          ],
+          "frameRate": 18,
+          "repeat": 0
+        }
+      ],
+      "unusedFrames": [],
+      "skippedBands": [
+        2,
+        4,
+        9,
+        12,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "warnings": []
+    },
+    {
+      "id": "crocodile",
+      "texture": "crocodile",
+      "source": "crocodile.png",
+      "frameWidth": 354,
+      "frameHeight": 72,
+      "plate": {
+        "r": 0,
+        "g": 128,
+        "b": 255
+      },
+      "bands": [
+        {
+          "index": 0,
+          "top": 3,
+          "bottom": 65,
+          "frameCount": 10,
+          "animation": "idle"
+        },
+        {
+          "index": 1,
+          "top": 69,
+          "bottom": 132,
+          "frameCount": 13,
+          "animation": "walk"
+        },
+        {
+          "index": 2,
+          "top": 134,
+          "bottom": 193,
+          "frameCount": 8
+        },
+        {
+          "index": 3,
+          "top": 205,
+          "bottom": 258,
+          "frameCount": 6,
+          "animation": "hurt"
+        },
+        {
+          "index": 4,
+          "top": 261,
+          "bottom": 335,
+          "frameCount": 12,
+          "animation": "jump"
+        },
+        {
+          "index": 5,
+          "top": 338,
+          "bottom": 516,
+          "frameCount": 3
+        },
+        {
+          "index": 6,
+          "top": 520,
+          "bottom": 583,
+          "frameCount": 6,
+          "animation": "fx-sand"
+        },
+        {
+          "index": 7,
+          "top": 589,
+          "bottom": 651,
+          "frameCount": 7
+        },
+        {
+          "index": 8,
+          "top": 656,
+          "bottom": 772,
+          "frameCount": 6
+        },
+        {
+          "index": 9,
+          "top": 776,
+          "bottom": 842,
+          "frameCount": 10,
+          "animation": "slash"
+        },
+        {
+          "index": 10,
+          "top": 845,
+          "bottom": 912,
+          "frameCount": 7
+        },
+        {
+          "index": 11,
+          "top": 915,
+          "bottom": 978,
+          "frameCount": 12,
+          "animation": "spada"
+        },
+        {
+          "index": 12,
+          "top": 981,
+          "bottom": 1101,
+          "frameCount": 10
+        },
+        {
+          "index": 13,
+          "top": 1105,
+          "bottom": 1163,
+          "frameCount": 5
+        },
+        {
+          "index": 14,
+          "top": 1166,
+          "bottom": 1235,
+          "frameCount": 11
+        },
+        {
+          "index": 15,
+          "top": 1240,
+          "bottom": 1324,
+          "frameCount": 12
+        },
+        {
+          "index": 16,
+          "top": 1327,
+          "bottom": 1496,
+          "frameCount": 12
+        },
+        {
+          "index": 17,
+          "top": 1502,
+          "bottom": 1561,
+          "frameCount": 14
+        },
+        {
+          "index": 18,
+          "top": 1565,
+          "bottom": 1624,
+          "frameCount": 7
+        },
+        {
+          "index": 19,
+          "top": 1652,
+          "bottom": 1721,
+          "frameCount": 15
+        },
+        {
+          "index": 20,
+          "top": 1724,
+          "bottom": 1865,
+          "frameCount": 4
+        },
+        {
+          "index": 21,
+          "top": 1869,
+          "bottom": 1934,
+          "frameCount": 13
+        },
+        {
+          "index": 22,
+          "top": 1938,
+          "bottom": 2015,
+          "frameCount": 9
+        },
+        {
+          "index": 23,
+          "top": 2018,
+          "bottom": 2161,
+          "frameCount": 1
+        },
+        {
+          "index": 24,
+          "top": 2164,
+          "bottom": 2307,
+          "frameCount": 2
+        },
+        {
+          "index": 25,
+          "top": 2310,
+          "bottom": 2512,
+          "frameCount": 1
+        },
+        {
+          "index": 26,
+          "top": 2517,
+          "bottom": 2567,
+          "frameCount": 12
+        },
+        {
+          "index": 27,
+          "top": 2570,
+          "bottom": 2632,
+          "frameCount": 8
+        }
+      ],
+      "animations": [
+        {
+          "key": "crocodile-idle",
+          "frames": [
+            "b0f0",
+            "b0f1",
+            "b0f2",
+            "b0f3",
+            "b0f4",
+            "b0f5"
+          ],
+          "frameRate": 5,
+          "repeat": -1
+        },
+        {
+          "key": "crocodile-walk",
+          "frames": [
+            "b1f0",
+            "b1f1",
+            "b1f2",
+            "b1f3",
+            "b1f4",
+            "b1f5",
+            "b1f6",
+            "b1f7",
+            "b1f8",
+            "b1f9"
+          ],
+          "frameRate": 11,
+          "repeat": -1
+        },
+        {
+          "key": "crocodile-hurt",
+          "frames": [
+            "b3f0",
+            "b3f1",
+            "b3f2",
+            "b3f3"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "crocodile-knockdown",
+          "frames": [
+            "b3f4",
+            "b3f5"
+          ],
+          "frameRate": 8,
+          "repeat": 0
+        },
+        {
+          "key": "crocodile-jump",
+          "frames": [
+            "b4f6",
+            "b4f7",
+            "b4f8",
+            "b4f9",
+            "b4f10",
+            "b4f11"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "crocodile-guard",
+          "frames": [
+            "b3f0"
+          ],
+          "frameRate": 1,
+          "repeat": -1
+        },
+        {
+          "key": "crocodile-slash",
+          "frames": [
+            "b9f0",
+            "b9f1",
+            "b9f2",
+            "b9f3",
+            "b9f4",
+            "b9f5",
+            "b9f6",
+            "b9f7"
+          ],
+          "frameRate": 15,
+          "repeat": 0
+        },
+        {
+          "key": "crocodile-spada",
+          "frames": [
+            "b11f0",
+            "b11f1",
+            "b11f2",
+            "b11f3",
+            "b11f4",
+            "b11f5",
+            "b11f6",
+            "b11f7"
+          ],
+          "frameRate": 15,
+          "repeat": 0
+        },
+        {
+          "key": "crocodile-fx-sand",
+          "frames": [
+            "b6f1",
+            "b6f2",
+            "b6f3",
+            "b6f4",
+            "b6f5"
+          ],
+          "frameRate": 16,
+          "repeat": 0
+        }
+      ],
+      "unusedFrames": [],
+      "skippedBands": [
+        2,
+        5,
+        7,
+        8,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "warnings": []
+    },
+    {
+      "id": "enel",
+      "texture": "enel",
+      "source": "enel.png",
+      "frameWidth": 148,
+      "frameHeight": 99,
+      "plate": {
+        "r": 126,
+        "g": 62,
+        "b": 66
+      },
+      "bands": [
+        {
+          "index": 0,
+          "top": 35,
+          "bottom": 120,
+          "frameCount": 3,
+          "animation": "idle"
+        },
+        {
+          "index": 1,
+          "top": 133,
+          "bottom": 240,
+          "frameCount": 17,
+          "animation": "walk"
+        },
+        {
+          "index": 2,
+          "top": 250,
+          "bottom": 361,
+          "frameCount": 7,
+          "animation": "jump"
+        },
+        {
+          "index": 3,
+          "top": 391,
+          "bottom": 485,
+          "frameCount": 2,
+          "animation": "guard"
+        },
+        {
+          "index": 4,
+          "top": 525,
+          "bottom": 607,
+          "frameCount": 13,
+          "animation": "hurt"
+        },
+        {
+          "index": 5,
+          "top": 649,
+          "bottom": 733,
+          "frameCount": 4
+        },
+        {
+          "index": 6,
+          "top": 769,
+          "bottom": 853,
+          "frameCount": 8,
+          "animation": "staff"
+        },
+        {
+          "index": 7,
+          "top": 886,
+          "bottom": 968,
+          "frameCount": 11
+        },
+        {
+          "index": 8,
+          "top": 979,
+          "bottom": 992,
+          "frameCount": 3
+        },
+        {
+          "index": 9,
+          "top": 1001,
+          "bottom": 1093,
+          "frameCount": 6
+        },
+        {
+          "index": 10,
+          "top": 1126,
+          "bottom": 1219,
+          "frameCount": 11,
+          "animation": "thunder"
+        },
+        {
+          "index": 11,
+          "top": 1250,
+          "bottom": 1355,
+          "frameCount": 10,
+          "animation": "fx-bolt"
+        },
+        {
+          "index": 12,
+          "top": 1390,
+          "bottom": 1410,
+          "frameCount": 4
+        },
+        {
+          "index": 13,
+          "top": 1421,
+          "bottom": 1493,
+          "frameCount": 10
+        },
+        {
+          "index": 14,
+          "top": 1506,
+          "bottom": 1588,
+          "frameCount": 11
+        },
+        {
+          "index": 15,
+          "top": 1602,
+          "bottom": 1615,
+          "frameCount": 3
+        },
+        {
+          "index": 16,
+          "top": 1625,
+          "bottom": 1723,
+          "frameCount": 14
+        },
+        {
+          "index": 17,
+          "top": 1743,
+          "bottom": 1948,
+          "frameCount": 13
+        },
+        {
+          "index": 18,
+          "top": 1996,
+          "bottom": 2089,
+          "frameCount": 14
+        },
+        {
+          "index": 19,
+          "top": 2107,
+          "bottom": 2120,
+          "frameCount": 3
+        },
+        {
+          "index": 20,
+          "top": 2131,
+          "bottom": 2219,
+          "frameCount": 10
+        },
+        {
+          "index": 21,
+          "top": 2233,
+          "bottom": 2246,
+          "frameCount": 3
+        },
+        {
+          "index": 22,
+          "top": 2259,
+          "bottom": 2353,
+          "frameCount": 10
+        },
+        {
+          "index": 23,
+          "top": 2375,
+          "bottom": 2441,
+          "frameCount": 17
+        },
+        {
+          "index": 24,
+          "top": 2477,
+          "bottom": 2606,
+          "frameCount": 8
+        },
+        {
+          "index": 25,
+          "top": 2626,
+          "bottom": 2742,
+          "frameCount": 5
+        },
+        {
+          "index": 26,
+          "top": 2751,
+          "bottom": 2870,
+          "frameCount": 13
+        },
+        {
+          "index": 27,
+          "top": 2890,
+          "bottom": 2905,
+          "frameCount": 1
+        },
+        {
+          "index": 28,
+          "top": 2920,
+          "bottom": 3015,
+          "frameCount": 21
+        },
+        {
+          "index": 29,
+          "top": 3046,
+          "bottom": 3263,
+          "frameCount": 7
+        },
+        {
+          "index": 30,
+          "top": 3291,
+          "bottom": 3306,
+          "frameCount": 1
+        },
+        {
+          "index": 31,
+          "top": 3323,
+          "bottom": 3407,
+          "frameCount": 11
+        },
+        {
+          "index": 32,
+          "top": 3438,
+          "bottom": 3543,
+          "frameCount": 8
+        },
+        {
+          "index": 33,
+          "top": 3564,
+          "bottom": 3579,
+          "frameCount": 1
+        },
+        {
+          "index": 34,
+          "top": 3600,
+          "bottom": 3704,
+          "frameCount": 15
+        },
+        {
+          "index": 35,
+          "top": 3749,
+          "bottom": 3884,
+          "frameCount": 17
+        },
+        {
+          "index": 36,
+          "top": 3908,
+          "bottom": 3923,
+          "frameCount": 1
+        },
+        {
+          "index": 37,
+          "top": 3934,
+          "bottom": 4036,
+          "frameCount": 16
+        },
+        {
+          "index": 38,
+          "top": 4064,
+          "bottom": 4181,
+          "frameCount": 13
+        },
+        {
+          "index": 39,
+          "top": 4188,
+          "bottom": 4203,
+          "frameCount": 1
+        },
+        {
+          "index": 40,
+          "top": 4262,
+          "bottom": 4360,
+          "frameCount": 11
+        },
+        {
+          "index": 41,
+          "top": 4486,
+          "bottom": 4792,
+          "frameCount": 10
+        },
+        {
+          "index": 42,
+          "top": 4935,
+          "bottom": 5031,
+          "frameCount": 8
+        },
+        {
+          "index": 43,
+          "top": 5081,
+          "bottom": 5161,
+          "frameCount": 3
+        }
+      ],
+      "animations": [
+        {
+          "key": "enel-idle",
+          "frames": [
+            "b0f0",
+            "b0f1",
+            "b0f2"
+          ],
+          "frameRate": 5,
+          "repeat": -1
+        },
+        {
+          "key": "enel-walk",
+          "frames": [
+            "b1f1",
+            "b1f2",
+            "b1f3",
+            "b1f4",
+            "b1f5",
+            "b1f6"
+          ],
+          "frameRate": 12,
+          "repeat": -1
+        },
+        {
+          "key": "enel-jump",
+          "frames": [
+            "b2f1",
+            "b2f2",
+            "b2f3",
+            "b2f4",
+            "b2f5",
+            "b2f6"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "enel-guard",
+          "frames": [
+            "b3f0",
+            "b3f1"
+          ],
+          "frameRate": 6,
+          "repeat": -1
+        },
+        {
+          "key": "enel-hurt",
+          "frames": [
+            "b4f0",
+            "b4f1",
+            "b4f2",
+            "b4f3"
+          ],
+          "frameRate": 10,
+          "repeat": 0
+        },
+        {
+          "key": "enel-knockdown",
+          "frames": [
+            "b4f4",
+            "b4f5",
+            "b4f6",
+            "b4f7",
+            "b4f8"
+          ],
+          "frameRate": 8,
+          "repeat": 0
+        },
+        {
+          "key": "enel-staff",
+          "frames": [
+            "b6f0",
+            "b6f1",
+            "b6f2",
+            "b6f3",
+            "b6f4",
+            "b6f5",
+            "b6f6",
+            "b6f7"
+          ],
+          "frameRate": 14,
+          "repeat": 0
+        },
+        {
+          "key": "enel-thunder",
+          "frames": [
+            "b10f0",
+            "b10f1",
+            "b10f2",
+            "b10f3",
+            "b10f4",
+            "b10f5",
+            "b10f6",
+            "b10f7",
+            "b10f8",
+            "b10f9",
+            "b10f10"
+          ],
+          "frameRate": 13,
+          "repeat": 0
+        },
+        {
+          "key": "enel-fx-bolt",
+          "frames": [
+            "b11f6",
+            "b11f7",
+            "b11f8",
+            "b11f9"
+          ],
+          "frameRate": 16,
+          "repeat": 0
+        }
+      ],
+      "unusedFrames": [],
+      "skippedBands": [
+        5,
+        7,
+        8,
+        9,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "warnings": []
+    }
+  ],
+  "stages": [
+    {
+      "id": "marineford",
+      "image": "marineford.webp",
+      "width": 1440,
+      "height": 921
+    },
+    {
+      "id": "enies-lobby",
+      "image": "enies-lobby.webp",
+      "width": 1440,
+      "height": 921
+    },
+    {
+      "id": "impel-down",
+      "image": "impel-down.webp",
+      "width": 1440,
+      "height": 921
+    },
+    {
+      "id": "rain-dinners",
+      "image": "rain-dinners.webp",
+      "width": 1440,
+      "height": 921
+    },
+    {
+      "id": "shandora",
+      "image": "shandora.webp",
+      "width": 1440,
+      "height": 921
+    },
+    {
+      "id": "arlong-park",
+      "image": "arlong-park.webp",
+      "width": 1440,
+      "height": 921
+    }
+  ]
+}

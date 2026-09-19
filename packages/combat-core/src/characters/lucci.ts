@@ -44,9 +44,9 @@ export const lucci: CharacterDefinition = {
         land: 'lucci-idle',
         hurt: 'lucci-hurt',
         guard: 'lucci-guard',
-        knockdown: 'lucci-hurt',
+        knockdown: 'lucci-knockdown',
         victory: 'lucci-idle',
-        defeat: 'lucci-hurt'
+        defeat: 'lucci-knockdown'
     },
     moves: [
         move({
@@ -83,7 +83,7 @@ export const lucci: CharacterDefinition = {
             id: 'lucci-rankyaku',
             name: 'Rankyaku — lame d’air',
             slot: 'special',
-            animation: 'lucci-leopard',
+            animation: 'lucci-rankyaku',
             duration: 44,
             startup: 12,
             active: [[12, 14]],
@@ -98,7 +98,7 @@ export const lucci: CharacterDefinition = {
                 lifetime: 70,
                 box: { x: -20, y: -26, width: 52, height: 62 },
                 hit: hit({ damage: 52, hitstun: 20, blockstun: 12, knockbackX: 4, hitstop: 8 }),
-                animation: 'fx-slash',
+                animation: 'lucci-fx-slash',
                 hits: 1,
                 scale: 2
             },
@@ -109,7 +109,7 @@ export const lucci: CharacterDefinition = {
             id: 'lucci-sai-dai',
             name: 'Rokuogan',
             slot: 'ultimate',
-            animation: 'lucci-shigan',
+            animation: 'lucci-rokuogan',
             duration: 70,
             startup: 20,
             active: [

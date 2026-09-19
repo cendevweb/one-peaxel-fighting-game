@@ -33,16 +33,16 @@ export const luffy: CharacterDefinition = {
     pushbox: { x: -28, y: 0, width: 56, height: 130 },
     animations: {
         idle: 'luffy-idle',
-        walk: 'luffy-run',
-        walkBack: 'luffy-run',
+        walk: 'luffy-walk',
+        walkBack: 'luffy-walk',
         jumpRise: 'luffy-jump',
         jumpFall: 'luffy-jump',
         land: 'luffy-idle',
         hurt: 'luffy-hurt',
         guard: 'luffy-guard',
-        knockdown: 'luffy-hurt',
+        knockdown: 'luffy-knockdown',
         victory: 'luffy-idle',
-        defeat: 'luffy-hurt'
+        defeat: 'luffy-knockdown'
     },
     moves: [
         move({
@@ -170,6 +170,7 @@ export const luffy: CharacterDefinition = {
         })
     ],
     spriteNotes: [
-        "Le saut réutilise une frame de course : la planche d'origine ne contient pas de cycle de saut."
+        'Gear 3 joue la mise en charge du bras : les frames du poing geant de la planche sont tronquees et inutilisables.',
+        'La garde reutilise la premiere frame de recul, faute de pose de garde dediee dans le rip.'
     ]
 };

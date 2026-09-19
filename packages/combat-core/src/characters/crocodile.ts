@@ -40,9 +40,9 @@ export const crocodile: CharacterDefinition = {
         land: 'crocodile-idle',
         hurt: 'crocodile-hurt',
         guard: 'crocodile-guard',
-        knockdown: 'crocodile-hurt',
+        knockdown: 'crocodile-knockdown',
         victory: 'crocodile-idle',
-        defeat: 'crocodile-hurt'
+        defeat: 'crocodile-knockdown'
     },
     moves: [
         move({
@@ -101,7 +101,7 @@ export const crocodile: CharacterDefinition = {
                 lifetime: 110,
                 box: { x: -24, y: -30, width: 56, height: 64 },
                 hit: hit({ damage: 58, hitstun: 22, blockstun: 14, knockbackX: 4.4, hitstop: 8 }),
-                animation: 'fx-sand',
+                animation: 'crocodile-fx-sand',
                 hits: 1,
                 scale: 2.2
             },
@@ -148,7 +148,7 @@ export const crocodile: CharacterDefinition = {
                     launcher: true,
                     meterGainOnHit: 0
                 }),
-                animation: 'fx-sand',
+                animation: 'crocodile-fx-sand',
                 hits: 3,
                 scale: 3.2
             },
