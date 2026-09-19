@@ -59,10 +59,30 @@ discrète sur l'arène, des accents orange et cyan. Aucun composant générique.
 16:9 sur écran d'ordinateur en priorité. Le tactile n'est pas prévu pour la
 V1, et l'interface ne prétend pas le contraire.
 
+## Seul contre le roster
+
+Le mode arcade demande un combattant, puis oppose tous les autres, un par un.
+La longueur du parcours n'est pas un chiffre écrit quelque part : c'est le
+roster moins le personnage choisi, donc un sixième personnage rallonge
+l'échelle sans qu'une ligne change.
+
+Quatre niveaux, de la Recrue à l'Amiral. Ce qui change d'un niveau à l'autre
+est la fréquence à laquelle l'ordinateur s'engage — attaquer, enchaîner,
+garder, dépenser sa jauge — et non sa connaissance du combat : il voit ce que
+voit un joueur. La Recrue n'enchaîne jamais, ce qui est l'essentiel de ce qui
+la rend abordable ; l'Amiral garde la plupart des coups qu'il voit venir.
+
+Chaque combat se joue sur une arène tirée de la graine du parcours, et un
+combat retenté après une défaite reçoit une graine neuve : l'ordinateur ne
+rejoue pas le combat qui vient de vous battre.
+
 ## Ce que le jeu ne fait pas
 
 - Pas de comptes, pas de classement, pas de progression.
 - Pas de sons : les planches n'en apportent pas, et rien d'original n'a été
   produit. Le hitstop et les effets visuels portent seuls le retour d'impact.
-- Pas d'IA. Le mode entraînement oppose deux joueurs sur un clavier, ou permet
-  de travailler seul contre un adversaire immobile.
+- L'ordinateur ne lit pas vos habitudes. Il voit la distance, l'état de
+  l'adversaire et sa propre jauge, et répond à la situation présente : il ne
+  reconnaît pas un schéma, ne punit pas sur réaction et ne prévoit rien au-delà
+  du coup suivant. C'est un partenaire d'entraînement compétent, pas un
+  adversaire fort.

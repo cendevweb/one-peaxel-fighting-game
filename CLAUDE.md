@@ -11,7 +11,7 @@ strict partout.
 | `npm install --legacy-peer-deps` | **Obligatoire.** Sans ce drapeau, npm plante sur l'arbre de pairs de vitest (`Cannot read properties of null (reading 'edgesOut')`). |
 | `npm run build:packages` | Compile `@opfg/shared` puis `@opfg/combat-core`. Tout le reste en dépend. |
 | `npm run dev` | Compile ce qui doit l'être, puis lance le serveur de jeu (8080, ou `PORT`) et Next.js (3000). |
-| `npm test` | 73 tests vitest : moteur, ressources, salons. |
+| `npm test` | 83 tests vitest : moteur, ressources, salons, ordinateur. |
 | `npm run typecheck` | `tsc -b --force` sur tout le dépôt. |
 | `npm run assets` | Ré-extrait les sprites des planches et republie les atlas. |
 
@@ -27,6 +27,12 @@ packages/assets-pipeline Extraction des sprites hors ligne (Node + sharp).
 apps/server             Serveur Socket.IO autoritaire (Render).
 apps/web                Next.js, React, Tailwind, Phaser (Vercel).
 ```
+
+L'adversaire contrôlé par l'ordinateur (`packages/combat-core/src/ai.ts`)
+n'échappe pas à cette règle : il lit le même `MatchState` que tout le monde et
+répond par un masque d'entrées, un par frame. Il ne peut pas fixer une vie,
+forcer un coup, ni lire une touche qui n'a pas été pressée. Une IA qui écrirait
+dans l'état serait un bug, au même titre qu'un calcul de dégâts dans Phaser.
 
 La règle qui tient l'ensemble : **`combat-core` décide, tout le reste
 affiche.** Le serveur et le client exécutent le même `stepMatch`, avec les
