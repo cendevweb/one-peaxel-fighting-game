@@ -3,7 +3,8 @@
 Fichier de reprise : il dit ce qui est fait, ce qui bloque, et par quoi
 reprendre. À relire en premier après une interruption.
 
-**Au 19 septembre 2026.** 12 commits en local, aucun poussé.
+**Au 19 septembre 2026.** 13 commits poussés sur
+`cendevweb/one-peaxel-fighting-game`, branche `main`.
 
 ## Fait
 
@@ -28,23 +29,15 @@ en plein combat et a retrouvé son siège et son round.
 
 ## Bloqué
 
-1. **Push GitHub.** `git push` renvoie 403. L'application GitHub de Claude
-   n'est pas installée sur `cendevweb/one-peaxel-fighting-game`. Dylan doit
-   l'ajouter : https://github.com/apps/claude/installations/select_target
-   En attendant, le dépôt entier est sauvegardé hors du conteneur, dans les
-   fichiers du projet : `one-peaxel-fighting-game.bundle`. Un
-   `git clone <le bundle>` le restitue en entier, historique compris. Le
-   rafraîchir après chaque commit tant que le push ne passe pas.
-2. **Déploiement.** Vercel et Render demandent des comptes et des clés que
-   Claude n'a pas. `render.yaml` et `.env.example` sont prêts.
+1. **Déploiement.** Vercel et Render demandent des comptes et des clés que
+   Claude n'a pas. `render.yaml`, `vercel.json` et `docs/DEPLOIEMENT.md` sont
+   prêts : Render d'abord, Vercel ensuite, parce que le client fige l'adresse
+   du serveur à la compilation.
 
 ## Reprendre par
 
-1. Vérifier si l'accès GitHub est passé (`git push -u origin main`).
-2. Si oui, pousser, puis suivre `docs/DEPLOIEMENT.md` : Render d'abord, Vercel
-   ensuite, parce que le client a besoin de l'adresse du serveur à la
-   compilation.
-3. Sinon, continuer sur `docs/ROADMAP.md`, section « Ensuite ».
+1. `docs/DEPLOIEMENT.md`, une fois les comptes Render et Vercel en place.
+2. Sinon, `docs/ROADMAP.md`, section « Ensuite ».
 
 ## Ne pas oublier
 
