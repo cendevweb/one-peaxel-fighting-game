@@ -13,15 +13,14 @@
   "scripts": {
     "build": "npm run build --workspace @opfg/shared && npm run build --workspace @opfg/combat-core && npm run build --workspace @opfg/server && npm run build --workspace @opfg/web",
     "build:packages": "npm run build --workspace @opfg/shared && npm run build --workspace @opfg/combat-core",
-    "dev": "concurrently -n server,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev": "npm run build:packages && npm run build --workspace @opfg/server && concurrently -n server,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:web\"",
     "dev:server": "npm run dev --workspace @opfg/server",
     "dev:web": "npm run dev --workspace @opfg/web",
     "assets": "npm run build --workspace @opfg/assets-pipeline && npm run extract --workspace @opfg/assets-pipeline",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --force",
-    "lint": "eslint .",
-    "clean": "rm -rf packages/*/dist apps/server/dist apps/web/.next node_modules/.cache"
+    "clean": "rm -rf packages/*/dist packages/*/*.tsbuildinfo apps/server/dist apps/server/*.tsbuildinfo apps/web/.next node_modules/.cache"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
