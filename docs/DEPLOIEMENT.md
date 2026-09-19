@@ -1,8 +1,7 @@
 # Déploiement
 
-Rien n'est déployé à ce jour : les comptes Render et Vercel n'existent pas
-encore côté projet. Tout ce qui pouvait l'être sans eux est prêt. Ce document
-est la marche à suivre quand les comptes seront là.
+Marche à suivre pour mettre le jeu en ligne, et ce qu'il faut savoir avant de
+recommencer. Les deux comptes sont connectés depuis le 19 septembre 2026.
 
 ## Ordre
 
@@ -39,9 +38,24 @@ joueurs.
 
 ## 2. Le site, sur Vercel
 
-`vercel.json` est à la racine et décrit déjà l'installation et la
-compilation du monorepo. Importer le dépôt, laisser le dossier racine sur la
-racine du dépôt, et renseigner :
+Importer le dépôt. Vercel détecte l'application Next.js et place le **dossier
+racine du projet sur `apps/web`** : c'est le réglage attendu, il ne faut pas le
+ramener à la racine du dépôt. `vercel.json`, à la racine, ne fixe plus que
+l'installation ; la compilation est celle de Next.js par défaut.
+
+Ce qui rend cela possible est le script `prebuild` de `apps/web/package.json` :
+
+```json
+"prebuild": "tsc -b ../../packages/combat-core ../../packages/shared"
+```
+
+npm l'exécute automatiquement avant `build`, donc `@opfg/combat-core` et
+`@opfg/shared` sont compilés d'où que la commande soit lancée — depuis
+`apps/web` comme depuis la racine du dépôt. C'est ce qui manquait au premier
+essai : la commande de compilation appelait `npm run build:packages`, un script
+qui n'existe qu'à la racine, alors que Vercel la lançait depuis `apps/web`.
+
+Reste une variable à renseigner :
 
 | Variable | Valeur |
 | --- | --- |

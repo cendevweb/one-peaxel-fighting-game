@@ -3,7 +3,7 @@
 Fichier de reprise : il dit ce qui est fait, ce qui bloque, et par quoi
 reprendre. À relire en premier après une interruption.
 
-**Au 19 septembre 2026.** 13 commits poussés sur
+**Au 19 septembre 2026.** 16 commits poussés sur
 `cendevweb/one-peaxel-fighting-game`, branche `main`.
 
 ## Fait
@@ -27,16 +27,23 @@ barres de vie concordants, sans erreur console ; un match d'entraînement est
 allé jusqu'au KO, au résultat et à la revanche ; un joueur a rechargé sa page
 en plein combat et a retrouvé son siège et son round.
 
-## Bloqué
+## En cours
 
-1. **Déploiement.** Vercel et Render demandent des comptes et des clés que
-   Claude n'a pas. `render.yaml`, `vercel.json` et `docs/DEPLOIEMENT.md` sont
-   prêts : Render d'abord, Vercel ensuite, parce que le client fige l'adresse
-   du serveur à la compilation.
+**Déploiement.** Les deux comptes sont connectés. Le blueprint Render est
+déployé. Le premier build Vercel a échoué parce que la commande de compilation
+appelait `npm run build:packages`, un script qui n'existe qu'à la racine du
+dépôt, alors que Vercel compile depuis `apps/web`. Corrigé : `apps/web` a
+maintenant un script `prebuild` qui compile lui-même les deux paquets partagés,
+et `vercel.json` ne fixe plus de commande de compilation.
+
+Restent deux valeurs que seul Dylan peut fournir :
+
+- `NEXT_PUBLIC_GAME_SERVER_URL` sur Vercel, l'URL du service Render.
+- `ALLOWED_ORIGINS` sur Render, le domaine Vercel.
 
 ## Reprendre par
 
-1. `docs/DEPLOIEMENT.md`, une fois les comptes Render et Vercel en place.
+1. `docs/DEPLOIEMENT.md`, sections 2 et 3.
 2. Sinon, `docs/ROADMAP.md`, section « Ensuite ».
 
 ## Ne pas oublier
