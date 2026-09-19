@@ -92,7 +92,7 @@ export function CharacterSelect({
                 sliding the tiles sideways under the cursor as you hovered
                 across the roster. */}
             <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr]">
-                <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                     {CHARACTER_LIST.map((character) => {
                         const pickedBy = picks
                             .map((pick, index) => (pick === character.id ? index : -1))

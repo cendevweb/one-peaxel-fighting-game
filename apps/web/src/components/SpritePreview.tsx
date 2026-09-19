@@ -81,10 +81,26 @@ export function SpritePreview({
             }
             setReady(true);
 
-            const first = frames.get(animation.frames[0] ?? '');
-            const box = first?.sourceSize ?? { w: 120, h: 120 };
-            canvas.width = Math.round(box.w * scale);
-            canvas.height = Math.round(box.h * scale);
+            // The atlas gives every frame of a character one shared logical
+            // box, sized by their widest and tallest animation — a super that
+            // throws a giant fist, usually. Drawing an idle inside that box
+            // leaves most of it empty, so a heavy character looks smaller on
+            // the select screen than a light one. The preview therefore
+            // measures the box of *this* animation, which fills the tile while
+            // keeping the frames aligned with each other.
+            const drawn = animation.frames
+                .map((name) => frames.get(name))
+                .filter((frame): frame is AtlasFrame => frame !== undefined);
+            if (drawn.length === 0) {
+                return;
+            }
+            const left = Math.min(...drawn.map((frame) => frame.spriteSourceSize.x));
+            const top = Math.min(...drawn.map((frame) => frame.spriteSourceSize.y));
+            const right = Math.max(...drawn.map((frame) => frame.spriteSourceSize.x + frame.frame.w));
+            const bottom = Math.max(...drawn.map((frame) => frame.spriteSourceSize.y + frame.frame.h));
+
+            canvas.width = Math.max(1, Math.round((right - left) * scale));
+            canvas.height = Math.max(1, Math.round((bottom - top) * scale));
             context.imageSmoothingEnabled = false;
 
             let index = 0;
@@ -113,8 +129,8 @@ export function SpritePreview({
                         frame.frame.y,
                         frame.frame.w,
                         frame.frame.h,
-                        Math.round(frame.spriteSourceSize.x * scale),
-                        Math.round(frame.spriteSourceSize.y * scale),
+                        Math.round((frame.spriteSourceSize.x - left) * scale),
+                        Math.round((frame.spriteSourceSize.y - top) * scale),
                         Math.round(frame.frame.w * scale),
                         Math.round(frame.frame.h * scale)
                     );

@@ -49,6 +49,29 @@ export const segmentOptionsFor = (source: CharacterSource): SegmentOptions => ({
 /** Filled in after inspecting the contact sheets; see `docs/ASSET_PIPELINE.md`. */
 export const CHARACTER_SOURCES: CharacterSource[] = [
     {
+        id: 'akainu',
+        texture: 'akainu',
+        file: 'akainu.png',
+        scale: 1,
+        // The last row of the sheet is the ripper's credit banner and a large
+        // character portrait, neither of which is a sprite. Left in, they merge
+        // three rows of frames into one unusable band.
+        ignore: [{ left: 0, top: 7855, right: 999, bottom: 8217, reason: 'banniere du ripper et portrait' }],
+        bands: [
+            { animation: 'idle', band: 0, range: [0, 5], frameRate: 6, repeat: -1 },
+            { animation: 'walk', band: 0, range: [6, 13], frameRate: 11, repeat: -1 },
+            { animation: 'guard', band: 0, order: [14], frameRate: 1, repeat: -1 },
+            { animation: 'jump', band: 34, range: [3, 6], frameRate: 9 },
+            { animation: 'hurt', band: 74, range: [0, 1], frameRate: 9 },
+            { animation: 'knockdown', band: 74, range: [2, 7], frameRate: 8 },
+            { animation: 'jab', band: 1, range: [0, 8], frameRate: 15 },
+            { animation: 'smash', band: 37, range: [0, 9], frameRate: 13 },
+            { animation: 'meteor', band: 8, range: [0, 6], frameRate: 13 },
+            { animation: 'hound', band: 7, range: [0, 6], frameRate: 11 },
+            { animation: 'fx-magma', band: 2, range: [0, 3], frameRate: 12, repeat: -1 }
+        ]
+    },
+    {
         id: 'luffy',
         texture: 'luffy',
         file: 'luffy.png',

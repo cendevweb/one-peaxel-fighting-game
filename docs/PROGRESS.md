@@ -33,8 +33,9 @@ Total : **73 tests verts**, `tsc -b --force` propre sur tout le dépôt.
 
 ## Ce qui est incomplet et assumé
 
-Trois personnages sur quatre n'ont que deux animations d'attaque exploitables
-dans les planches d'origine. Leurs coups se distinguent par leurs propriétés
+Trois personnages sur cinq — Lucci, Crocodile et Enel — n'ont que deux
+animations d'attaque exploitables dans les planches d'origine ; Luffy et
+Akainu en ont une par coup. Leurs coups se distinguent par leurs propriétés
 de jeu, pas par leurs images. C'est visible sur l'écran de sélection.
 
 Les droits des planches ne sont pas établis. Voir `DECISIONS.md` et le README.

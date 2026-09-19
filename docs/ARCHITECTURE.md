@@ -36,7 +36,7 @@ et de le re-simuler après une correction réseau.
 | `collision.ts` | Boîtes AABB, écrites face à droite et miroitées à l'exécution. |
 | `engine.ts` | `stepMatch`, la fonction qui fait avancer le match d'une frame. |
 | `serialize.ts` | Encodage compact de l'état en `number[]`, et son checksum FNV-1a. |
-| `characters/` | Les quatre combattants, en données pures. |
+| `characters/` | Les cinq combattants, en données pures. |
 | `stages.ts` | Les six arènes, en données pures. |
 | `testing.ts` | Le banc d'essai des tests : avancer, placer, remplir la jauge. |
 

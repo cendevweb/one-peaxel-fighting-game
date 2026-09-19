@@ -1,6 +1,692 @@
 {
-  "generatedAt": "2026-09-19T19:55:28.960Z",
+  "generatedAt": "2026-09-19T21:02:37.510Z",
   "characters": [
+    {
+      "id": "akainu",
+      "texture": "akainu",
+      "source": "akainu.png",
+      "frameWidth": 292,
+      "frameHeight": 124,
+      "plate": {
+        "r": 88,
+        "g": 95,
+        "b": 142
+      },
+      "bands": [
+        {
+          "index": 0,
+          "top": 12,
+          "bottom": 93,
+          "frameCount": 16,
+          "animation": "idle"
+        },
+        {
+          "index": 1,
+          "top": 107,
+          "bottom": 180,
+          "frameCount": 9,
+          "animation": "jab"
+        },
+        {
+          "index": 2,
+          "top": 187,
+          "bottom": 246,
+          "frameCount": 11,
+          "animation": "fx-magma"
+        },
+        {
+          "index": 3,
+          "top": 263,
+          "bottom": 342,
+          "frameCount": 10
+        },
+        {
+          "index": 4,
+          "top": 361,
+          "bottom": 421,
+          "frameCount": 18
+        },
+        {
+          "index": 5,
+          "top": 438,
+          "bottom": 511,
+          "frameCount": 10
+        },
+        {
+          "index": 6,
+          "top": 522,
+          "bottom": 635,
+          "frameCount": 12
+        },
+        {
+          "index": 7,
+          "top": 640,
+          "bottom": 763,
+          "frameCount": 7,
+          "animation": "hound"
+        },
+        {
+          "index": 8,
+          "top": 775,
+          "bottom": 846,
+          "frameCount": 7,
+          "animation": "meteor"
+        },
+        {
+          "index": 9,
+          "top": 880,
+          "bottom": 955,
+          "frameCount": 14
+        },
+        {
+          "index": 10,
+          "top": 961,
+          "bottom": 1043,
+          "frameCount": 13
+        },
+        {
+          "index": 11,
+          "top": 1058,
+          "bottom": 1248,
+          "frameCount": 8
+        },
+        {
+          "index": 12,
+          "top": 1263,
+          "bottom": 1366,
+          "frameCount": 7
+        },
+        {
+          "index": 13,
+          "top": 1381,
+          "bottom": 1544,
+          "frameCount": 4
+        },
+        {
+          "index": 14,
+          "top": 1555,
+          "bottom": 1635,
+          "frameCount": 10
+        },
+        {
+          "index": 15,
+          "top": 1657,
+          "bottom": 1735,
+          "frameCount": 12
+        },
+        {
+          "index": 16,
+          "top": 1765,
+          "bottom": 1808,
+          "frameCount": 17
+        },
+        {
+          "index": 17,
+          "top": 1833,
+          "bottom": 1910,
+          "frameCount": 12
+        },
+        {
+          "index": 18,
+          "top": 1926,
+          "bottom": 1959,
+          "frameCount": 11
+        },
+        {
+          "index": 19,
+          "top": 2013,
+          "bottom": 2111,
+          "frameCount": 7
+        },
+        {
+          "index": 20,
+          "top": 2136,
+          "bottom": 2204,
+          "frameCount": 10
+        },
+        {
+          "index": 21,
+          "top": 2224,
+          "bottom": 2299,
+          "frameCount": 8
+        },
+        {
+          "index": 22,
+          "top": 2309,
+          "bottom": 2422,
+          "frameCount": 17
+        },
+        {
+          "index": 23,
+          "top": 2435,
+          "bottom": 2510,
+          "frameCount": 8
+        },
+        {
+          "index": 24,
+          "top": 2523,
+          "bottom": 2635,
+          "frameCount": 18
+        },
+        {
+          "index": 25,
+          "top": 2645,
+          "bottom": 2721,
+          "frameCount": 12
+        },
+        {
+          "index": 26,
+          "top": 2744,
+          "bottom": 2851,
+          "frameCount": 10
+        },
+        {
+          "index": 27,
+          "top": 2869,
+          "bottom": 2955,
+          "frameCount": 6
+        },
+        {
+          "index": 28,
+          "top": 2992,
+          "bottom": 3069,
+          "frameCount": 11
+        },
+        {
+          "index": 29,
+          "top": 3095,
+          "bottom": 3167,
+          "frameCount": 21
+        },
+        {
+          "index": 30,
+          "top": 3184,
+          "bottom": 3219,
+          "frameCount": 6
+        },
+        {
+          "index": 31,
+          "top": 3238,
+          "bottom": 3276,
+          "frameCount": 15
+        },
+        {
+          "index": 32,
+          "top": 3297,
+          "bottom": 3320,
+          "frameCount": 1
+        },
+        {
+          "index": 33,
+          "top": 3335,
+          "bottom": 3404,
+          "frameCount": 3
+        },
+        {
+          "index": 34,
+          "top": 3419,
+          "bottom": 3491,
+          "frameCount": 10,
+          "animation": "jump"
+        },
+        {
+          "index": 35,
+          "top": 3502,
+          "bottom": 3564,
+          "frameCount": 14
+        },
+        {
+          "index": 36,
+          "top": 3570,
+          "bottom": 3648,
+          "frameCount": 6
+        },
+        {
+          "index": 37,
+          "top": 3666,
+          "bottom": 3743,
+          "frameCount": 10,
+          "animation": "smash"
+        },
+        {
+          "index": 38,
+          "top": 3759,
+          "bottom": 3822,
+          "frameCount": 17
+        },
+        {
+          "index": 39,
+          "top": 3836,
+          "bottom": 3900,
+          "frameCount": 15
+        },
+        {
+          "index": 40,
+          "top": 3929,
+          "bottom": 4027,
+          "frameCount": 9
+        },
+        {
+          "index": 41,
+          "top": 4052,
+          "bottom": 4126,
+          "frameCount": 9
+        },
+        {
+          "index": 42,
+          "top": 4144,
+          "bottom": 4196,
+          "frameCount": 10
+        },
+        {
+          "index": 43,
+          "top": 4216,
+          "bottom": 4250,
+          "frameCount": 6
+        },
+        {
+          "index": 44,
+          "top": 4268,
+          "bottom": 4336,
+          "frameCount": 7
+        },
+        {
+          "index": 45,
+          "top": 4348,
+          "bottom": 4456,
+          "frameCount": 7
+        },
+        {
+          "index": 46,
+          "top": 4463,
+          "bottom": 4544,
+          "frameCount": 18
+        },
+        {
+          "index": 47,
+          "top": 4570,
+          "bottom": 4655,
+          "frameCount": 10
+        },
+        {
+          "index": 48,
+          "top": 4666,
+          "bottom": 4777,
+          "frameCount": 18
+        },
+        {
+          "index": 49,
+          "top": 4797,
+          "bottom": 4886,
+          "frameCount": 9
+        },
+        {
+          "index": 50,
+          "top": 4892,
+          "bottom": 4998,
+          "frameCount": 10
+        },
+        {
+          "index": 51,
+          "top": 5018,
+          "bottom": 5086,
+          "frameCount": 6
+        },
+        {
+          "index": 52,
+          "top": 5111,
+          "bottom": 5262,
+          "frameCount": 5
+        },
+        {
+          "index": 53,
+          "top": 5278,
+          "bottom": 5413,
+          "frameCount": 12
+        },
+        {
+          "index": 54,
+          "top": 5427,
+          "bottom": 5601,
+          "frameCount": 11
+        },
+        {
+          "index": 55,
+          "top": 5627,
+          "bottom": 5644,
+          "frameCount": 2
+        },
+        {
+          "index": 56,
+          "top": 5649,
+          "bottom": 5668,
+          "frameCount": 4
+        },
+        {
+          "index": 57,
+          "top": 5673,
+          "bottom": 5770,
+          "frameCount": 13
+        },
+        {
+          "index": 58,
+          "top": 5794,
+          "bottom": 5983,
+          "frameCount": 9
+        },
+        {
+          "index": 59,
+          "top": 5995,
+          "bottom": 6142,
+          "frameCount": 9
+        },
+        {
+          "index": 60,
+          "top": 6165,
+          "bottom": 6355,
+          "frameCount": 5
+        },
+        {
+          "index": 61,
+          "top": 6376,
+          "bottom": 6422,
+          "frameCount": 12
+        },
+        {
+          "index": 62,
+          "top": 6444,
+          "bottom": 6635,
+          "frameCount": 7
+        },
+        {
+          "index": 63,
+          "top": 6644,
+          "bottom": 6694,
+          "frameCount": 11
+        },
+        {
+          "index": 64,
+          "top": 6727,
+          "bottom": 6918,
+          "frameCount": 5
+        },
+        {
+          "index": 65,
+          "top": 6931,
+          "bottom": 7008,
+          "frameCount": 11
+        },
+        {
+          "index": 66,
+          "top": 7028,
+          "bottom": 7100,
+          "frameCount": 20
+        },
+        {
+          "index": 67,
+          "top": 7121,
+          "bottom": 7172,
+          "frameCount": 17
+        },
+        {
+          "index": 68,
+          "top": 7199,
+          "bottom": 7277,
+          "frameCount": 12
+        },
+        {
+          "index": 69,
+          "top": 7288,
+          "bottom": 7364,
+          "frameCount": 8
+        },
+        {
+          "index": 70,
+          "top": 7378,
+          "bottom": 7479,
+          "frameCount": 10
+        },
+        {
+          "index": 71,
+          "top": 7492,
+          "bottom": 7567,
+          "frameCount": 7
+        },
+        {
+          "index": 72,
+          "top": 7594,
+          "bottom": 7672,
+          "frameCount": 13
+        },
+        {
+          "index": 73,
+          "top": 7676,
+          "bottom": 7756,
+          "frameCount": 11
+        },
+        {
+          "index": 74,
+          "top": 7777,
+          "bottom": 7847,
+          "frameCount": 13,
+          "animation": "hurt"
+        }
+      ],
+      "animations": [
+        {
+          "key": "akainu-idle",
+          "frames": [
+            "b0f0",
+            "b0f1",
+            "b0f2",
+            "b0f3",
+            "b0f4",
+            "b0f5"
+          ],
+          "frameRate": 6,
+          "repeat": -1
+        },
+        {
+          "key": "akainu-walk",
+          "frames": [
+            "b0f6",
+            "b0f7",
+            "b0f8",
+            "b0f9",
+            "b0f10",
+            "b0f11",
+            "b0f12",
+            "b0f13"
+          ],
+          "frameRate": 11,
+          "repeat": -1
+        },
+        {
+          "key": "akainu-guard",
+          "frames": [
+            "b0f14"
+          ],
+          "frameRate": 1,
+          "repeat": -1
+        },
+        {
+          "key": "akainu-jump",
+          "frames": [
+            "b34f3",
+            "b34f4",
+            "b34f5",
+            "b34f6"
+          ],
+          "frameRate": 9,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-hurt",
+          "frames": [
+            "b74f0",
+            "b74f1"
+          ],
+          "frameRate": 9,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-knockdown",
+          "frames": [
+            "b74f2",
+            "b74f3",
+            "b74f4",
+            "b74f5",
+            "b74f6",
+            "b74f7"
+          ],
+          "frameRate": 8,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-jab",
+          "frames": [
+            "b1f0",
+            "b1f1",
+            "b1f2",
+            "b1f3",
+            "b1f4",
+            "b1f5",
+            "b1f6",
+            "b1f7",
+            "b1f8"
+          ],
+          "frameRate": 15,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-smash",
+          "frames": [
+            "b37f0",
+            "b37f1",
+            "b37f2",
+            "b37f3",
+            "b37f4",
+            "b37f5",
+            "b37f6",
+            "b37f7",
+            "b37f8",
+            "b37f9"
+          ],
+          "frameRate": 13,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-meteor",
+          "frames": [
+            "b8f0",
+            "b8f1",
+            "b8f2",
+            "b8f3",
+            "b8f4",
+            "b8f5",
+            "b8f6"
+          ],
+          "frameRate": 13,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-hound",
+          "frames": [
+            "b7f0",
+            "b7f1",
+            "b7f2",
+            "b7f3",
+            "b7f4",
+            "b7f5",
+            "b7f6"
+          ],
+          "frameRate": 11,
+          "repeat": 0
+        },
+        {
+          "key": "akainu-fx-magma",
+          "frames": [
+            "b2f0",
+            "b2f1",
+            "b2f2",
+            "b2f3"
+          ],
+          "frameRate": 12,
+          "repeat": -1
+        }
+      ],
+      "unusedFrames": [],
+      "skippedBands": [
+        3,
+        4,
+        5,
+        6,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        35,
+        36,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73
+      ],
+      "warnings": []
+    },
     {
       "id": "luffy",
       "texture": "luffy",

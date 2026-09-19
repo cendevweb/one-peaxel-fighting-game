@@ -102,18 +102,19 @@ troisième round ou sur le second si le même joueur l'emporte deux fois. Le
 chrono qui tombe à zéro donne le round à qui a le plus de vie, et un match nul
 si les deux sont à égalité.
 
-## Les quatre combattants
+## Les cinq combattants
 
 | Personnage | Ce qui le distingue |
 | --- | --- |
-| **Luffy** | Le seul dont chaque coup a sa propre animation. Portée élastique, cancels souples, Gear 3 qui renverse un round. |
+| **Luffy** | Portée élastique, cancels souples, Gear 3 qui renverse un round. |
 | **Rob Lucci** | Rapide, dégâts secs, Rokuogan à courte portée. |
 | **Crocodile** | Portée et zonage, coups lents mais lourds. |
 | **Enel** | Projectiles et contrôle à distance, corps à corps faible. |
+| **Akainu** | Le plus lent et le plus résistant, les punitions les plus dures. |
 
-Les quatre sont des données. Ajouter un cinquième personnage veut dire écrire
-un fichier dans `characters/` et lui donner des animations : le moteur n'a pas
-à changer.
+Les cinq sont des données. Akainu a été ajouté après coup, et cela a
+effectivement coûté ce que cette page promettait : un fichier de données, une
+entrée dans la configuration du pipeline, aucune ligne de moteur.
 
 ## Ce que les planches ne permettent pas
 

@@ -19,9 +19,9 @@ Cela se traduit par des choix précis :
 - **Un compteur de combo qui dit les dégâts**, pas seulement le nombre de
   touches, parce que c'est l'information qui compte.
 
-## Quatre personnages, pas quinze
+## Cinq personnages, pas quinze
 
-Quatre personnages qui fonctionnent valent mieux que quinze qui sont des
+Cinq personnages qui fonctionnent valent mieux que quinze qui sont des
 variations de couleur. Chacun doit répondre à une question différente :
 
 | Personnage | La question qu'il pose |
@@ -30,8 +30,9 @@ variations de couleur. Chacun doit répondre à une question différente :
 | **Rob Lucci** | Peux-tu gérer quelqu'un de plus rapide que toi ? |
 | **Crocodile** | Peux-tu entrer sur quelqu'un qui tient l'espace ? |
 | **Enel** | Peux-tu approcher sous les projectiles ? |
+| **Akainu** | Peux-tu te permettre de te tromper une seule fois ? |
 
-Les quatre sont honnêtement contraints par ce que les planches permettent.
+Les cinq sont honnêtement contraints par ce que les planches permettent.
 Luffy est le seul avec un jeu complet ; les trois autres tirent deux
 animations d'attaque chacune, et leurs coups se distinguent par leurs
 propriétés, pas par leurs images. C'est un compromis assumé, écrit dans
