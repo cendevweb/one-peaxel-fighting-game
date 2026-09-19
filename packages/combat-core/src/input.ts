@@ -3,7 +3,9 @@
  * is ever allowed to send: everything else (damage, position, meter, the
  * result of the match) is decided by the simulation from those masks.
  */
-export const enum Button {
+// A plain enum rather than a `const enum`: the web app is compiled with
+// `isolatedModules`, which cannot inline a const enum coming from a package.
+export enum Button {
     Left = 1 << 0,
     Right = 1 << 1,
     Up = 1 << 2,

@@ -13,8 +13,11 @@ export interface StageDefinition {
     floorY: number;
     /** How much the backdrop moves relative to the camera, 0 fixed, 1 locked. */
     parallax: number;
-    /** Tint applied over the backdrop so sprites stay readable. */
+    /** Tint applied over the backdrop so sprites stay readable: a CSS value
+     *  for the interface, and the same colour as a number for the renderer. */
     overlay: string;
+    overlayColor: number;
+    overlayAlpha: number;
     /** Accent colour for the round banner. */
     accent: string;
     ambience: 'none' | 'embers' | 'snow' | 'sparks' | 'dust';
@@ -28,6 +31,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.45,
         overlay: 'rgba(24,10,8,0.28)',
+        overlayColor: 0x180a08,
+        overlayAlpha: 0.28,
         accent: '#ff7a3c',
         ambience: 'embers'
     },
@@ -38,6 +43,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.42,
         overlay: 'rgba(10,14,32,0.24)',
+        overlayColor: 0x0a0e20,
+        overlayAlpha: 0.24,
         accent: '#5aa9ff',
         ambience: 'dust'
     },
@@ -48,6 +55,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.38,
         overlay: 'rgba(8,4,16,0.36)',
+        overlayColor: 0x080410,
+        overlayAlpha: 0.36,
         accent: '#b061ff',
         ambience: 'none'
     },
@@ -58,6 +67,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.4,
         overlay: 'rgba(30,22,6,0.24)',
+        overlayColor: 0x1e1606,
+        overlayAlpha: 0.24,
         accent: '#ffd166',
         ambience: 'dust'
     },
@@ -68,6 +79,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.44,
         overlay: 'rgba(6,20,14,0.24)',
+        overlayColor: 0x06140e,
+        overlayAlpha: 0.24,
         accent: '#5ee6a8',
         ambience: 'sparks'
     },
@@ -78,6 +91,8 @@ export const STAGES: readonly StageDefinition[] = [
         floorY: 452,
         parallax: 0.4,
         overlay: 'rgba(6,16,30,0.24)',
+        overlayColor: 0x06101e,
+        overlayAlpha: 0.24,
         accent: '#4fd0e3',
         ambience: 'none'
     }
