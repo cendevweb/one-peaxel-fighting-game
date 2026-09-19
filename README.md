@@ -46,6 +46,22 @@ apps/web                 Next.js + React + Tailwind + Phaser   (Vercel)
 
 Le détail est dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
+## Documentation
+
+| Fichier | Contenu |
+| --- | --- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Le découpage en paquets et ce qui n'a pas été fait, avec les raisons. |
+| [`docs/COMBAT_SYSTEM.md`](docs/COMBAT_SYSTEM.md) | Frames, boîtes, combos, garde, jauge, déroulement d'un match. |
+| [`docs/NETWORKING.md`](docs/NETWORKING.md) | Autorité du serveur, prédiction, correction, reprise de siège. |
+| [`docs/ASSET_PIPELINE.md`](docs/ASSET_PIPELINE.md) | Comment les planches deviennent des atlas, et les droits. |
+| [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md) | Ce que le jeu cherche à faire ressentir. |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Les arbitrages techniques et pourquoi. |
+| [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) | Render puis Vercel, dans cet ordre. |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md) | Ce qui marche, comment ça a été vérifié, ce qui manque. |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | La suite. |
+| [`CLAUDE.md`](CLAUDE.md) | Les pièges de compilation, à lire avant de toucher au code. |
+| [`NOW.md`](NOW.md) | Où en est le travail en cours.
+
 ## Ressources graphiques — à lire avant toute diffusion
 
 Les planches de sprites et les décors proviennent d'un **rip de la ROM de

@@ -2,6 +2,9 @@
 
 Dernière mise à jour : 19 septembre 2026.
 
+Rien de ce tableau n'est déclaré terminé sur la foi d'une relecture de code :
+chaque ligne « Vérifié » a été jouée dans un navigateur.
+
 ## Ce qui fonctionne, et comment ça a été vérifié
 
 | Élément | État | Vérification |
@@ -10,7 +13,7 @@ Dernière mise à jour : 19 septembre 2026.
 | Ressources | Fait | 5 tests reliant chaque animation et chaque arène citées par le jeu au manifeste publié. |
 | Serveur temps réel | Fait | 27 tests : salons, sélection, synchronisation, fin de match, revanche, déconnexion, checksum d'instantané. |
 | Client web | Fait | Build de production Next.js, puis parcours complet joué dans deux contextes de navigateur indépendants. |
-| Parcours en ligne | Vérifié | Pseudo → création → code → adversaire rejoint → sélection synchronisée → prêt → décompte → combat → dégâts des deux côtés, chronos identiques sur les deux écrans. Aucune erreur console. |
+| Parcours en ligne | Vérifié | Pseudo → création → code → adversaire rejoint → sélection synchronisée → prêt → décompte → combat → K.O. → round 2 → fin de match → revanche demandée des deux côtés → retour à la sélection. Deux navigateurs indépendants, chronos identiques sur les deux écrans, aucune erreur console. |
 | Entraînement local | Vérifié | Match complet joué jusqu'au bout : combos comptés, KO, deux rounds gagnés, écran de résultat, revanche qui relance au round 1. |
 | Reconnexion | Vérifié | Rechargement de page en plein combat : le serveur constate la coupure, le jeton rend le siège 85 ms plus tard sur un nouveau socket, les deux écrans restent d'accord et le joueur reprend le combat. |
 
