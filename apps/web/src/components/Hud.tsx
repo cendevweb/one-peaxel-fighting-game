@@ -172,17 +172,21 @@ export function Hud({ bridge, playerNames, slot }: HudProps): React.ReactElement
 
     return (
         <div className="pointer-events-none absolute inset-0 flex flex-col">
-            <div className="flex items-start gap-3 p-3 sm:gap-6 sm:p-5">
+            {/* A scrim under the top row: a bright stage washes the names out
+                otherwise, and the HUD has to stay readable on all six. */}
+            <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ink/85 via-ink/45 to-transparent" />
+
+            <div className="relative flex items-start gap-3 p-3 sm:gap-6 sm:p-5">
                 {[0, 1].map((index) => {
                     const mirrored = index === 1;
                     const isYou = slot === index;
                     return (
                         <div key={index} className={`flex-1 ${mirrored ? 'text-right' : ''}`}>
                             <div className={`mb-1 flex items-center gap-2 ${mirrored ? 'flex-row-reverse' : ''}`}>
-                                <span className="display text-base leading-none sm:text-lg">
+                                <span className="display text-base leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.75)] sm:text-lg">
                                     {snapshot.names[index]}
                                 </span>
-                                <span className="label truncate">
+                                <span className={`label truncate drop-shadow-[0_1px_0_rgba(0,0,0,0.75)] ${isYou ? 'text-accent' : ''}`}>
                                     {playerNames[index]}
                                     {isYou ? ' · toi' : ''}
                                 </span>

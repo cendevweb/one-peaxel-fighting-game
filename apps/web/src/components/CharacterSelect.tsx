@@ -86,8 +86,13 @@ export function CharacterSelect({
                 </button>
             </div>
 
+            {/* `min-w-0` on both columns is not cosmetic: an `fr` track sizes to
+                its content by default, so a longer tagline or a longer move
+                name in the right panel was shrinking the left column and
+                sliding the tiles sideways under the cursor as you hovered
+                across the roster. */}
             <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr]">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                     {CHARACTER_LIST.map((character) => {
                         const pickedBy = picks
                             .map((pick, index) => (pick === character.id ? index : -1))
@@ -140,13 +145,13 @@ export function CharacterSelect({
                     })}
                 </div>
 
-                <div className="panel flex flex-col gap-4 p-5">
+                <div className="panel flex min-w-0 flex-col gap-4 p-5">
                     <div className="flex items-start justify-between gap-4">
                         <div>
                             <h2 className="display text-3xl" style={{ color: focused.color }}>
                                 {focused.name}
                             </h2>
-                            <p className="mt-1 max-w-sm text-sm text-muted">{focused.tagline}</p>
+                            <p className="mt-1 h-10 max-w-sm text-sm text-muted">{focused.tagline}</p>
                         </div>
                         <SpritePreview
                             texture={focused.texture}
