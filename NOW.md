@@ -3,7 +3,7 @@
 Fichier de reprise : il dit ce qui est fait, ce qui bloque, et par quoi
 reprendre. À relire en premier après une interruption.
 
-**Au 19 septembre 2026.**
+**Au 19 septembre 2026.** 12 commits en local, aucun poussé.
 
 ## Fait
 
@@ -31,7 +31,10 @@ en plein combat et a retrouvé son siège et son round.
 1. **Push GitHub.** `git push` renvoie 403. L'application GitHub de Claude
    n'est pas installée sur `cendevweb/one-peaxel-fighting-game`. Dylan doit
    l'ajouter : https://github.com/apps/claude/installations/select_target
-   Les commits attendent en local.
+   En attendant, le dépôt entier est sauvegardé hors du conteneur, dans les
+   fichiers du projet : `one-peaxel-fighting-game.bundle`. Un
+   `git clone <le bundle>` le restitue en entier, historique compris. Le
+   rafraîchir après chaque commit tant que le push ne passe pas.
 2. **Déploiement.** Vercel et Render demandent des comptes et des clés que
    Claude n'a pas. `render.yaml` et `.env.example` sont prêts.
 
