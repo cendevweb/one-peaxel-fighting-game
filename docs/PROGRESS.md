@@ -15,6 +15,7 @@ chaque ligne « Vérifié » a été jouée dans un navigateur.
 | Client web | Fait | Build de production Next.js, puis parcours complet joué dans deux contextes de navigateur indépendants. |
 | Parcours en ligne | Vérifié | Pseudo → création → code → adversaire rejoint → sélection synchronisée → prêt → décompte → combat → K.O. → round 2 → fin de match → revanche demandée des deux côtés → retour à la sélection. Deux navigateurs indépendants, chronos identiques sur les deux écrans, aucune erreur console. |
 | Entraînement local | Vérifié | Match complet joué jusqu'au bout : combos comptés, KO, deux rounds gagnés, écran de résultat, revanche qui relance au round 1. |
+| Chemins de bord | Vérifié | Code de partie inexistant, partie rapide sans code, sortie en plein combat des deux côtés, relance immédiate. |
 | Reconnexion | Vérifié | Rechargement de page en plein combat : le serveur constate la coupure, le jeton rend le siège 85 ms plus tard sur un nouveau socket, les deux écrans restent d'accord et le joueur reprend le combat. |
 
 Total : **73 tests verts**, `tsc -b --force` propre sur tout le dépôt.
