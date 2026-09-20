@@ -406,6 +406,41 @@ describe('projectiles', () => {
         expect(harness.state.fighters[1].health).toBeLessThan(before);
     });
 
+    it('emits one projectile per move, however long the hitstop lasts', () => {
+        // Hitstop holds `stateFrame` still, so the spawn frame of a move is
+        // read again on every frame of the freeze. The special used to fire a
+        // fresh projectile on each of them, which locked the opponent in a
+        // combo that only ended when they drifted out of range.
+        const harness = skipIntro(startHarness('akainu', 'lucci'));
+        placeFighters(harness, 300, 500);
+        advance(harness, 1);
+
+        let spawned = 0;
+        for (let frame = 0; frame < 120; frame += 1) {
+            const events = tick(harness, [frame % 4 === 0 ? Button.Special : 0, 0]);
+            spawned += eventsOfType(events, 'projectile').length;
+        }
+
+        // Two presses fit in 120 frames; anything above that is the bug.
+        expect(spawned).toBeLessThanOrEqual(3);
+        expect(harness.state.fighters[1].comboHits).toBeLessThan(6);
+    });
+
+    it('hits with the projectile own numbers, not the move ones', () => {
+        const harness = skipIntro(startHarness('akainu', 'lucci'));
+        placeFighters(harness, 300, 500);
+        advance(harness, 1);
+        const before = harness.state.fighters[1].health;
+
+        tick(harness, [Button.Special, 0]);
+        advance(harness, 30);
+
+        const move = ROSTER.akainu?.moves.find((entry) => entry.id === 'akainu-meteor');
+        const dealt = before - harness.state.fighters[1].health;
+        expect(dealt).toBe(move?.projectile?.hit.damage);
+        expect(harness.state.fighters[1].state).toBe('knockdown');
+    });
+
     it('cleans up a projectile that leaves the arena', () => {
         const harness = skipIntro(startHarness('crocodile', 'luffy'));
         placeFighters(harness, 200, 1200);

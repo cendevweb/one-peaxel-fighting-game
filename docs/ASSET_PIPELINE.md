@@ -34,6 +34,18 @@ Dans chaque bande, le profil vertical donne les colonnes. Les écarts trop
 courts sont fusionnés, pour qu'un bras tendu séparé du corps ne compte pas
 comme deux frames.
 
+Le cas inverse existe aussi : deux poses dessinées si près l'une de l'autre
+que leurs encres se touchent ne laissent aucune colonne vide entre elles, et
+sortent comme une seule frame. Le jeu peint alors deux combattants d'un coup —
+c'est ce qui faisait apparaître un second Akainu immobile à la place de sa
+boule de magma. `splitTouching` coupe ces jointures : une frame beaucoup plus
+large que les autres de sa bande est tranchée au milieu d'une courte traînée de
+colonnes presque vides, à condition que les deux moitiés restent aussi larges
+que le reste de la bande. L'option est **désactivée par défaut** et se demande
+par personnage (`segment: { splitTouching: true }`), parce qu'elle renumérote
+les frames des bandes qu'elle corrige : une planche l'active une fois ses
+`band` relues. Seul Akainu l'utilise aujourd'hui.
+
 ### 4. Ignorer ce qui n'est pas un sprite
 
 Une planche peut déclarer des rectangles `ignore`. Ceux de Crocodile écartent
@@ -71,14 +83,14 @@ quelle bande et quelles frames forment quelle animation :
 ```ts
 { animation: 'gigant', band: 41, range: [0, 4], frameRate: 10 },
 { animation: 'pistol', band: 8, range: [0, 6], frameRate: 15, flip: true },
-{ animation: 'meigo', band: 8, order: [6, 5, 4, 3, 2, 1, 0], frameRate: 13 },
+{ animation: 'meigo', band: 8, order: [8, 7, 6, 5, 4, 3, 2, 1, 0], frameRate: 13 },
 ```
 
 C'est irréductible : aucune analyse d'image ne peut deviner que la bande 41
 est un Gear 3 plutôt qu'une garde. Le reste — où sont les bandes, où sont les
 frames, où est le sol — est déduit.
 
-Trois propriétés servent à rattraper ce que le rip fait de travers :
+Quatre propriétés servent à rattraper ce que le rip fait de travers :
 
 - `range` limite la bande aux frames qui appartiennent vraiment au coup ;
 - `order` donne un ordre de lecture explicite, pour les rangées dessinées de
@@ -87,6 +99,8 @@ Trois propriétés servent à rattraper ce que le rip fait de travers :
 - `flip` retourne l'animation, pour les rangées dessinées dans l'autre sens :
   le Pistolet de Luffy part vers la gauche alors que sa Gatling va vers la
   droite, sur la même planche.
+- `segment` surcharge le découpage pour une planche entière, et c'est là que
+  `splitTouching` se demande.
 
 Une rangée peut aussi être inutilisable pour une raison qui ne se voit qu'en
 jeu : les bandes 40 et 43 de Luffy sont dessinées au-dessus de la ligne de sol

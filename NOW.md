@@ -105,3 +105,48 @@ section « Si la page dit "Serveur injoignable" ».
 **Reste à faire, et seul Dylan peut le faire :** redéployer pour que ces
 correctifs soient en ligne, puis interroger `/health` avec l'origine du site
 pour vérifier `ALLOWED_ORIGINS`.
+
+## Coup spécial infini, animations et effets (20 septembre 2026)
+
+Branche `claude/project-thread-z7nwrt`. La vidéo de Dylan montrait le coup L —
+le **spécial**, pas le coup léger — qui enchaînait sans fin, un personnage figé
+sur sa dernière image pendant toute la récupération, un adversaire peint en
+blanc plein, et un second Akainu immobile là où la boule de magma aurait dû
+partir. Cinq causes distinctes, toutes corrigées :
+
+- **Le projectile était ré-émis à chaque frame.** Le hitstop fige `stateFrame` :
+  la frame d'apparition du projectile était donc relue autant de fois que le gel
+  durait, et chaque lecture lançait un nouveau tir, qui regelait le compteur. Un
+  combattant touché ne sortait jamais. `FighterState` porte maintenant
+  `projectileSpawned`, remis à zéro par `startMove` : un coup émet un projectile
+  et un seul.
+- **Les projectiles frappaient avec les chiffres du corps à corps.** `applyHit`
+  lisait `move.hit` au lieu de `move.projectile.hit` : chaque tir infligeait les
+  dégâts, le stun et le recul du jab qui le lance. Aucun projectile du jeu n'a
+  jamais mis personne au sol avant ce correctif.
+- **Les attaques se figeaient sur leur dernière image.** Le rendu épuisait
+  l'animation pendant le startup puis tenait la pose. La queue de l'animation
+  joue désormais à sa propre cadence et le combattant retombe dans sa garde dès
+  qu'il n'y a plus rien à montrer. Les frames d'impact du Meigō et de la Dai
+  Funka d'Akainu, qui désignaient l'avant-dernière image, ont été reculées.
+- **Le flash blanc durait tout le hitstop**, soit vingt frames sur un coup
+  lourd : le sprite se lisait comme absent. Il dure maintenant 70 ms, déclenché
+  par l'événement de touche.
+- **« Un personnage au lieu d'un SFX. »** Ce n'était pas un effet : la rangée
+  Meigō d'Akainu dessine ses poses si près les unes des autres que le magma de
+  l'une touche le manteau de la suivante. La découpe par colonnes vides rendait
+  deux poses dans une seule frame d'atlas, et le jeu peignait donc un second
+  Akainu à la place de la comète. `segment.ts` sait couper ces jointures, en
+  option par personnage (`splitTouching`), parce que la correction renumérote
+  les frames de la rangée : seul Akainu l'active pour l'instant.
+
+106 tests, `tsc -b --force` propre, vérifié image par image dans un navigateur
+pour les six coups des cinq personnages.
+
+**Défauts vus et volontairement laissés** (ils ne font pas partie de ce que la
+vidéo montre, et les corriger décalerait les rangées des quatre autres
+planches) : `crocodile-fx-sand` inclut les chaussures de Crocodile ;
+`luffy-fx-fire`, `lucci-fx-rings`, `crocodile-fx-tornado` et `enel-fx-bolt`
+sont tirés de rangées de personnage même si les images choisies ressemblent à
+de vrais effets ; les quatre autres planches contiennent elles aussi des frames
+collées que `splitTouching` corrigerait, une fois leurs rangées relues.

@@ -42,6 +42,10 @@ export interface SegmentOptions {
     minFramePixels: number;
     /** Fraction of a frame's height treated as "the feet", for the anchor. */
     footFraction: number;
+    /** Cut a run that holds two drawings whose ink touches. Off by default:
+     *  it re-numbers every frame of the bands it corrects, so a sheet opts in
+     *  once its band mappings have been read again. */
+    splitTouching: boolean;
 }
 
 export const DEFAULT_SEGMENT_OPTIONS: SegmentOptions = {
@@ -50,7 +54,8 @@ export const DEFAULT_SEGMENT_OPTIONS: SegmentOptions = {
     minBandHeight: 14,
     minFrameWidth: 6,
     minFramePixels: 60,
-    footFraction: 0.18
+    footFraction: 0.18,
+    splitTouching: false
 };
 
 /** Runs of consecutive indices whose count is non-zero, merging runs that are
@@ -79,6 +84,70 @@ const runs = (counts: ArrayLike<number>, length: number, gap: number): Array<[nu
         found.push([start, length - 1 - empty]);
     }
     return found;
+};
+
+/**
+ * Two poses whose drawings touch leave no *empty* column between them, so the
+ * column pass returns both as one frame and the game draws two fighters at
+ * once. Akainu's Meigō row is eight poses and came out as seven frames: the
+ * magma ball of one pose brushes the coat of the next by three pixels, and
+ * the fighter was painted twice, the second copy standing exactly where the
+ * projectile should have been.
+ *
+ * The join is still visible in the column profile — a handful of columns
+ * holding three pixels where the body holds sixty — so a run that is much
+ * wider than the band's own frames is cut at any short, nearly empty stretch
+ * inside it, as long as both halves come out about as wide as the rest of the
+ * band. Both guards earn their keep: Luffy's whip lays a thin rope across the
+ * width of two frames, which is a long quiet stretch, and cutting there would
+ * saw the whip off its owner; and the smoke Akainu's hound leaves hanging in
+ * the air is a narrow puff beside a full pose, which is one drawing and not
+ * two.
+ */
+const splitTouchingFrames = (
+    columns: ArrayLike<number>,
+    found: Array<[number, number]>,
+    bandHeight: number,
+    options: SegmentOptions
+): Array<[number, number]> => {
+    if (!options.splitTouching || found.length < 2) {
+        return found;
+    }
+    const widths = found.map(([left, right]) => right - left + 1).sort((a, b) => a - b);
+    const median = widths[widths.length >> 1] ?? 0;
+    const noise = Math.max(1, Math.round(bandHeight * 0.05));
+    const longestJoin = options.columnGap * 4;
+
+    const out: Array<[number, number]> = [];
+    for (const [left, right] of found) {
+        if (right - left + 1 < median * 1.4) {
+            out.push([left, right]);
+            continue;
+        }
+
+        const narrowest = median * 0.6;
+        let start = left;
+        let quiet = -1;
+        for (let x = left; x <= right; x += 1) {
+            if ((columns[x] ?? 0) <= noise) {
+                if (quiet < 0) {
+                    quiet = x;
+                }
+                continue;
+            }
+            const width = quiet < 0 ? 0 : x - quiet;
+            if (width >= options.columnGap && width <= longestJoin && quiet > start) {
+                const cut = quiet + (width >> 1);
+                if (cut - start + 1 >= narrowest && right - cut >= narrowest) {
+                    out.push([start, cut]);
+                    start = cut + 1;
+                }
+            }
+            quiet = -1;
+        }
+        out.push([start, right]);
+    }
+    return out;
 };
 
 const columnCountsInBand = (mask: Mask, top: number, bottom: number): Int32Array => {
@@ -174,7 +243,14 @@ export const segment = (
         const columns = columnCountsInBand(mask, top, bottom);
         const frames: Frame[] = [];
 
-        for (const [left, right] of runs(columns, mask.width, options.columnGap)) {
+        const columnRuns = splitTouchingFrames(
+            columns,
+            runs(columns, mask.width, options.columnGap),
+            bottom - top + 1,
+            options
+        );
+
+        for (const [left, right] of columnRuns) {
             if (right - left + 1 < options.minFrameWidth) {
                 continue;
             }

@@ -61,6 +61,7 @@ const createFighter = (character: CharacterDefinition, slot: 0 | 1): FighterStat
     stateFrame: 0,
     moveId: null,
     hitWindows: 0,
+    projectileSpawned: false,
     stunFrames: 0,
     connected: false,
     hitstop: 0,
@@ -200,6 +201,7 @@ const startMove = (
     fighter.stateFrame = 0;
     fighter.moveId = move.id;
     fighter.hitWindows = 0;
+    fighter.projectileSpawned = false;
     fighter.connected = false;
     fighter.guarding = false;
     fighter.meter -= move.meterCost;
@@ -651,7 +653,13 @@ const applyHit = (
     if (!victimCharacter) {
         return;
     }
-    const properties = hit.move.hit;
+    // A projectile carries its own numbers. Reading the move's instead gave
+    // every shot the damage, the stun and the knockback of the jab that
+    // launches it, so no projectile in the game ever knocked anyone down.
+    const properties =
+        hit.projectileId !== undefined && hit.move.projectile
+            ? hit.move.projectile.hit
+            : hit.move.hit;
 
     if (hit.windowIndex >= 0) {
         attacker.hitWindows |= 1 << hit.windowIndex;
@@ -753,9 +761,13 @@ const spawnProjectiles = (
         const character = roster[fighter.characterId];
         const move = character ? findMove(character, fighter.moveId) : undefined;
         const spec = move?.projectile;
-        if (!spec || fighter.stateFrame !== spec.spawnFrame) {
+        // `>=` rather than `===`: the spawn frame can be stepped over when a
+        // hit lands on it, and `projectileSpawned` is what stops the move
+        // emitting a second one on every frame after that.
+        if (!spec || fighter.projectileSpawned || fighter.stateFrame < spec.spawnFrame) {
             continue;
         }
+        fighter.projectileSpawned = true;
         const projectile: ProjectileState = {
             id: state.nextProjectileId,
             owner: slot,

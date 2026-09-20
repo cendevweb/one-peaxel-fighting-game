@@ -26,6 +26,15 @@ export interface FightSceneConfig {
     stageId: string;
 }
 
+/** Frames the last drawing of an attack is held for before the fighter drops
+ *  back into their stance. */
+const ATTACK_HOLD = 5;
+
+/** How long a fighter is drawn white after being hit, in milliseconds. The
+ *  flash used to last the whole hitstop, which on a heavy blow is twenty
+ *  frames: long enough that the sprite read as missing rather than struck. */
+const HURT_FLASH_MS = 70;
+
 /** Player colours for the floor shadows and the impact flashes. */
 const SLOT_TINT = [0xff6a2b, 0x45b6ff] as const;
 
@@ -170,6 +179,8 @@ export class FightScene extends Phaser.Scene {
             return;
         }
 
+        this.hurtFlash[0] = Math.max(0, this.hurtFlash[0] - delta);
+        this.hurtFlash[1] = Math.max(0, this.hurtFlash[1] - delta);
         this.consumeEvents(this.bridge.events.splice(0, this.bridge.events.length));
         this.updateCamera(state);
         this.updateFighters(state);
@@ -212,6 +223,9 @@ export class FightScene extends Phaser.Scene {
 
     private cameraOffset = { x: 0, y: 0 };
 
+    /** Milliseconds of white flash left on each fighter, set by a hit. */
+    private hurtFlash: [number, number] = [0, 0];
+
     // ---------------------------------------------------------------- fighters
 
     private characterOf(slot: 0 | 1): CharacterDefinition | undefined {
@@ -228,6 +242,13 @@ export class FightScene extends Phaser.Scene {
             case 'attack': {
                 const move = character.moves.find((entry) => entry.id === fighter.moveId);
                 if (move) {
+                    // The recovery of a move belongs to the stance, not to the
+                    // last drawing of the blow. Holding that drawing is what
+                    // made every attack end frozen in place.
+                    const animation = this.animations.get(move.animation);
+                    if (animation && this.attackDrawingDone(move, animation, fighter.stateFrame)) {
+                        return { key: names.idle, progress: 0, loop: true };
+                    }
                     return {
                         key: move.animation,
                         progress: Phaser.Math.Clamp(fighter.stateFrame / Math.max(1, move.duration), 0, 1),
@@ -280,37 +301,57 @@ export class FightScene extends Phaser.Scene {
      * limb had moved and the sprite struck once the hitbox had closed.
      *
      * So the animation is pinned instead. `impactFrame` is placed exactly on
-     * the first active frame; the wind-up is spread over the startup; the
-     * follow-through then runs at the animation's own rate and holds its last
-     * image through the recovery. Range and impact read as one thing again.
+     * the first active frame and the wind-up is spread over the startup. What
+     * follows the blow then plays at the animation's own rate — stretching it
+     * over the recovery instead, which is what this did next, gave one drawing
+     * every dozen frames and read as a freeze; Akainu's Meigō and his Dai Funka
+     * had no drawings left after the impact at all and simply stopped dead for
+     * half a second. Once the last drawing has been held for a beat and every
+     * hitbox of the move is closed, the fighter falls back into their stance
+     * for the rest of the recovery, which is what a move is supposed to look
+     * like when it ends.
      */
+    private attackRate(move: MoveDefinition, animation: ManifestAnimation, impact: number): number {
+        const tail = animation.frames.length - 1 - impact;
+        const span = Math.max(1, move.duration - Math.max(1, move.startup));
+        // The animation's own rate, but never so slow that the follow-through
+        // would still be playing when the move is over.
+        return Math.max(animation.frameRate / 60, tail / span);
+    }
+
+    private impactIndex(move: MoveDefinition, animation: ManifestAnimation): number {
+        const count = animation.frames.length;
+        return Phaser.Math.Clamp(move.impactFrame ?? Math.round((count - 1) / 2), 0, count - 1);
+    }
+
     private attackFrameIndex(
         move: MoveDefinition,
         animation: ManifestAnimation,
         stateFrame: number
     ): number {
         const count = animation.frames.length;
-        const impact = Phaser.Math.Clamp(
-            move.impactFrame ?? Math.round((count - 1) / 2),
-            0,
-            count - 1
-        );
+        const impact = this.impactIndex(move, animation);
         const startup = Math.max(1, move.startup);
         if (stateFrame <= startup) {
             return Phaser.Math.Clamp(Math.round((impact * stateFrame) / startup), 0, count - 1);
         }
-        // After the blow, the frames that are left are spread over the frames
-        // of the move that are left, so the animation finishes exactly when
-        // the move does. Playing the tail at its own rate instead would reach
-        // the last drawing halfway through the recovery and hold it there,
-        // which is what made every heavy attack end on a frozen pose.
-        const tail = count - 1 - impact;
-        if (tail <= 0) {
-            return count - 1;
-        }
-        const span = Math.max(1, move.duration - startup);
-        const elapsed = Math.round((tail * (stateFrame - startup)) / span);
+        const elapsed = Math.floor((stateFrame - startup) * this.attackRate(move, animation, impact));
         return Phaser.Math.Clamp(impact + elapsed, 0, count - 1);
+    }
+
+    /** True once the move has no drawing left to show and can no longer hit,
+     *  so the fighter goes back to their stance instead of holding a pose. */
+    private attackDrawingDone(
+        move: MoveDefinition,
+        animation: ManifestAnimation,
+        stateFrame: number
+    ): boolean {
+        const impact = this.impactIndex(move, animation);
+        const tail = animation.frames.length - 1 - impact;
+        const startup = Math.max(1, move.startup);
+        const played = Math.ceil(tail / this.attackRate(move, animation, impact));
+        const lastActive = move.active.reduce((latest, window) => Math.max(latest, window[1]), 0);
+        return stateFrame > Math.max(startup + played + ATTACK_HOLD, lastActive + 1);
     }
 
     private frameNameFor(
@@ -376,11 +417,15 @@ export class FightScene extends Phaser.Scene {
             sprite.setFlipX((fighter.facing === -1) !== (animation?.flip ?? false));
             sprite.setScale(character.stats.spriteScale);
 
-            // Hitstop is the frame the game stops to let a hit land; showing it
-            // as a flash is what makes a heavy hit read as heavy.
+            // Hitstop is the frames the game stops on to let a hit land; a
+            // white flash over them is what makes a heavy hit read as heavy.
+            // It is kept to a few milliseconds from the blow rather than to
+            // the whole freeze: a twenty-frame hitstop painted the fighter
+            // solid white for a third of a second, and during a combo the
+            // sprite never came back at all.
             // Phaser 4 separates the tint colour from the tint mode, so the
             // white flash is a FILL tint rather than the old `setTintFill`.
-            if (fighter.hitstop > 0 && fighter.state !== 'attack') {
+            if ((this.hurtFlash[slot] ?? 0) > 0 && fighter.state !== 'attack') {
                 sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
             } else if (fighter.invuln > 0 && state.frame % 6 < 3) {
                 sprite.setTint(0x88aaff).setTintMode(Phaser.TintModes.MULTIPLY);
@@ -603,6 +648,7 @@ export class FightScene extends Phaser.Scene {
                     const spark = this.impactEffectFor(event.attacker, event.moveId, event.heavy);
                     this.spawnEffect(spark.animation, event.x, event.y, spark.scale);
                     this.shake = Math.max(this.shake, event.heavy ? 7 : 3);
+                    this.hurtFlash[event.victim] = event.heavy ? HURT_FLASH_MS * 1.6 : HURT_FLASH_MS;
                     break;
                 }
                 case 'block': {

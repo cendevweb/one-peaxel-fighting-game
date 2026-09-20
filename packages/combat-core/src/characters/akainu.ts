@@ -107,6 +107,11 @@ export const akainu: CharacterDefinition = {
             duration: 50,
             startup: 16,
             active: [[16, 19]],
+            // `akainu-meigo` runs from the stance to the arm at full stretch,
+            // and the magma leaves the fist on the seventh drawing. Naming the
+            // last drawing as the impact left nothing to play afterwards, so
+            // the move stopped dead on that pose for the whole recovery —
+            // thirty-four frames of a frozen lunge.
             impactFrame: 6,
             hitbox: { x: 30, y: 40, width: 120, height: 76 },
             hit: hit({ damage: 30, hitstun: 12, blockstun: 9, knockbackX: 1.4, hitstop: 5 }),
@@ -144,7 +149,10 @@ export const akainu: CharacterDefinition = {
                 [32, 40],
                 [52, 62]
             ],
-            impactFrame: 11,
+            // Same as the Meigō: the fist lands well before the last drawing
+            // of `akainu-funka`, and pinning the impact on frame eleven of
+            // twelve froze the ultimate for its second half.
+            impactFrame: 8,
             hitbox: { x: -50, y: 0, width: 300, height: 260 },
             hit: hit({
                 damage: 178,
