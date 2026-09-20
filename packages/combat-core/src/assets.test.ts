@@ -22,7 +22,7 @@ interface Manifest {
         texture: string;
         frameWidth: number;
         frameHeight: number;
-        animations: Array<{ key: string; frames: string[]; frameRate: number; repeat: number }>;
+        animations: Array<{ key: string; frames: string[]; frameRate: number; repeat: number; flip?: boolean }>;
         warnings: string[];
     }>;
     stages: Array<{ id: string; image: string; width: number; height: number }>;
@@ -62,6 +62,73 @@ describe.skipIf(manifest === null)('published assets', () => {
                         keys.has(move.projectile.animation),
                         `${move.id} : effet manquant ${move.projectile.animation}`
                     ).toBe(true);
+                }
+            }
+        }
+    });
+
+    it('resolves every effect a move puts on screen', () => {
+        const keys = new Set(
+            published.characters.flatMap((character) =>
+                character.animations.filter((animation) => animation.frames.length > 0).map((animation) => animation.key)
+            )
+        );
+
+        for (const character of CHARACTER_LIST) {
+            for (const spark of Object.values(character.hitEffects ?? {})) {
+                expect(keys.has(spark.animation), `${character.id} : etincelle manquante ${spark.animation}`).toBe(true);
+            }
+            for (const move of character.moves) {
+                for (const effect of move.effects ?? []) {
+                    expect(keys.has(effect.animation), `${move.id} : effet manquant ${effect.animation}`).toBe(true);
+                }
+                if (move.impactEffect) {
+                    expect(
+                        keys.has(move.impactEffect.animation),
+                        `${move.id} : etincelle manquante ${move.impactEffect.animation}`
+                    ).toBe(true);
+                }
+            }
+        }
+    });
+
+    /**
+     * The whole point of `impactFrame` is that the frame it names is the one on
+     * screen when the hitbox opens. A frame index past the end of the animation
+     * silently clamps to the last frame, which looks like the move simply has
+     * no wind-up — so it is checked rather than clamped and forgotten.
+     */
+    it('points every impact frame at a frame the animation has', () => {
+        const byKey = new Map(
+            published.characters.flatMap((character) => character.animations.map((animation) => [animation.key, animation]))
+        );
+
+        for (const character of CHARACTER_LIST) {
+            for (const move of character.moves) {
+                const animation = byKey.get(move.animation);
+                if (!animation || move.impactFrame === undefined) {
+                    continue;
+                }
+                expect(
+                    move.impactFrame,
+                    `${move.id} : frame d'impact ${move.impactFrame} hors de ${move.animation} (${animation.frames.length} frames)`
+                ).toBeLessThan(animation.frames.length);
+                expect(move.impactFrame, `${move.id} : frame d'impact negative`).toBeGreaterThanOrEqual(0);
+            }
+        }
+    });
+
+    /**
+     * An effect that fires after the move is over is an effect nobody sees.
+     */
+    it('spawns every effect within the move that owns it', () => {
+        for (const character of CHARACTER_LIST) {
+            for (const move of character.moves) {
+                for (const effect of move.effects ?? []) {
+                    expect(effect.frame, `${move.id} : effet ${effect.animation} hors du move`).toBeLessThan(
+                        move.duration
+                    );
+                    expect(effect.frame, `${move.id} : effet ${effect.animation} avant le move`).toBeGreaterThanOrEqual(0);
                 }
             }
         }

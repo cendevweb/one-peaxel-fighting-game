@@ -70,6 +70,39 @@ export interface HitProperties {
     unblockable?: boolean;
 }
 
+/**
+ * A drawing the renderer lays over a move: the magma a fist throws off, the
+ * sand a hook drags behind it, the aura of a transformation.
+ *
+ * Nothing here is read by the simulation. Two clients that disagree about an
+ * effect still agree about the fight, which is why an effect can be authored
+ * freely without touching the checksum.
+ */
+export interface MoveEffect {
+    /** Animation key, `<texture>-fx-<name>`. */
+    animation: string;
+    /** Frame of the move it appears on. */
+    frame: number;
+    /** Offset from the fighter's origin, forward and up, in pixels. */
+    offsetX: number;
+    offsetY: number;
+    scale?: number;
+    /** Track the fighter instead of staying where it was spawned. */
+    follow?: boolean;
+    /** Draw behind the fighter rather than in front. */
+    behind?: boolean;
+    /** Fade out over its lifetime. A spark should; a magma fist should not. */
+    fade?: boolean;
+    /** Play it once and hold the last frame for this many frames. */
+    hold?: number;
+}
+
+/** The spark left where a blow connects. */
+export interface ImpactEffect {
+    animation: string;
+    scale: number;
+}
+
 /** A projectile emitted by a move. */
 export interface ProjectileSpec {
     /** Frame of the move on which it spawns. */
@@ -129,6 +162,18 @@ export interface MoveDefinition {
     startupFreeze?: number;
     /** Renderer hint: shake the camera when this connects. */
     cameraShake?: number;
+    /**
+     * The frame of the animation that shows the blow landing. The renderer
+     * lines it up with the first active frame, so what the player sees at the
+     * moment the hitbox opens is the strike itself rather than the wind-up.
+     * Without it the animation is merely stretched over the move, which is how
+     * a move ends up looking short of its own range.
+     */
+    impactFrame?: number;
+    /** Effects drawn while the move plays. */
+    effects?: readonly MoveEffect[];
+    /** Spark shown where this move connects, overriding the character's. */
+    impactEffect?: ImpactEffect;
 }
 
 export interface FighterStats {
@@ -178,6 +223,10 @@ export interface CharacterDefinition {
         defeat: string;
     };
     moves: readonly MoveDefinition[];
+    /** Sparks left by this fighter's blows, unless a move overrides them.
+     *  Akainu splashes magma where Crocodile scatters sand; sharing one spark
+     *  between the five of them is what made every hit read the same. */
+    hitEffects?: { light: ImpactEffect; heavy: ImpactEffect; block: ImpactEffect };
     /** Documented gaps in the source sprite sheet, surfaced in the UI so a
      *  reused animation is never passed off as a dedicated one. */
     spriteNotes?: readonly string[];

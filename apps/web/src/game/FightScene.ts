@@ -12,6 +12,7 @@ import {
     type CharacterDefinition,
     type CombatEvent,
     type FighterState,
+    type ImpactEffect,
     type MatchState,
     type MoveDefinition
 } from '@opfg/combat-core';
@@ -33,7 +34,24 @@ interface EffectSprite {
     animation: ManifestAnimation;
     frame: number;
     elapsed: number;
+    /** Arena coordinates. Effects used to be placed in screen space and never
+     *  moved again, so a spark slid across the stage as soon as the camera
+     *  followed the fighters. */
+    worldX: number;
+    worldY: number;
+    fade: boolean;
+    /** Extra frames the last image is held for. */
+    hold: number;
+    /** The effect rides a fighter instead of the arena. */
+    follow?: { slot: 0 | 1; offsetX: number; offsetY: number };
 }
+
+/** Sparks used when a character declares none of its own. */
+const FALLBACK_HIT: { light: ImpactEffect; heavy: ImpactEffect; block: ImpactEffect } = {
+    light: { animation: 'luffy-fx-spark', scale: 1.9 },
+    heavy: { animation: 'luffy-fx-ring', scale: 2.6 },
+    block: { animation: 'luffy-fx-spark', scale: 1.4 }
+};
 
 /**
  * Draws the fight. It owns no rules: every position, every animation frame and
@@ -64,6 +82,12 @@ export class FightScene extends Phaser.Scene {
     private cameraX = 0;
     private shake = 0;
     private floorY = 452;
+
+    /** Move each fighter is currently performing, and the effects that move has
+     *  already put on screen, so a frame replayed during hitstop does not spawn
+     *  the same magma fist twice. */
+    private currentMove: [string | null, string | null] = [null, null];
+    private spawnedEffects = new Set<string>();
 
     constructor() {
         super('fight');
@@ -150,7 +174,7 @@ export class FightScene extends Phaser.Scene {
         this.updateCamera(state);
         this.updateFighters(state);
         this.updateProjectiles(state);
-        this.updateEffects(delta);
+        this.updateEffects(delta, state);
         this.drawDebug(state);
     }
 
@@ -198,7 +222,7 @@ export class FightScene extends Phaser.Scene {
     private animationFor(
         fighter: FighterState,
         character: CharacterDefinition
-    ): { key: string; progress: number; loop: boolean } {
+    ): { key: string; progress: number; loop: boolean; move?: MoveDefinition } {
         const names = character.animations;
         switch (fighter.state) {
             case 'attack': {
@@ -207,7 +231,8 @@ export class FightScene extends Phaser.Scene {
                     return {
                         key: move.animation,
                         progress: Phaser.Math.Clamp(fighter.stateFrame / Math.max(1, move.duration), 0, 1),
-                        loop: false
+                        loop: false,
+                        move
                     };
                 }
                 return { key: names.idle, progress: 0, loop: true };
@@ -243,19 +268,69 @@ export class FightScene extends Phaser.Scene {
         }
     }
 
+    /**
+     * Which frame of an attack shows on a given frame of the move.
+     *
+     * Stretching the animation evenly over the move — what this used to do —
+     * puts whatever frame happens to fall there on screen when the hitbox
+     * opens, and it never fell right: every move in the roster displayed a
+     * wind-up frame on its own first active frame, so blows landed before the
+     * limb had moved and the sprite struck once the hitbox had closed.
+     *
+     * So the animation is pinned instead. `impactFrame` is placed exactly on
+     * the first active frame; the wind-up is spread over the startup; the
+     * follow-through then runs at the animation's own rate and holds its last
+     * image through the recovery. Range and impact read as one thing again.
+     */
+    private attackFrameIndex(
+        move: MoveDefinition,
+        animation: ManifestAnimation,
+        stateFrame: number
+    ): number {
+        const count = animation.frames.length;
+        const impact = Phaser.Math.Clamp(
+            move.impactFrame ?? Math.round((count - 1) / 2),
+            0,
+            count - 1
+        );
+        const startup = Math.max(1, move.startup);
+        if (stateFrame <= startup) {
+            return Phaser.Math.Clamp(Math.round((impact * stateFrame) / startup), 0, count - 1);
+        }
+        // After the blow, the frames that are left are spread over the frames
+        // of the move that are left, so the animation finishes exactly when
+        // the move does. Playing the tail at its own rate instead would reach
+        // the last drawing halfway through the recovery and hold it there,
+        // which is what made every heavy attack end on a frozen pose.
+        const tail = count - 1 - impact;
+        if (tail <= 0) {
+            return count - 1;
+        }
+        const span = Math.max(1, move.duration - startup);
+        const elapsed = Math.round((tail * (stateFrame - startup)) / span);
+        return Phaser.Math.Clamp(impact + elapsed, 0, count - 1);
+    }
+
     private frameNameFor(
         animation: ManifestAnimation,
         progress: number,
         loop: boolean,
-        clock: number
+        clock: number,
+        move?: MoveDefinition,
+        stateFrame = 0
     ): string {
         const count = animation.frames.length;
         if (count === 0) {
             return '';
         }
-        const index = loop
-            ? Math.floor((clock * animation.frameRate) / 60) % count
-            : Phaser.Math.Clamp(Math.floor(progress * count), 0, count - 1);
+        let index: number;
+        if (move) {
+            index = this.attackFrameIndex(move, animation, stateFrame);
+        } else if (loop) {
+            index = Math.floor((clock * animation.frameRate) / 60) % count;
+        } else {
+            index = Phaser.Math.Clamp(Math.floor(progress * count), 0, count - 1);
+        }
         return animation.frames[index] ?? animation.frames[0] ?? '';
     }
 
@@ -271,7 +346,14 @@ export class FightScene extends Phaser.Scene {
             const choice = this.animationFor(fighter, character);
             const animation = this.animations.get(choice.key);
             if (animation) {
-                const frame = this.frameNameFor(animation, choice.progress, choice.loop, state.frame);
+                const frame = this.frameNameFor(
+                    animation,
+                    choice.progress,
+                    choice.loop,
+                    state.frame,
+                    choice.move,
+                    fighter.stateFrame
+                );
                 if (frame && sprite.texture.key === character.texture) {
                     if (sprite.frame.name !== frame) {
                         sprite.setFrame(frame);
@@ -281,10 +363,15 @@ export class FightScene extends Phaser.Scene {
                 }
             }
 
+            this.updateMoveEffects(slot, fighter, choice.move);
+
             const x = toPx(fighter.x) - this.cameraOffset.x;
             const y = this.floorY - toPx(fighter.y) + this.cameraOffset.y;
             sprite.setPosition(Math.round(x), Math.round(y));
-            sprite.setFlipX(fighter.facing === -1);
+            // A row the rip drew facing the other way has to be mirrored back
+            // before the facing flip, or the move plays out of the fighter's
+            // back.
+            sprite.setFlipX((fighter.facing === -1) !== (animation?.flip ?? false));
             sprite.setScale(character.stats.spriteScale);
 
             // Hitstop is the frame the game stops to let a hit land; showing it
@@ -369,61 +456,157 @@ export class FightScene extends Phaser.Scene {
 
     // ----------------------------------------------------------------- effects
 
-    private spawnEffect(key: string, x: number, y: number, scale: number): void {
+    /**
+     * Puts an effect on the arena. `worldX` and `worldY` are arena coordinates
+     * — x from the left wall, y above the floor — not screen ones, so the
+     * effect stays where it was put while the camera moves.
+     */
+    private spawnEffect(
+        key: string,
+        worldX: number,
+        worldY: number,
+        scale: number,
+        options: {
+            fade?: boolean;
+            behind?: boolean;
+            hold?: number;
+            flip?: boolean;
+            follow?: { slot: 0 | 1; offsetX: number; offsetY: number };
+        } = {}
+    ): void {
         const animation = this.animations.get(key);
         if (!animation || animation.frames.length === 0) {
             return;
         }
         const texture = key.split('-')[0] ?? 'luffy';
-        const sprite = this.add.sprite(x, y, texture, animation.frames[0]).setDepth(30);
-        sprite.setOrigin(0.5, 0.5).setScale(scale);
-        this.effects.push({ sprite, animation, frame: 0, elapsed: 0 });
+        if (!this.textures.exists(texture)) {
+            return;
+        }
+        const sprite = this.add
+            .sprite(0, 0, texture, animation.frames[0])
+            .setDepth(options.behind ? 5 : 30);
+        sprite.setOrigin(0.5, 0.5).setScale(scale).setFlipX(options.flip ?? false);
+        this.effects.push({
+            sprite,
+            animation,
+            frame: 0,
+            elapsed: 0,
+            worldX,
+            worldY,
+            fade: options.fade ?? true,
+            hold: options.hold ?? 0,
+            ...(options.follow ? { follow: options.follow } : {})
+        });
     }
 
-    private updateEffects(delta: number): void {
+    /**
+     * Spawns the effects a move declares, once each. A move's frame counter
+     * stands still during hitstop and can be read several times on the same
+     * value, so the spawn is keyed rather than compared for equality — and the
+     * comparison is `>=`, so an effect is not lost when the browser drops a
+     * frame between two simulation steps.
+     */
+    private updateMoveEffects(slot: 0 | 1, fighter: FighterState, move?: MoveDefinition): void {
+        const active = fighter.state === 'attack' ? (move?.id ?? null) : null;
+        if (this.currentMove[slot] !== active) {
+            for (const key of [...this.spawnedEffects]) {
+                if (key.startsWith(`${slot}:`)) {
+                    this.spawnedEffects.delete(key);
+                }
+            }
+            this.currentMove[slot] = active;
+        }
+        if (!move?.effects || fighter.state !== 'attack') {
+            return;
+        }
+
+        move.effects.forEach((effect, index) => {
+            const key = `${slot}:${move.id}:${index}`;
+            if (fighter.stateFrame < effect.frame || this.spawnedEffects.has(key)) {
+                return;
+            }
+            this.spawnedEffects.add(key);
+            const forward = fighter.facing;
+            this.spawnEffect(
+                effect.animation,
+                toPx(fighter.x) + forward * effect.offsetX,
+                toPx(fighter.y) + effect.offsetY,
+                effect.scale ?? 2,
+                {
+                    fade: effect.fade ?? false,
+                    behind: effect.behind ?? false,
+                    hold: effect.hold ?? 0,
+                    flip: forward === -1,
+                    ...(effect.follow
+                        ? { follow: { slot, offsetX: effect.offsetX, offsetY: effect.offsetY } }
+                        : {})
+                }
+            );
+        });
+    }
+
+    private updateEffects(delta: number, state: MatchState): void {
         for (let index = this.effects.length - 1; index >= 0; index -= 1) {
             const effect = this.effects[index];
             if (!effect) {
                 continue;
             }
             effect.elapsed += delta;
+            const count = effect.animation.frames.length;
             const frame = Math.floor((effect.elapsed / 1000) * effect.animation.frameRate);
-            if (frame >= effect.animation.frames.length) {
+            if (frame >= count + effect.hold) {
                 effect.sprite.destroy();
                 this.effects.splice(index, 1);
                 continue;
             }
-            if (frame !== effect.frame) {
-                effect.frame = frame;
-                const name = effect.animation.frames[frame];
+            const shown = Math.min(frame, count - 1);
+            if (shown !== effect.frame) {
+                effect.frame = shown;
+                const name = effect.animation.frames[shown];
                 if (name) {
                     effect.sprite.setFrame(name);
                 }
             }
-            effect.sprite.setAlpha(1 - frame / (effect.animation.frames.length + 1));
+
+            if (effect.follow) {
+                const owner = state.fighters[effect.follow.slot];
+                effect.worldX = toPx(owner.x) + owner.facing * effect.follow.offsetX;
+                effect.worldY = toPx(owner.y) + effect.follow.offsetY;
+                effect.sprite.setFlipX(owner.facing === -1);
+            }
+            effect.sprite.setPosition(
+                Math.round(effect.worldX - this.cameraOffset.x),
+                Math.round(this.floorY - effect.worldY + this.cameraOffset.y)
+            );
+            effect.sprite.setAlpha(effect.fade ? 1 - frame / (count + effect.hold + 1) : 1);
         }
+    }
+
+    /**
+     * The spark a blow leaves. Every hit in the game used to draw Luffy's, so
+     * Akainu's magma and Crocodile's sand landed as a puff of rubber smoke. A
+     * move may name its own; otherwise the fighter's does.
+     */
+    private impactEffectFor(slot: 0 | 1, moveId: string | undefined, heavy: boolean): ImpactEffect {
+        const character = this.characterOf(slot);
+        const move = moveId ? character?.moves.find((entry) => entry.id === moveId) : undefined;
+        const declared = move?.impactEffect ?? (heavy ? character?.hitEffects?.heavy : character?.hitEffects?.light);
+        return declared ?? (heavy ? FALLBACK_HIT.heavy : FALLBACK_HIT.light);
     }
 
     private consumeEvents(events: CombatEvent[]): void {
         for (const event of events) {
             switch (event.type) {
                 case 'hit': {
-                    this.spawnEffect(
-                        event.heavy ? 'luffy-fx-burst' : 'luffy-fx-spark',
-                        Math.round(event.x - this.cameraOffset.x),
-                        Math.round(this.floorY - event.y + this.cameraOffset.y),
-                        event.heavy ? 2.6 : 1.9
-                    );
+                    const spark = this.impactEffectFor(event.attacker, event.moveId, event.heavy);
+                    this.spawnEffect(spark.animation, event.x, event.y, spark.scale);
                     this.shake = Math.max(this.shake, event.heavy ? 7 : 3);
                     break;
                 }
                 case 'block': {
-                    this.spawnEffect(
-                        'luffy-fx-spark',
-                        Math.round(event.x - this.cameraOffset.x),
-                        Math.round(this.floorY - event.y + this.cameraOffset.y),
-                        1.4
-                    );
+                    const character = this.characterOf(event.victim);
+                    const spark = character?.hitEffects?.block ?? FALLBACK_HIT.block;
+                    this.spawnEffect(spark.animation, event.x, event.y, spark.scale);
                     break;
                 }
                 case 'super': {

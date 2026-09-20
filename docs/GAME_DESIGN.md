@@ -32,11 +32,11 @@ variations de couleur. Chacun doit répondre à une question différente :
 | **Enel** | Peux-tu approcher sous les projectiles ? |
 | **Akainu** | Peux-tu te permettre de te tromper une seule fois ? |
 
-Les cinq sont honnêtement contraints par ce que les planches permettent.
-Luffy est le seul avec un jeu complet ; les trois autres tirent deux
-animations d'attaque chacune, et leurs coups se distinguent par leurs
-propriétés, pas par leurs images. C'est un compromis assumé, écrit dans
-`spriteNotes` et affiché sur l'écran de sélection plutôt que caché.
+Les cinq ont chacun six animations d'attaque distinctes, tirées de leur propre
+planche, avec les effets que la planche dessine à côté d'eux : le magma
+d'Akainu, le sable de Crocodile, la foudre d'Enel. Ce qui reste contraint par
+la source est écrit dans `spriteNotes` et affiché sur l'écran de sélection
+plutôt que caché.
 
 ## Le rythme d'un match
 
