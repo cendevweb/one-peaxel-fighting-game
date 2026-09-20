@@ -11,7 +11,7 @@ strict partout.
 | `npm install --legacy-peer-deps` | **Obligatoire.** Sans ce drapeau, npm plante sur l'arbre de pairs de vitest (`Cannot read properties of null (reading 'edgesOut')`). |
 | `npm run build:packages` | Compile `@opfg/shared` puis `@opfg/combat-core`. Tout le reste en dépend. |
 | `npm run dev` | Compile ce qui doit l'être, puis lance le serveur de jeu (8080, ou `PORT`) et Next.js (3000). |
-| `npm test` | 90 tests vitest : moteur, ressources, salons, ordinateur. |
+| `npm test` | 106 tests vitest : moteur, ressources, salons, ordinateur. |
 | `npm run typecheck` | `tsc -b --force` sur tout le dépôt. |
 | `npm run assets` | Ré-extrait les sprites des planches et republie les atlas. |
 

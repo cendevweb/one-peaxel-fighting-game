@@ -104,6 +104,21 @@ La mise à l'échelle des dégâts (`COMBO_SCALING`) descend de 100 % à 25 % au
 fil des touches, pour qu'un long enchaînement reste payant sans emporter un
 round entier.
 
+## Les projectiles
+
+Un coup qui porte un `projectile` en émet **un et un seul**, quel que soit le
+nombre de fois où sa frame d'apparition est relue. C'est `projectileSpawned`,
+remis à zéro par `startMove`, qui le garantit, et il ne s'agit pas d'une
+précaution théorique : le hitstop fige `stateFrame`, donc un tir qui touche
+tient le compteur sur la frame d'apparition pendant toute la durée du gel, et
+chaque frame de gel relançait un projectile, qui regelait le compteur. Le
+spécial devenait un enchaînement dont personne ne sortait.
+
+Un projectile frappe avec **ses** chiffres, `move.projectile.hit`, jamais ceux
+du geste qui le lance. Les lire au mauvais endroit donnait à chaque tir les
+dégâts et le recul du jab de départ, ce qui expliquait qu'aucun projectile du
+jeu ne mette jamais personne au sol.
+
 ## La garde
 
 La garde a sa propre touche, `Button.Guard`, et non la marche arrière. La

@@ -32,7 +32,7 @@ const encodeFighter = (fighter: FighterState, character: CharacterDefinition, ou
         fighter.facing, fighter.health, fighter.meter,
         stateIndex(fighter.state), fighter.stateFrame,
         moveIndex(character, fighter.moveId),
-        fighter.hitWindows, fighter.stunFrames,
+        fighter.hitWindows, fighter.projectileSpawned ? 1 : 0, fighter.stunFrames,
         fighter.connected ? 1 : 0, fighter.hitstop, fighter.invuln,
         fighter.guarding ? 1 : 0, fighter.airborne ? 1 : 0,
         fighter.comboHits, fighter.comboDamage, fighter.wins,
@@ -57,7 +57,7 @@ const decodeFighter = (
         state: STATE_IDS[read()] ?? 'idle',
         stateFrame: read(),
         moveId: null,
-        hitWindows: 0, stunFrames: 0, connected: false,
+        hitWindows: 0, projectileSpawned: false, stunFrames: 0, connected: false,
         hitstop: 0, invuln: 0, guarding: false, airborne: false,
         comboHits: 0, comboDamage: 0, wins: 0,
         buffer: [], lastInput: 0
@@ -65,6 +65,7 @@ const decodeFighter = (
     const move = read();
     fighter.moveId = move >= 0 ? (character.moves[move]?.id ?? null) : null;
     fighter.hitWindows = read();
+    fighter.projectileSpawned = read() === 1;
     fighter.stunFrames = read();
     fighter.connected = read() === 1;
     fighter.hitstop = read();

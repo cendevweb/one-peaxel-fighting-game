@@ -64,6 +64,12 @@ export const CHARACTER_SOURCES: CharacterSource[] = [
         texture: 'akainu',
         file: 'akainu.png',
         scale: 1,
+        // The Meigō row draws each pose so close to the next that the magma
+        // ball of one touches the coat of the one behind it. Without this the
+        // row came out a frame short, with two of its frames holding two
+        // Akainus each — which is how the game ended up painting a second,
+        // motionless Akainu standing where the fireball should have been.
+        segment: { splitTouching: true },
         // The last row of the sheet is the ripper's credit banner and a large
         // character portrait, neither of which is a sprite. Left in, they merge
         // three rows of frames into one unusable band.
@@ -82,7 +88,7 @@ export const CHARACTER_SOURCES: CharacterSource[] = [
             // Read left to right this row shows the magma ball shrinking; it is the
             // ball being *formed*, drawn backwards. Played in sheet order the
             // punch ends with an empty fist.
-            { animation: 'meigo', band: 8, order: [6, 5, 4, 3, 2, 1, 0], frameRate: 13 },
+            { animation: 'meigo', band: 8, order: [8, 7, 6, 5, 4, 3, 2, 1, 0], frameRate: 13 },
             { animation: 'funka', band: 6, range: [0, 11], frameRate: 10 },
             { animation: 'reach', band: 41, range: [0, 8], frameRate: 14 },
             { animation: 'smash', band: 37, range: [0, 9], frameRate: 13 },

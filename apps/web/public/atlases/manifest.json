@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-09-20T03:05:16.949Z",
+  "generatedAt": "2026-09-20T13:38:37.992Z",
   "characters": [
     {
       "id": "akainu",
       "texture": "akainu",
       "source": "akainu.png",
-      "frameWidth": 292,
+      "frameWidth": 192,
       "frameHeight": 124,
       "plate": {
         "r": 88,
@@ -31,7 +31,7 @@
           "index": 2,
           "top": 187,
           "bottom": 246,
-          "frameCount": 11,
+          "frameCount": 13,
           "animation": "fx-magma"
         },
         {
@@ -71,7 +71,7 @@
           "index": 8,
           "top": 775,
           "bottom": 846,
-          "frameCount": 7,
+          "frameCount": 9,
           "animation": "meigo"
         },
         {
@@ -91,7 +91,7 @@
           "index": 11,
           "top": 1058,
           "bottom": 1248,
-          "frameCount": 8
+          "frameCount": 11
         },
         {
           "index": 12,
@@ -115,7 +115,7 @@
           "index": 15,
           "top": 1657,
           "bottom": 1735,
-          "frameCount": 12
+          "frameCount": 15
         },
         {
           "index": 16,
@@ -145,7 +145,7 @@
           "index": 20,
           "top": 2136,
           "bottom": 2204,
-          "frameCount": 10
+          "frameCount": 11
         },
         {
           "index": 21,
@@ -157,7 +157,7 @@
           "index": 22,
           "top": 2309,
           "bottom": 2422,
-          "frameCount": 17
+          "frameCount": 18
         },
         {
           "index": 23,
@@ -257,7 +257,7 @@
           "index": 38,
           "top": 3759,
           "bottom": 3822,
-          "frameCount": 17,
+          "frameCount": 18,
           "animation": "fx-burst"
         },
         {
@@ -331,7 +331,7 @@
           "index": 50,
           "top": 4892,
           "bottom": 4998,
-          "frameCount": 10
+          "frameCount": 11
         },
         {
           "index": 51,
@@ -391,7 +391,7 @@
           "index": 60,
           "top": 6165,
           "bottom": 6355,
-          "frameCount": 5
+          "frameCount": 10
         },
         {
           "index": 61,
@@ -403,13 +403,13 @@
           "index": 62,
           "top": 6444,
           "bottom": 6635,
-          "frameCount": 7
+          "frameCount": 9
         },
         {
           "index": 63,
           "top": 6644,
           "bottom": 6694,
-          "frameCount": 11
+          "frameCount": 12
         },
         {
           "index": 64,
@@ -433,7 +433,7 @@
           "index": 67,
           "top": 7121,
           "bottom": 7172,
-          "frameCount": 17
+          "frameCount": 18
         },
         {
           "index": 68,
@@ -583,6 +583,8 @@
         {
           "key": "akainu-meigo",
           "frames": [
+            "b8f8",
+            "b8f7",
             "b8f6",
             "b8f5",
             "b8f4",

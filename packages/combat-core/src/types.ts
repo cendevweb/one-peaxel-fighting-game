@@ -268,6 +268,12 @@ export interface FighterState {
     moveId: string | null;
     /** Active windows already consumed by this move, as a bitmask. */
     hitWindows: number;
+    /** True once the current move has emitted its projectile. A move emits one
+     *  and only one, however many times its spawn frame is read: hitstop holds
+     *  `stateFrame` still, so the frame is read again on every frame the freeze
+     *  lasts. Without this the special re-fired for as long as it kept
+     *  connecting, and no opponent ever got out. */
+    projectileSpawned: boolean;
     /** Remaining frames of hitstun or blockstun. */
     stunFrames: number;
     /** True once the current move has connected, which opens its cancels. */
