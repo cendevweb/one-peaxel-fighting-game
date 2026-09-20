@@ -92,7 +92,7 @@ export default function Page(): React.ReactElement {
         onOver: (message) => setResult(message)
     });
 
-    const { room, status, ping, call, sendInput, notice, forgetRoom } = socket;
+    const { room, status, detail, ping, call, sendInput, notice, forgetRoom } = socket;
 
     // Build the netcode client once the server has declared the match.
     useEffect(() => {
@@ -267,6 +267,7 @@ export default function Page(): React.ReactElement {
     return (
         <Lobby
             status={status}
+            detail={detail}
             room={room}
             nickname={nickname}
             ping={ping}

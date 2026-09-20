@@ -8,6 +8,8 @@ import { ControlsCard } from './ControlsCard';
 
 export interface LobbyProps {
     status: ConnectionStatus;
+    /** Why the connection failed, when the client can work it out. */
+    detail: string | null;
     room: RoomView | null;
     nickname: string;
     ping: number;
@@ -39,6 +41,7 @@ const STATUS_TEXT: Record<ConnectionStatus, string> = {
  */
 export function Lobby({
     status,
+    detail,
     room,
     nickname,
     ping,
@@ -84,6 +87,12 @@ export function Lobby({
                     {online && ping > 0 ? ` · ${ping} ms` : ''}
                 </span>
             </div>
+
+            {detail ? (
+                <p className="max-w-xl border border-danger/40 bg-danger/10 px-4 py-3 text-center text-sm text-muted">
+                    {detail}
+                </p>
+            ) : null}
 
             {room ? (
                 <section className="panel panel-accent w-full max-w-xl animate-rise p-6">

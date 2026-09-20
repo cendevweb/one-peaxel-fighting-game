@@ -28,8 +28,19 @@ type GameSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 const http = createServer((request, response) => {
     // Render polls this to decide whether the instance is alive, and a browser
     // hitting the socket URL directly should see something other than a 404.
-    if (request.url === '/health' || request.url === '/') {
-        response.writeHead(200, { 'content-type': 'application/json' });
+    const path = (request.url ?? '/').split('?')[0];
+    if (path === '/health' || path === '/') {
+        // Readable cross-origin, deliberately, and from any site: a client that
+        // cannot open its socket needs to find out whether the server is down
+        // or whether this origin is simply not on the allowlist, and a health
+        // check it cannot read answers neither question. The body carries no
+        // secret, and `originAllowed` below still guards the socket itself.
+        const origin = request.headers.origin;
+        response.writeHead(200, {
+            'content-type': 'application/json',
+            'access-control-allow-origin': '*',
+            'cache-control': 'no-store'
+        });
         response.end(
             JSON.stringify({
                 status: 'ok',
@@ -37,7 +48,15 @@ const http = createServer((request, response) => {
                 tickRate: TICK_RATE,
                 rooms: registry.size,
                 roster: CHARACTER_IDS,
-                uptime: Math.round(process.uptime())
+                uptime: Math.round(process.uptime()),
+                // What the caller actually needs to diagnose a refused socket:
+                // whether its own origin would be accepted. The allowlist is
+                // reported as a count, not as a list, so the endpoint answers
+                // the question without publishing the configuration.
+                origin: origin ?? null,
+                originAllowed: originAllowed(origin),
+                allowedOrigins: config.allowedOrigins.length,
+                originsAreDefault: config.originsAreDefault
             })
         );
         return;
@@ -327,4 +346,13 @@ http.listen(config.port, config.host, () => {
         tickRate: TICK_RATE,
         origins: config.allowedOrigins.join(',')
     });
+    // Nothing else in the boot log distinguishes "deployed correctly" from
+    // "deployed with the local default", and the second one refuses every
+    // browser that is not on localhost while looking perfectly healthy to a
+    // health check. Say so where whoever deployed it will read it.
+    if (config.originsAreDefault && process.env.NODE_ENV === 'production') {
+        log('warn', 'ALLOWED_ORIGINS is unset: only localhost may open a socket', {
+            origins: config.allowedOrigins.join(',')
+        });
+    }
 });

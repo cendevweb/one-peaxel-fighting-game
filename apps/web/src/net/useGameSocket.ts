@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
+import { connectionDiagnosis, serverUrl } from './diagnosis';
 import type {
     Ack,
     ClientToServerEvents,
@@ -20,9 +21,6 @@ export interface GameSocketHandlers {
     onSnapshot?: (message: SnapshotMessage) => void;
     onOver?: (message: MatchOverMessage) => void;
 }
-
-const serverUrl = (): string =>
-    process.env.NEXT_PUBLIC_GAME_SERVER_URL ?? 'http://localhost:8080';
 
 /**
  * The resume credential, in `sessionStorage` rather than `localStorage`.
@@ -64,6 +62,7 @@ const writeToken = (token: string | null): void => {
  */
 export function useGameSocket(handlers: GameSocketHandlers) {
     const [status, setStatus] = useState<ConnectionStatus>('connecting');
+    const [detail, setDetail] = useState<string | null>(null);
     const [room, setRoom] = useState<RoomView | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
     const [ping, setPing] = useState(0);
@@ -72,8 +71,15 @@ export function useGameSocket(handlers: GameSocketHandlers) {
     handlersRef.current = handlers;
 
     useEffect(() => {
-        const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(serverUrl(), {
+        const url = serverUrl();
+        const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
             transports: ['websocket', 'polling'],
+            // Without this, the list above is not a list: engine.io tries only
+            // its first entry and gives up on failure, so a network that blocks
+            // WebSocket — a company proxy, some mobile carriers — reports a
+            // perfectly healthy server as unreachable instead of falling back
+            // to polling. It defaults to false, which is why it is spelled out.
+            tryAllTransports: true,
             reconnectionAttempts: 8,
             reconnectionDelay: 700,
             timeout: 8000
@@ -86,6 +92,7 @@ export function useGameSocket(handlers: GameSocketHandlers) {
         // where there is simply nothing to trade.
         socket.on('connect', () => {
             setStatus('online');
+            setDetail(null);
             const token = readToken();
             if (!token) {
                 return;
@@ -107,7 +114,18 @@ export function useGameSocket(handlers: GameSocketHandlers) {
             );
         });
         socket.on('disconnect', () => setStatus('offline'));
-        socket.on('connect_error', () => setStatus('error'));
+        socket.on('connect_error', (cause) => {
+            setStatus('error');
+            setDetail(
+                connectionDiagnosis(url, typeof window === 'undefined' ? null : window.location.origin) ??
+                    // Nothing the page can check explains it, so the server is
+                    // either down or refusing this origin. `/health` answers
+                    // which, and it is readable cross-origin for that reason.
+                    `Connexion à ${url} refusée (${cause.message}). Si le serveur répond sur ${url}/health, c'est son ALLOWED_ORIGINS qui ne contient pas ${
+                        typeof window === 'undefined' ? 'ce domaine' : window.location.origin
+                    }.`
+            );
+        });
         socket.on('session:token', ({ token }) => writeToken(token));
 
         socket.on('room:state', (view) => setRoom(view));
@@ -176,6 +194,7 @@ export function useGameSocket(handlers: GameSocketHandlers) {
     return useMemo(
         () => ({
             status,
+            detail,
             room,
             notice,
             ping,
@@ -184,6 +203,6 @@ export function useGameSocket(handlers: GameSocketHandlers) {
             forgetRoom,
             clearNotice: () => setNotice(null)
         }),
-        [status, room, notice, ping, call, sendInput, forgetRoom]
+        [status, detail, room, notice, ping, call, sendInput, forgetRoom]
     );
 }
