@@ -9,7 +9,7 @@ chaque ligne « Vérifié » a été jouée dans un navigateur.
 
 | Élément | État | Vérification |
 | --- | --- | --- |
-| Moteur de combat | Fait | 36 tests : mouvements, frames, garde, combos, jauge, projectiles, KO, déterminisme, re-simulation. |
+| Moteur de combat | Fait | 40 tests : mouvements, frames, garde, combos, jauge, projectiles, KO, déterminisme, re-simulation. |
 | Ressources | Fait | 5 tests reliant chaque animation et chaque arène citées par le jeu au manifeste publié. |
 | Serveur temps réel | Fait | 27 tests : salons, sélection, synchronisation, fin de match, revanche, déconnexion, checksum d'instantané. |
 | Client web | Fait | Build de production Next.js, puis parcours complet joué dans deux contextes de navigateur indépendants. |

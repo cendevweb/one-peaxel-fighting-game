@@ -241,6 +241,8 @@ export class FightScene extends Phaser.Scene {
                 return { key: names.walk, progress: 0, loop: true };
             case 'walkBack':
                 return { key: names.walkBack, progress: 0, loop: true };
+            case 'guard':
+                return { key: names.guard, progress: 0, loop: true };
             case 'jumpRise':
             case 'jumpFall':
                 return { key: names.jumpRise, progress: Phaser.Math.Clamp(fighter.stateFrame / 26, 0, 1), loop: false };

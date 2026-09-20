@@ -222,19 +222,75 @@ describe('attacks and damage', () => {
 });
 
 describe('guarding', () => {
-    it('blocks when holding away and only takes chip damage', () => {
+    it('blocks when holding the guard button and only takes chip damage', () => {
         const harness = skipIntro(startHarness());
         placeFighters(harness, 600, 660);
         advance(harness, 1);
         const jab = ROSTER.luffy!.moves.find((move) => move.slot === 'light')!;
         const before = harness.state.fighters[1].health;
 
+        tick(harness, [Button.Light, Button.Guard]);
+        advance(harness, 10, [0, Button.Guard]);
+
+        expect(harness.state.fighters[1].health).toBe(before - jab.hit.chipDamage);
+        expect(eventsOfType(harness.events, 'block')).not.toHaveLength(0);
+    });
+
+    it('does not block on the back direction alone', () => {
+        const harness = skipIntro(startHarness());
+        placeFighters(harness, 600, 660);
+        advance(harness, 1);
+        const before = harness.state.fighters[1].health;
+
         // Fighter 1 stands to the right, so holding Right is holding away.
         tick(harness, [Button.Light, Button.Right]);
         advance(harness, 10, [0, Button.Right]);
 
-        expect(harness.state.fighters[1].health).toBe(before - jab.hit.chipDamage);
-        expect(eventsOfType(harness.events, 'block')).not.toHaveLength(0);
+        expect(harness.state.fighters[1].health).toBeLessThan(before - 10);
+        expect(eventsOfType(harness.events, 'block')).toHaveLength(0);
+    });
+
+    it('holds the fighter still while the guard is up', () => {
+        const harness = skipIntro(startHarness());
+        placeFighters(harness, 600, 660);
+        advance(harness, 1);
+        const before = harness.state.fighters[1].x;
+
+        // Guard beats every direction held at the same time.
+        advance(harness, 12, [0, Button.Guard | Button.Right | Button.Left | Button.Up]);
+
+        expect(harness.state.fighters[1].x).toBe(before);
+        expect(harness.state.fighters[1].state).toBe('guard');
+        expect(harness.state.fighters[1].airborne).toBe(false);
+    });
+
+    it('lets a fighter attack straight out of the guard', () => {
+        const harness = skipIntro(startHarness());
+        placeFighters(harness, 600, 655);
+        advance(harness, 1);
+        advance(harness, 6, [0, Button.Guard]);
+        expect(harness.state.fighters[1].state).toBe('guard');
+
+        advance(harness, 3, [0, Button.Light]);
+        expect(harness.state.fighters[1].state).toBe('attack');
+    });
+
+    it('keeps the guard up across a multi-hit string', () => {
+        const harness = skipIntro(startHarness());
+        placeFighters(harness, 600, 660);
+        advance(harness, 1);
+
+        tick(harness, [Button.Light, Button.Guard]);
+        advance(harness, 4, [0, Button.Guard]);
+        expect(harness.state.fighters[1].state).toBe('blockstun');
+        expect(harness.state.fighters[1].guarding).toBe(true);
+
+        // Releasing it mid-string opens the fighter up again. The first few
+        // frames after a blocked hit are hitstop, which freezes the input
+        // buffer rather than reading it, so the release lands once it clears.
+        advance(harness, 5, [0, 0]);
+        expect(harness.state.fighters[1].state).toBe('blockstun');
+        expect(harness.state.fighters[1].guarding).toBe(false);
     });
 
     it('cannot block in the air', () => {
@@ -246,8 +302,8 @@ describe('guarding', () => {
         harness.state.fighters[1].y = 70 << 6;
         const before = harness.state.fighters[1].health;
 
-        tick(harness, [Button.Light, Button.Right]);
-        advance(harness, 10, [0, Button.Right]);
+        tick(harness, [Button.Light, Button.Guard]);
+        advance(harness, 10, [0, Button.Guard]);
         expect(harness.state.fighters[1].health).toBeLessThan(before - 10);
     });
 });

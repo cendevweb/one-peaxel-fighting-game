@@ -132,7 +132,10 @@ const risingEdge = (fighter: FighterState, button: number, window: number): bool
 };
 
 export const isNeutralState = (fighter: FighterState): boolean =>
-    fighter.state === 'idle' || fighter.state === 'walk' || fighter.state === 'walkBack';
+    fighter.state === 'idle' ||
+    fighter.state === 'walk' ||
+    fighter.state === 'walkBack' ||
+    fighter.state === 'guard';
 
 /** States in which a fighter may start a new action. */
 export const isActionable = (fighter: FighterState): boolean =>
@@ -298,9 +301,9 @@ const updateFighter = (
 
     switch (fighter.state) {
         case 'blockstun': {
-            // Holding back keeps the guard up, so a multi-hit string is
-            // blocked as one string instead of opening up after hit one.
-            fighter.guarding = (input & backButton) !== 0;
+            // Holding guard keeps it up, so a multi-hit string is blocked as
+            // one string instead of opening up after hit one.
+            fighter.guarding = (input & Button.Guard) !== 0;
             if (fighter.stateFrame >= fighter.stunFrames) {
                 fighter.state = fighter.airborne ? 'jumpFall' : 'idle';
                 fighter.stateFrame = 0;
@@ -407,6 +410,21 @@ const updateFighter = (
             const holdingBack = (input & backButton) !== 0;
             const holdingForward = (input & forwardButton) !== 0;
 
+            // The guard is a button of its own, and it wins over everything a
+            // direction could ask for: a player holding it is asking to stand
+            // still and take the hit, whatever else their other hand is doing.
+            // Walking back is therefore only walking back, and a guard can be
+            // held while running away is no longer an option.
+            if ((input & Button.Guard) !== 0) {
+                fighter.guarding = true;
+                fighter.vx = 0;
+                if (fighter.state !== 'guard') {
+                    fighter.state = 'guard';
+                    fighter.stateFrame = 0;
+                }
+                break;
+            }
+
             if ((input & Button.Up) !== 0 && (fighter.lastInput & Button.Up) === 0) {
                 fighter.airborne = true;
                 fighter.state = 'jumpRise';
@@ -422,7 +440,6 @@ const updateFighter = (
             }
 
             if (holdingBack) {
-                fighter.guarding = true;
                 fighter.vx = -px(stats.backSpeed) * towardsOpponent;
                 if (fighter.state !== 'walkBack') {
                     fighter.state = 'walkBack';
@@ -643,7 +660,7 @@ const applyHit = (
 
     const attackerSide: 1 | -1 = attacker.x <= victim.x ? 1 : -1;
     // A guard only works on the ground, only against blockable hits, and only
-    // while the victim is holding away from the attacker.
+    // while the victim is holding the guard button.
     const blocking = victim.guarding && !properties.unblockable && !victim.airborne;
 
     if (blocking) {

@@ -28,6 +28,7 @@ export type FighterStateId =
     | 'idle'
     | 'walk'
     | 'walkBack'
+    | 'guard'
     | 'jumpRise'
     | 'jumpFall'
     | 'land'

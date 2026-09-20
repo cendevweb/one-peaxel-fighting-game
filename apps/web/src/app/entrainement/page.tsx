@@ -72,7 +72,7 @@ export default function TrainingPage(): React.ReactElement {
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent): void => {
-            if (event.code === 'KeyH' && event.shiftKey) {
+            if (event.code === 'KeyB' && event.shiftKey) {
                 setHitboxes((current) => !current);
             }
         };
@@ -196,7 +196,7 @@ export default function TrainingPage(): React.ReactElement {
                 </div>
 
                 <p className="label">
-                    Maj + H affiche les boîtes de collision · Joueur 2 au pavé numérique
+                    Maj + B affiche les boîtes de collision · Joueur 2 au pavé numérique
                 </p>
             </main>
         );
@@ -261,7 +261,7 @@ export default function TrainingPage(): React.ReactElement {
                     </div>
                     <p className="mt-4 text-xs leading-relaxed text-muted">
                         Les deux combattants partagent ce clavier. Le joueur 1 utilise les flèches et J/K/L,
-                        le joueur 2 le pavé numérique. Maj + H affiche les boîtes de collision pendant le
+                        le joueur 2 le pavé numérique. Maj + B affiche les boîtes de collision pendant le
                         combat.
                     </p>
                     <Link href="/" className="btn mt-4 inline-block">

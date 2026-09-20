@@ -74,7 +74,7 @@ export default function Page(): React.ReactElement {
     // tuning frame data, and invisible to everyone else.
     useEffect(() => {
         const onKey = (event: KeyboardEvent): void => {
-            if (event.code === 'KeyH' && event.shiftKey) {
+            if (event.code === 'KeyB' && event.shiftKey) {
                 setHitboxes((current) => !current);
             }
         };

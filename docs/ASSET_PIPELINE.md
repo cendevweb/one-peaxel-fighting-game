@@ -109,7 +109,7 @@ configurée** plutôt que par bande, ce qui est ce qu'on veut relire après avoi
 touché `characters.config.ts`. Mais une planche-contact ne dit rien de
 l'ancrage ni du rythme : ça, il faut le voir en jeu. La salle
 d'entraînement (`/entrainement`) sert à ça, boîtes de collision comprises avec
-Maj + H. Elles ont servi à trouver que le `gear3` de Luffy incluait
+Maj + B. Elles ont servi à trouver que le `gear3` de Luffy incluait
 des frames de poing géant tronquées, que la `walk` d'Enel embarquait une
 étiquette de texte, et que la garde de Crocodile pointait sur une rangée de
 marche.
