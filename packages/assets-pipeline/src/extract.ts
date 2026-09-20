@@ -205,7 +205,13 @@ export const extractCharacter = (analysed: AnalysedSheet, sourceFile: string): E
         const band = bands.find((entry) => entry.index === mapping.band);
         if (!band) {
             warnings.push(`La bande ${mapping.band} (${mapping.animation}) n'existe pas dans la planche.`);
-            return { key, frames: [], frameRate: mapping.frameRate, repeat: mapping.repeat ?? 0 };
+            return {
+                key,
+                frames: [],
+                frameRate: mapping.frameRate,
+                repeat: mapping.repeat ?? 0,
+                ...(mapping.flip ? { flip: true } : {})
+            };
         }
 
         const indices = mapping.order
@@ -232,7 +238,13 @@ export const extractCharacter = (analysed: AnalysedSheet, sourceFile: string): E
             warnings.push(`${mapping.animation} : aucune frame retenue.`);
         }
 
-        return { key, frames: names, frameRate: mapping.frameRate, repeat: mapping.repeat ?? 0 };
+        return {
+            key,
+            frames: names,
+            frameRate: mapping.frameRate,
+            repeat: mapping.repeat ?? 0,
+            ...(mapping.flip ? { flip: true } : {})
+        };
     });
 
     const manifest: CharacterManifest = {

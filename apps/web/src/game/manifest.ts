@@ -4,6 +4,8 @@ export interface ManifestAnimation {
     frames: string[];
     frameRate: number;
     repeat: number;
+    /** The source row faces the other way; the renderer mirrors it back. */
+    flip?: boolean;
 }
 
 export interface ManifestCharacter {

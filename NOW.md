@@ -51,3 +51,22 @@ Restent deux valeurs que seul Dylan peut fournir :
 - `npm install --legacy-peer-deps`, jamais `npm install` seul.
 - Dépôt **public** : aucun secret, aucune clé.
 - `NEXT_PUBLIC_GAME_SERVER_URL` est figée à la compilation du client.
+
+## Refonte des attaques et des animations (20 septembre 2026)
+
+Branche `refonte-attaques-animations`. Les trente coups du jeu ont été repris.
+
+- L'animation d'une attaque est calée sur sa frame d'impact et se termine avec
+  le move ; avant, aucune attaque n'avait son image de contact au moment où sa
+  boîte s'ouvrait.
+- Les effets des planches (magma, sable, foudre, ondes de choc) sont publiés
+  et attachés aux coups ; chaque personnage a ses propres étincelles, au lieu
+  de celles de Luffy pour tout le monde.
+- Les ultimes jouent enfin le bon geste : le Raigo d'Enel, la Dai Funka
+  d'Akainu, le Desert Girasole de Crocodile, le Rokuōgan de Lucci et le pied
+  géant du Gear 3.
+- Les portées ont été remesurées sur les planches et les boîtes redimensionnées
+  en conséquence.
+
+Validé image par image dans un navigateur, boîtes de collision affichées, pour
+les six coups de chacun des cinq personnages.

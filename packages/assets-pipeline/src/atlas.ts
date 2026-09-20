@@ -52,6 +52,8 @@ export interface CharacterManifest {
         frames: string[];
         frameRate: number;
         repeat: number;
+        /** The source row is drawn facing the other way; mirror it. */
+        flip?: boolean;
     }>;
     /** Frames that exist in the atlas but are not used by any animation. */
     unusedFrames: string[];

@@ -92,3 +92,59 @@ non libres de droits, et exclues de la licence du dépôt.
 Le pipeline est conçu pour qu'elles soient remplaçables sans toucher au jeu :
 un déploiement public demande soit une autorisation, soit des ressources
 originales.
+
+## L'animation d'attaque est calée sur la frame d'impact
+
+**Décision.** Une attaque ne joue plus son animation étalée sur sa durée. Le
+move déclare `impactFrame`, l'image de la planche où le coup porte, et le
+rendu garantit deux choses : cette image est à l'écran exactement à la
+première frame active, et l'image finale tombe exactement à la dernière frame
+du move.
+
+**Pourquoi.** L'ancien calcul était `frame = progress × nbFrames`. Sur les
+trente moves du jeu, aucun n'avait son image de contact au moment où sa boîte
+s'ouvrait : le Pistolet de Luffy touchait pendant que le bras partait encore,
+le Rankyaku de Lucci pendant que la jambe descendait. C'est ce décalage qui
+donnait l'impression que « la portée et l'impact sont mauvais » alors que les
+boîtes, elles, étaient plausibles. Étaler la queue de l'animation sur la
+récupération plutôt que la jouer à sa cadence propre évite l'autre moitié du
+problème : l'animation arrivait à sa dernière image au milieu du move et la
+figeait jusqu'à la fin.
+
+## Les effets appartiennent au move, pas au moteur
+
+**Décision.** Un move porte une liste d'`effects` — clé d'animation, frame
+d'apparition, décalage, échelle, `behind`, `follow`, `hold` — et chaque
+personnage porte ses propres `hitEffects` (léger, lourd, garde). Tout cela est
+purement graphique : rien n'entre dans la simulation ni dans le checksum.
+
+**Pourquoi.** Les planches rangent les effets sur les rangées voisines du
+personnage : huit rangées de magma à côté d'Akainu, le sable à côté de
+Crocodile, la foudre à côté d'Enel. Rien de tout cela n'était publié, et
+chaque coup du jeu, quel que soit le personnage, affichait l'étincelle de
+Luffy. Attacher l'effet au move est le seul endroit où l'information existe :
+c'est le move qui sait à quelle frame le magma jaillit.
+
+## Certaines rangées sont dessinées à l'envers, ou dans l'autre sens
+
+**Décision.** Une animation peut déclarer `flip` (miroir horizontal) et
+`order` (ordre de lecture explicite des frames de la bande).
+
+**Pourquoi.** Le rip n'est pas cohérent : le Pistolet de Luffy est dessiné
+vers la gauche alors que sa Gatling va vers la droite, et le Meigō d'Akainu
+comme le Rokuōgan de Lucci sont dessinés de droite à gauche — lus dans le sens
+de la planche, la boule de magma rétrécit au lieu de grossir. Corriger cela au
+rendu pour un personnage entier casserait les autres rangées ; c'est donc une
+propriété par animation.
+
+## Le Gear 3 joue le pied géant, pas le gonflage de bras
+
+**Décision.** `luffy-gigant` pointe sur la bande 41 (le pied géant qui
+retombe, Luffy debout dessus) et non sur la bande 40 ni sur la bande 43.
+
+**Pourquoi.** Les bandes 40 et 43 sont dessinées bien au-dessus de la ligne de
+sol de leur rangée et finissent toutes deux sur du flou de mouvement pleine
+hauteur. En jeu, Luffy flottait au-dessus du sol et la dernière image devenait
+une barre jaune en travers de l'écran, tenue pendant toute la récupération. La
+bande 41 est posée sur sa propre ligne de sol et finit sur une pose qui
+supporte d'être tenue.

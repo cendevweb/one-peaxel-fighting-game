@@ -74,6 +74,50 @@ const contactBands = async (characterId: string): Promise<void> => {
     }
 };
 
+/**
+ * One contact sheet per *animation*, not per band. A band tells you what the
+ * rip contains; an animation tells you what the game will actually play, after
+ * the range, the ordering and the trimming have been applied. Reading the band
+ * and assuming the animation follows is how a move ends up opening on a text
+ * label or closing three frames before its own impact.
+ */
+const contactAnimations = async (characterId?: string): Promise<void> => {
+    await mkdir(contactDir, { recursive: true });
+    for (const source of CHARACTER_SOURCES) {
+        if (characterId && source.id !== characterId) {
+            continue;
+        }
+        const analysed = await analyseSheet(source, join(sheetsDir, source.file));
+        for (const mapping of source.bands) {
+            const band = analysed.bands.find((entry) => entry.index === mapping.band);
+            if (!band) {
+                console.warn(`${source.id}/${mapping.animation}: bande ${mapping.band} absente`);
+                continue;
+            }
+            const indices = mapping.order
+                ? mapping.order
+                : Array.from(
+                      { length: (mapping.range?.[1] ?? band.frames.length - 1) - (mapping.range?.[0] ?? 0) + 1 },
+                      (_, offset) => (mapping.range?.[0] ?? 0) + offset
+                  );
+            const frames = indices
+                .map((index) => band.frames[index])
+                .filter((frame): frame is NonNullable<typeof frame> => frame !== undefined)
+                .map((frame, index) => ({ ...frame, index }));
+            if (frames.length === 0) {
+                console.warn(`${source.id}/${mapping.animation}: aucune frame`);
+                continue;
+            }
+            const sheet = renderContactSheet(analysed.image, analysed.plate, [{ ...band, frames }]);
+            const out = join(contactDir, `${source.id}-anim-${mapping.animation}.png`);
+            await writePng(sheet, out);
+            console.log(
+                `${out}  ${frames.length} frames  bande ${mapping.band}  ${sheet.width}x${sheet.height}`
+            );
+        }
+    }
+};
+
 const publishStages = async (): Promise<AssetManifest['stages']> => {
     await mkdir(stagesDir, { recursive: true });
     const published: AssetManifest['stages'] = [];
@@ -164,12 +208,15 @@ const main = async (): Promise<void> => {
                 await contact();
             }
             break;
+        case 'contact-anim':
+            await contactAnimations(argument);
+            break;
         case 'extract':
         case undefined:
             await extract();
             break;
         default:
-            console.error(`Commande inconnue : ${command}\nUtilisation : opfg-sprites <analyse|contact [perso]|extract>`);
+            console.error(`Commande inconnue : ${command}\nUtilisation : opfg-sprites <analyse|contact [perso]|contact-anim [perso]|extract>`);
             process.exitCode = 2;
     }
 };

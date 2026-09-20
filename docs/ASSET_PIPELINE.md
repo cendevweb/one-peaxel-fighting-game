@@ -69,25 +69,47 @@ Un seul fichier : `characters.config.ts`. Il dit, pour chaque personnage,
 quelle bande et quelles frames forment quelle animation :
 
 ```ts
-luffy: {
-    gear3: { band: 14, frames: [0, 5], frameRate: 9 }
-}
+{ animation: 'gigant', band: 41, range: [0, 4], frameRate: 10 },
+{ animation: 'pistol', band: 8, range: [0, 6], frameRate: 15, flip: true },
+{ animation: 'meigo', band: 8, order: [6, 5, 4, 3, 2, 1, 0], frameRate: 13 },
 ```
 
-C'est irréductible : aucune analyse d'image ne peut deviner que la bande 14
+C'est irréductible : aucune analyse d'image ne peut deviner que la bande 41
 est un Gear 3 plutôt qu'une garde. Le reste — où sont les bandes, où sont les
 frames, où est le sol — est déduit.
+
+Trois propriétés servent à rattraper ce que le rip fait de travers :
+
+- `range` limite la bande aux frames qui appartiennent vraiment au coup ;
+- `order` donne un ordre de lecture explicite, pour les rangées dessinées de
+  droite à gauche — le Meigō d'Akainu et le Rokuōgan de Lucci y montrent
+  sinon une boule d'énergie qui rétrécit ;
+- `flip` retourne l'animation, pour les rangées dessinées dans l'autre sens :
+  le Pistolet de Luffy part vers la gauche alors que sa Gatling va vers la
+  droite, sur la même planche.
+
+Une rangée peut aussi être inutilisable pour une raison qui ne se voit qu'en
+jeu : les bandes 40 et 43 de Luffy sont dessinées au-dessus de la ligne de sol
+de leur rangée, ce qui le fait flotter, et finissent sur du flou de mouvement
+pleine hauteur, qui devient une barre en travers de l'écran dès qu'il est
+tenu. C'est pour cela que le Gear 3 joue la bande 41.
 
 ## Vérifier
 
 ```
 npm run assets -- analyse            # ce que le découpage a trouvé
-npm run assets -- contact luffy      # planches-contact à regarder
+npm run assets -- contact luffy      # une planche-contact par bande
+npm run contact-anim --workspace @opfg/assets-pipeline luffy   # par animation
 npm run assets -- extract            # publie les atlas
 ```
 
-Les planches-contact sont la seule façon honnête de valider ce travail : il
-faut les regarder. Elles ont servi à trouver que le `gear3` de Luffy incluait
+Les planches-contact sont la première façon honnête de valider ce travail :
+il faut les regarder. `contact-anim` rend une planche par **animation
+configurée** plutôt que par bande, ce qui est ce qu'on veut relire après avoir
+touché `characters.config.ts`. Mais une planche-contact ne dit rien de
+l'ancrage ni du rythme : ça, il faut le voir en jeu. La salle
+d'entraînement (`/entrainement`) sert à ça, boîtes de collision comprises avec
+Maj + H. Elles ont servi à trouver que le `gear3` de Luffy incluait
 des frames de poing géant tronquées, que la `walk` d'Enel embarquait une
 étiquette de texte, et que la garde de Crocodile pointait sur une rangée de
 marche.

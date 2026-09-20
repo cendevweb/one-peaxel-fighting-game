@@ -48,6 +48,30 @@ ne correspond pas à la première frame active, une fenêtre active qui déborde
 de la durée. Une faute de frappe dans les données ne devient pas un bug de
 gameplay six semaines plus tard.
 
+Trois champs de plus ne servent qu'à l'affichage et n'entrent jamais dans la
+simulation ni dans le checksum :
+
+```ts
+impactFrame: 4,            // l'image de la planche où le coup porte
+effects: [                 // ce que le coup met à l'écran, et quand
+    { animation: 'akainu-fx-magma', frame: 18, offsetX: 176, offsetY: 70, scale: 1.8 }
+],
+impactEffect: { animation: 'akainu-fx-spikes', scale: 2 }
+```
+
+`impactFrame` est ce qui relie le dessin au frame data : le rendu met cette
+image à l'écran exactement à la première frame active, puis étale ce qui reste
+de l'animation sur la récupération. Sans lui, une animation de neuf images
+étalée sur un move de cinquante frames montre n'importe quelle image au moment
+du contact.
+
+`effects` sont les rangées voisines de la planche — le magma, le sable, la
+foudre — posées à une frame et à un décalage donnés. `offsetX` est compté vers
+l'avant du combattant, `offsetY` vers le haut depuis ses pieds ; `behind` passe
+l'effet derrière lui, `follow` le fait suivre, `hold` garde la dernière image
+quelques frames de plus. `impactEffect` remplace, pour ce coup-là, l'étincelle
+par défaut du personnage (`hitEffects`).
+
 ## Les boîtes
 
 Trois familles, toutes en AABB, toutes écrites **face à droite** et miroitées
@@ -116,10 +140,26 @@ Les cinq sont des données. Akainu a été ajouté après coup, et cela a
 effectivement coûté ce que cette page promettait : un fichier de données, une
 entrée dans la configuration du pipeline, aucune ligne de moteur.
 
-## Ce que les planches ne permettent pas
+## Ce que les planches permettent, et ce qu'elles ne permettent pas
 
-Seul Luffy a un jeu complet dans les planches d'origine. Les trois autres
-n'ont que deux animations d'attaque exploitables chacune, et leurs coups
-réutilisent donc les mêmes images avec des propriétés différentes. C'est écrit
-dans `spriteNotes`, visible sur l'écran de sélection, et ce n'est pas présenté
-comme autre chose.
+Les cinq combattants ont maintenant **six animations d'attaque distinctes
+chacun**, plus leurs effets. Ce n'était pas le cas au premier jet : trois
+personnages réutilisaient deux rangées pour six coups, parce que les rangées
+suivantes n'avaient pas été cartographiées. Les planches en contenaient
+soixante-quinze pour Akainu seul.
+
+Ce que les planches ne donnent toujours pas :
+
+- **Pas de rangée de récupération pour tous les coups.** Certaines rangées
+  s'arrêtent sur le contact ; l'animation étale alors ses dernières images sur
+  la récupération plutôt que d'en inventer.
+- **Des rangées inutilisables.** Certaines sont dessinées au-dessus de la
+  ligne de sol de leur propre rangée, d'autres finissent sur du flou de
+  mouvement pleine hauteur, d'autres encore mélangent les deux sens dans une
+  même rangée. Elles sont écartées, et la raison est écrite dans
+  `characters.config.ts` à l'endroit du choix.
+- **Pas d'effet détachable pour tout.** Un effet n'est publié que si la
+  rangée le dessine seul ; celles où le personnage est dedans (les plumes de
+  Lucci, par exemple) ne peuvent pas servir d'effet.
+
+Ce qui reste est écrit dans `spriteNotes`, visible sur l'écran de sélection.
