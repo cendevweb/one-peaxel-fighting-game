@@ -29,7 +29,18 @@ Vercel qui n'existe pas encore :
 Render fournit `PORT` tout seul. `NODE_VERSION` est fixé à 22.
 
 Vérifier ensuite que `https://<service>.onrender.com/health` répond
-`{"status":"ok",...}`.
+`{"status":"ok",...}`. En y ajoutant l'origine du site, la réponse dit aussi si
+ce site serait accepté, ce qui est la seule façon de contrôler `ALLOWED_ORIGINS`
+sans ouvrir le tableau de bord :
+
+```
+curl -H 'Origin: https://<le-domaine-du-site>' https://<service>.onrender.com/health
+```
+
+`"originAllowed": false` veut dire que le socket sera refusé et que la page
+affichera « Serveur injoignable » alors que le serveur va très bien.
+`"originsAreDefault": true` veut dire que la variable n'a jamais été
+renseignée.
 
 **Le plan gratuit de Render endort un service inactif.** Le premier joueur à
 arriver attendra la reprise, une trentaine de secondes. Pour un jeu en temps
@@ -67,7 +78,28 @@ Reste une variable à renseigner :
 | `NEXT_PUBLIC_GAME_SERVER_URL` | `https://<service>.onrender.com` |
 
 **Cette variable est figée dans le bundle du navigateur à la compilation.** La
-changer demande un redéploiement, pas un redémarrage.
+changer demande un redéploiement, pas un redémarrage. Elle doit commencer par
+`https://` : depuis une page en HTTPS, le navigateur refuse une adresse en
+`http://` sans le dire, et la page ne peut que rapporter un serveur
+injoignable. Une valeur vide compte comme absente.
+
+## Si la page dit « Serveur injoignable »
+
+Commencer par établir si le serveur est réellement en panne, parce que la
+réponse est le plus souvent non :
+
+1. `https://<service>.onrender.com/health` répond-il `status: ok` ? Si oui, le
+   serveur est vivant et la cause est dans le chemin du client.
+2. La page nomme-t-elle une raison sous le bandeau rouge ? Elle reconnaît les
+   deux erreurs qu'elle peut voir : un client compilé sans adresse de serveur,
+   et une adresse en `http://` servie depuis une page en `https://`.
+3. Sinon, interroger `/health` avec l'origine du site, comme au point 1 :
+   `originAllowed: false` désigne `ALLOWED_ORIGINS` sur Render.
+
+Le plan gratuit de Render endort un service inactif : une première requête peut
+mettre une trentaine de secondes sans que rien ne soit cassé. `uptime` dans la
+réponse de `/health` distingue un réveil d'un service qui tourne depuis
+longtemps.
 
 ## 3. Vérifier
 

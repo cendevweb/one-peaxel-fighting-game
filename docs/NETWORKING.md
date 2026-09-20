@@ -111,11 +111,45 @@ une arène figée un décompte qui n'avait pas commencé.
 | Variable | Défaut | Ce qu'elle fait |
 | --- | --- | --- |
 | `PORT` | 8080 | Port d'écoute. Render le fournit. |
-| `ALLOWED_ORIGINS` | — | Origines autorisées, séparées par des virgules. Les domaines de prévisualisation Vercel sont acceptés par joker. |
+| `ALLOWED_ORIGINS` | `http://localhost:3000` | Origines autorisées, séparées par des virgules. Les domaines de prévisualisation Vercel sont acceptés par joker (`https://*.vercel.app`). Le slash final et les majuscules sont ignorés. |
 | `INPUT_DELAY` | 3 | Frames de délai d'entrée. |
 | `SNAPSHOT_INTERVAL` | 3 | Frames entre deux instantanés. |
 | `RECONNECT_GRACE_MS` | 12000 | Délai de grâce après une déconnexion. |
 | `NEXT_PUBLIC_GAME_SERVER_URL` | `http://localhost:8080` | Côté client, **figée à la compilation**. |
+
+## Diagnostiquer une connexion qui échoue
+
+Le client n'a qu'un mot pour tout ce qui rate avant le premier paquet :
+« Serveur injoignable ». Trois causes distinctes produisent ce mot, et deux
+sont des réglages, pas des pannes. La page en nomme deux toute seule, parce
+qu'elle peut les voir sans rien demander :
+
+- le client a été compilé sans `NEXT_PUBLIC_GAME_SERVER_URL` et appelle donc
+  `http://localhost:8080` depuis un site en ligne ;
+- l'adresse du serveur est en `http://` alors que la page est en `https://`, et
+  le navigateur refuse le contenu mixte sans le dire.
+
+La troisième ne se voit que du serveur : l'origine du site n'est pas dans
+`ALLOWED_ORIGINS`. C'est à cela que `/health` répond.
+
+```
+curl -H 'Origin: https://<le-domaine-du-site>' https://<service>.onrender.com/health
+```
+
+```json
+{ "status": "ok", "originAllowed": false, "allowedOrigins": 1, "originsAreDefault": true }
+```
+
+`originAllowed` dit si ce site précis serait accepté ; `originsAreDefault` dit
+que personne n'a renseigné `ALLOWED_ORIGINS` et que le serveur en est resté au
+défaut local. L'endpoint est lisible depuis n'importe quelle origine, exprès :
+un contrôle de santé qu'un client en échec ne peut pas lire ne répond à aucune
+des deux questions. Il ne publie pas la liste des origines, seulement leur
+nombre.
+
+Un serveur qui répond `status: ok` n'est pas en panne. Si la page dit malgré
+tout « Serveur injoignable », le problème est dans le chemin du client, pas
+dans le serveur.
 
 ## Les limites connues
 

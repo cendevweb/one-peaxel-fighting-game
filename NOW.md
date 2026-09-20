@@ -70,3 +70,38 @@ Branche `refonte-attaques-animations`. Les trente coups du jeu ont été repris.
 
 Validé image par image dans un navigateur, boîtes de collision affichées, pour
 les six coups de chacun des cinq personnages.
+
+## Serveur Render injoignable (20 septembre 2026)
+
+Branche `claude/project-thread-6i2dgq`. Le serveur n'était pas en panne :
+`https://opfg-game-server.onrender.com/health` répondait `status: ok` avec neuf
+heures de fonctionnement, et le handshake Socket.IO aboutissait. « Serveur
+injoignable » venait donc du client. Trois causes, toutes corrigées ou rendues
+visibles :
+
+- **Le repli de transport ne se faisait pas.** Le client demandait
+  `transports: ['websocket', 'polling']`, mais `tryAllTransports` vaut `false`
+  par défaut dans engine.io : un seul transport était essayé et un échec du
+  WebSocket abandonnait la connexion au lieu de passer au long-polling. Un
+  réseau qui bloque les WebSockets rendait donc un serveur en parfaite santé
+  injoignable. `tryAllTransports: true` est maintenant explicite.
+- **Deux réglages muets.** Une valeur vide de `NEXT_PUBLIC_GAME_SERVER_URL`
+  était traitée comme une valeur, et une adresse en `http://` depuis une page
+  HTTPS est bloquée par le navigateur sans un mot. La page nomme désormais ces
+  deux cas sous le bandeau, avec le geste à faire.
+- **`ALLOWED_ORIGINS` intolérant.** Une entrée écrite `https://site/` — ce que
+  donne une barre d'adresse — ne correspondait à rien, puisque le navigateur
+  envoie l'origine sans slash final. Le slash et la casse sont maintenant
+  ignorés des deux côtés, et le joker ne peut plus être détourné par un domaine
+  sosie (`evil-vercel.app`).
+
+`/health` est lisible depuis n'importe quelle origine et rapporte
+`originAllowed` pour l'origine appelante : c'est ce qui permet de savoir lequel
+des deux réglages manque, sans le tableau de bord. Voir `docs/DEPLOIEMENT.md`,
+section « Si la page dit "Serveur injoignable" ».
+
+100 tests, `tsc -b --force` propre, build Next de production propre.
+
+**Reste à faire, et seul Dylan peut le faire :** redéployer pour que ces
+correctifs soient en ligne, puis interroger `/health` avec l'origine du site
+pour vérifier `ALLOWED_ORIGINS`.
