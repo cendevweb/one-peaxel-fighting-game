@@ -11,14 +11,14 @@ reprendre. À relire en premier après une interruption.
 Le jeu est jouable de bout en bout, en local comme en ligne.
 
 - `packages/combat-core` — simulation déterministe entière, 5 personnages,
-  6 arènes. 36 tests.
+  6 arènes, adversaire contrôlé par l'ordinateur à quatre niveaux. 46 tests.
 - `packages/assets-pipeline` — extraction automatique des planches, atlas
   publiés dans `apps/web/public`. 5 tests de cohérence données ↔ ressources.
 - `packages/shared` — protocole zod partagé.
 - `apps/server` — serveur Socket.IO autoritaire, 60 Hz, instantanés,
   déconnexions, reprise de siège par jeton, revanche. 32 tests.
 - `apps/web` — lobby, sélection, arène Phaser, HUD, résultats, entraînement
-  local. Build de production propre.
+  local, mode arcade contre l'ordinateur. Build de production propre.
 - Documentation : `CLAUDE.md`, `docs/`.
 
 Vérifié dans un vrai navigateur : deux contextes indépendants ont créé et

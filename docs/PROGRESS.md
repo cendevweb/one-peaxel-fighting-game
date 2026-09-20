@@ -14,11 +14,13 @@ chaque ligne « Vérifié » a été jouée dans un navigateur.
 | Serveur temps réel | Fait | 27 tests : salons, sélection, synchronisation, fin de match, revanche, déconnexion, checksum d'instantané. |
 | Client web | Fait | Build de production Next.js, puis parcours complet joué dans deux contextes de navigateur indépendants. |
 | Parcours en ligne | Vérifié | Pseudo → création → code → adversaire rejoint → sélection synchronisée → prêt → décompte → combat → K.O. → round 2 → fin de match → revanche demandée des deux côtés → retour à la sélection. Deux navigateurs indépendants, chronos identiques sur les deux écrans, aucune erreur console. |
+| Adversaire ordinateur | Fait | 10 tests : déterminisme à graine égale, bat un adversaire passif avec chacun des cinq personnages, chaque niveau bat celui du dessous en miroir sur 8 graines, garde, enchaînement, ultime. |
+| Mode arcade | Vérifié | Parcours joué au navigateur : choix du combattant et de la difficulté, échelle des quatre autres personnages, victoire au clavier contre la Recrue puis passage à l'adversaire suivant, défaite contre l'Amiral puis reprise du combat sur une nouvelle arène. Aucune erreur console. |
 | Entraînement local | Vérifié | Match complet joué jusqu'au bout : combos comptés, KO, deux rounds gagnés, écran de résultat, revanche qui relance au round 1. |
 | Chemins de bord | Vérifié | Code de partie inexistant, partie rapide sans code, sortie en plein combat des deux côtés, relance immédiate. |
 | Reconnexion | Vérifié | Rechargement de page en plein combat : le serveur constate la coupure, le jeton rend le siège 85 ms plus tard sur un nouveau socket, les deux écrans restent d'accord et le joueur reprend le combat. |
 
-Total : **73 tests verts**, `tsc -b --force` propre sur tout le dépôt.
+Total : **83 tests verts**, `tsc -b --force` propre sur tout le dépôt.
 
 ## Ce qui n'est pas fait
 

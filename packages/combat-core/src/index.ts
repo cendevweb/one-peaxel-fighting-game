@@ -7,3 +7,4 @@ export * from './engine.js';
 export * from './serialize.js';
 export * from './characters/index.js';
 export * from './stages.js';
+export * from './ai.js';

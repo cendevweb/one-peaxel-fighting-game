@@ -280,6 +280,9 @@ export default function Page(): React.ReactElement {
             onLocal={() => {
                 window.location.href = '/entrainement';
             }}
+            onArcade={() => {
+                window.location.href = '/arcade';
+            }}
         />
     );
 }

@@ -16,6 +16,10 @@ export interface ResultsProps {
     opponentWantsRematch: boolean;
     onRematch: () => void;
     onMenu: () => void;
+    /** Overrides the primary button. Arcade mode carries on rather than
+     *  replaying, so "Revanche" would be the wrong word there. */
+    primaryLabel?: string;
+    menuLabel?: string;
 }
 
 export function Results({
@@ -27,7 +31,9 @@ export function Results({
     rematchRequested,
     opponentWantsRematch,
     onRematch,
-    onMenu
+    onMenu,
+    primaryLabel = 'Revanche',
+    menuLabel = 'Menu principal'
 }: ResultsProps): React.ReactElement {
     const animations = useMemo(() => animationsByKey(manifest), [manifest]);
     const winner = result.winner;
@@ -105,10 +111,10 @@ export function Results({
                         onClick={onRematch}
                         disabled={rematchRequested}
                     >
-                        {rematchRequested ? 'En attente de l’adversaire…' : 'Revanche'}
+                        {rematchRequested ? 'En attente de l’adversaire…' : primaryLabel}
                     </button>
                     <button type="button" className="btn flex-1" onClick={onMenu}>
-                        Menu principal
+                        {menuLabel}
                     </button>
                 </div>
                 {opponentWantsRematch && !rematchRequested ? (
