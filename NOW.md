@@ -11,7 +11,7 @@ reprendre. À relire en premier après une interruption.
 Le jeu est jouable de bout en bout, en local comme en ligne.
 
 - `packages/combat-core` — simulation déterministe entière, 5 personnages,
-  6 arènes, adversaire contrôlé par l'ordinateur à quatre niveaux. 46 tests.
+  6 arènes, adversaire contrôlé par l'ordinateur à quatre niveaux. 58 tests.
 - `packages/assets-pipeline` — extraction automatique des planches, atlas
   publiés dans `apps/web/public`. 5 tests de cohérence données ↔ ressources.
 - `packages/shared` — protocole zod partagé.

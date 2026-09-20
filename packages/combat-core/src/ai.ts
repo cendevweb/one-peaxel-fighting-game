@@ -162,7 +162,7 @@ export class AiController {
      *  the duration here again would leave the bot idle for twice as long as
      *  the move actually costs. */
     private cooldown = 0;
-    /** Frames left holding guard, once the bot has decided to block. */
+    /** Frames left holding the guard button, once the bot has decided to block. */
     private guardFor = 0;
     /** Frames until the bot is allowed to weigh its options again. Without
      *  this, every chance below would be rolled sixty times a second, and a
@@ -218,11 +218,12 @@ export class AiController {
         const back = towards === 1 ? Button.Left : Button.Right;
         const distance = toPx(iabs(foe.x - me.x));
 
-        // Being hit is not a decision. Holding back through the stun means the
-        // guard is already up if the next hit of the string is blockable.
+        // Being hit is not a decision. Holding the guard button through the
+        // stun means the guard is already up if the next hit of the string is
+        // blockable.
         if (me.state === 'hitstun' || me.state === 'airHitstun' || me.state === 'blockstun') {
             this.script.length = 0;
-            return back;
+            return Button.Guard;
         }
 
         // One roll per opponent attack, on the frame it starts.
@@ -242,7 +243,9 @@ export class AiController {
 
         if (this.guardFor > 0) {
             this.guardFor -= 1;
-            return back;
+            // Guard only, with no direction: the bot holds its ground instead
+            // of walking itself into the wall every time it blocks a string.
+            return Button.Guard;
         }
 
         if (this.script.length > 0) {

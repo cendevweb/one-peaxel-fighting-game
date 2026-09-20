@@ -15,7 +15,7 @@ import { INPUT_BUFFER_FRAMES } from './constants.js';
 const STATE_IDS: readonly FighterStateId[] = [
     'idle', 'walk', 'walkBack', 'jumpRise', 'jumpFall', 'land', 'attack',
     'hitstun', 'airHitstun', 'blockstun', 'knockdown', 'wakeup', 'victory',
-    'defeat', 'intro'
+    'defeat', 'intro', 'guard'
 ];
 
 const PHASES: readonly MatchPhase[] = ['intro', 'fight', 'ko', 'roundEnd', 'matchEnd'];

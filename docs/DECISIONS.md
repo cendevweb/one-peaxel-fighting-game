@@ -148,3 +148,44 @@ hauteur. En jeu, Luffy flottait au-dessus du sol et la dernière image devenait
 une barre jaune en travers de l'écran, tenue pendant toute la récupération. La
 bande 41 est posée sur sa propre ligne de sol et finit sur une pose qui
 supporte d'être tenue.
+
+## La garde a sa propre touche
+
+**Décision.** `Button.Guard` est un bit d'entrée à part (`1 << 8`), tenu sur
+`Espace` ou `H` au clavier, `Pavé 7` pour le joueur 2. Reculer ne garde plus :
+c'est redevenu un simple déplacement.
+
+**Pourquoi.** La garde sur la marche arrière est l'héritage des bornes à huit
+directions et deux boutons. Elle force un choix que personne ne veut faire —
+se protéger ou gagner du terrain — et elle rend la garde illisible à l'écran,
+puisque le même geste veut dire deux choses selon ce que fait l'adversaire.
+Le jeu a assez de touches libres pour s'en passer.
+
+**Ce qui a été tranché en chemin, faute de règle évidente.**
+
+*La touche.* `Espace` plutôt qu'une lettre : la garde se tient, souvent le
+temps d'une série entière, et le pouce est le seul doigt qui peut tenir sans
+priver les autres d'un coup. `Espace` servait au saut ; le saut garde
+`↑`, `W` et `Z`, qui suffisent. `H` est bindé en second, pour qui préfère
+garder la main droite sur la rangée des coups.
+
+*Le dev.* `Maj + H` affichait les boîtes de collision et tombait donc sur la
+nouvelle touche de garde. C'est passé à `Maj + B`, comme « boîtes ».
+
+*Debout ou accroupi.* Une seule garde, debout. Le moteur n'a pas d'état
+accroupi et aucun coup n'est marqué haut ou bas : une garde unique couvre
+donc tout ce qui est blocable, et tenir `Bas` avec la garde ne change rien.
+Le jour où des coups bas arrivent, il faudra y revenir — c'est à ce
+moment-là que la question a une réponse, pas avant.
+
+*Celui qui gardait déjà en reculant.* La garde l'emporte sur toute direction
+tenue en même temps, et cloue sur place. Un joueur qui tient `arrière` et la
+garde se protège sans reculer d'un pixel. C'est le contraire du réflexe hérité
+de la marche arrière, et c'est voulu : la garde est une décision, pas un effet
+de bord d'un déplacement. Elle interdit aussi le saut tant qu'elle est tenue,
+pour la même raison.
+
+*Le bot.* `ai.ts` renvoyait `arrière` pour garder ; il renvoie maintenant
+`Button.Guard` seul. L'adversaire tient donc sa position au lieu de se
+pousser vers le mur à chaque série bloquée — un effet secondaire favorable
+qui n'a demandé aucun réglage de difficulté.

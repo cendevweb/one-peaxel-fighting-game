@@ -19,12 +19,16 @@ export interface Binding {
 export const PLAYER_BINDINGS: readonly Binding[] = [
     { label: 'Gauche', codes: ['ArrowLeft', 'KeyA', 'KeyQ'], button: Button.Left },
     { label: 'Droite', codes: ['ArrowRight', 'KeyD'], button: Button.Right },
-    { label: 'Saut', codes: ['ArrowUp', 'KeyW', 'KeyZ', 'Space'], button: Button.Up },
+    { label: 'Saut', codes: ['ArrowUp', 'KeyW', 'KeyZ'], button: Button.Up },
     { label: 'Bas', codes: ['ArrowDown', 'KeyS'], button: Button.Down },
     { label: 'Coup léger', codes: ['KeyJ'], button: Button.Light },
     { label: 'Coup lourd', codes: ['KeyK'], button: Button.Heavy },
     { label: 'Spéciale', codes: ['KeyL'], button: Button.Special },
-    { label: 'Ultime', codes: ['KeyI', 'KeyO'], button: Button.Ultimate }
+    { label: 'Ultime', codes: ['KeyI', 'KeyO'], button: Button.Ultimate },
+    // The guard is held, often for a whole string, so it goes under the thumb
+    // rather than on a finger that is also needed to attack. That costs the
+    // space bar its jump, which `ArrowUp`, `KeyW` and `KeyZ` still cover.
+    { label: 'Garde', codes: ['Space', 'KeyH'], button: Button.Guard }
 ];
 
 /** Second seat for the local training mode, on the right of the keyboard. */
@@ -36,7 +40,8 @@ export const SECOND_PLAYER_BINDINGS: readonly Binding[] = [
     { label: 'Coup léger', codes: ['Numpad1'], button: Button.Light },
     { label: 'Coup lourd', codes: ['Numpad2'], button: Button.Heavy },
     { label: 'Spéciale', codes: ['Numpad3'], button: Button.Special },
-    { label: 'Ultime', codes: ['Numpad0'], button: Button.Ultimate }
+    { label: 'Ultime', codes: ['Numpad0'], button: Button.Ultimate },
+    { label: 'Garde', codes: ['Numpad7'], button: Button.Guard }
 ];
 
 /**

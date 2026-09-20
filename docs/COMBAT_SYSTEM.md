@@ -81,7 +81,7 @@ au moment du test :
 - **hitbox** — où un coup touche, pendant ses frames actives seulement.
 - **pushbox** — ce qui empêche deux corps de se superposer.
 
-`Maj + H` les affiche pendant un combat, en ligne comme à l'entraînement.
+`Maj + B` les affiche pendant un combat, en ligne comme à l'entraînement.
 
 ## Les combos
 
@@ -106,10 +106,20 @@ round entier.
 
 ## La garde
 
-Tenir la direction opposée à l'adversaire garde. Le blocage est relu **à
-chaque frame** de blockstun, pas seulement à l'impact : autrement un joueur
-qui relâche au milieu d'une série restait protégé jusqu'au bout. On ne garde
-pas en l'air, et certains coups sont `unblockable`.
+La garde a sa propre touche, `Button.Guard`, et non la marche arrière. La
+tenir met le combattant dans l'état `guard` : il est cloué sur place, il ne
+saute pas, et la touche l'emporte sur toute direction tenue en même temps.
+Reculer n'est plus qu'un déplacement.
+
+Le blocage est relu **à chaque frame** de blockstun, pas seulement à
+l'impact : autrement un joueur qui relâche au milieu d'une série restait
+protégé jusqu'au bout. On ne garde pas en l'air, et certains coups sont
+`unblockable`.
+
+Il n'y a qu'une garde, debout. Le moteur n'a pas d'état accroupi et aucun
+coup n'est marqué haut ou bas, donc une garde unique couvre tout ce qui est
+blocable ; tenir `Bas` avec la garde ne change rien. Le jour où des coups bas
+arrivent, c'est là qu'il faudra trancher.
 
 ## La jauge et les ultimes
 

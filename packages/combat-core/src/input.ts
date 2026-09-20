@@ -13,12 +13,15 @@ export enum Button {
     Light = 1 << 4,
     Heavy = 1 << 5,
     Special = 1 << 6,
-    Ultimate = 1 << 7
+    Ultimate = 1 << 7,
+    /** A button of its own, not a direction: walking back is only walking. */
+    Guard = 1 << 8
 }
 
 export const ALL_BUTTONS =
     Button.Left | Button.Right | Button.Up | Button.Down |
-    Button.Light | Button.Heavy | Button.Special | Button.Ultimate;
+    Button.Light | Button.Heavy | Button.Special | Button.Ultimate |
+    Button.Guard;
 
 export const NEUTRAL_INPUT = 0;
 

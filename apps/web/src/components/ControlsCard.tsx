@@ -2,6 +2,7 @@ import { PLAYER_BINDINGS, SECOND_PLAYER_BINDINGS, type Binding } from '@/input/k
 
 const prettyCode = (code: string): string =>
     code
+        .replace('ShiftRight', 'Maj dr.')
         .replace('Arrow', '')
         .replace('Key', '')
         .replace('Numpad', 'Pavé ')
@@ -50,7 +51,9 @@ export function ControlsCard({ showSecond = false }: { showSecond?: boolean }): 
                     <h3 className="label mb-2">À savoir</h3>
                     <ul className="space-y-2 text-sm text-muted">
                         <li>
-                            Reculer met la garde. Une garde ne tient qu&apos;au sol, et l&apos;ultime passe à travers.
+                            La garde a sa propre touche : elle cloue sur place tant qu&apos;elle est tenue,
+                            ne tient qu&apos;au sol, et l&apos;ultime passe à travers. Reculer n&apos;est plus
+                            qu&apos;un déplacement.
                         </li>
                         <li>
                             Un coup léger qui touche s&apos;annule en coup lourd, puis en spéciale : c&apos;est la
