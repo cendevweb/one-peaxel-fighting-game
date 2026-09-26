@@ -28,6 +28,8 @@ const DOWN_TICKS = 34;
 const THROW_RANGE = 26;
 const THROW_TECH_WINDOW = 9;
 const BUFFER = 8;
+/** Ticks after a normal starts during which a second button still upgrades it. */
+const KARA = 3;
 const GROUND_FRICTION = 0.32 * PX;
 const MAX_JUGGLE = 7;
 const INTRO_TICKS = 100;
@@ -256,12 +258,12 @@ function throwable(state: MatchState, a: FighterState, d: FighterState): boolean
 }
 
 /** Try every action a free fighter on the ground can take. */
-function groundActions(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): boolean {
+function groundActions(state: MatchState, f: FighterState, _o: FighterState, events: GameEvent[]): boolean {
     const def = getChar(f.char);
     if (wantsUltimate(f, state)) { startMove(state, f, 'ultimate', events); return true; }
-    if (wantsThrow(f)) {
-        if (throwable(state, f, o)) { startMove(state, f, 'throw', events); return true; }
-    }
+    // Out of range the grab still comes out and whiffs, so the button always
+    // answers with the throw and never with a stray jab.
+    if (wantsThrow(f)) { startMove(state, f, 'throw', events); return true; }
     const sp = specialSlot(f);
     if (sp && def.moves[sp as keyof CharacterDef['moves']]) { startMove(state, f, sp, events); return true; }
     const n = normalSlot(f, false);
@@ -681,6 +683,19 @@ function freeGround(state: MatchState, f: FighterState, o: FighterState, events:
 function stepMove(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): void {
     const move = moveOf(f)!;
     const def = getChar(f.char);
+    // Two fingers never land on the same tick: a second button pressed just
+    // after a grounded normal upgrades it to the throw, the ultimate or a
+    // special, as if both had been pressed together.
+    if (move.kind === 'normal' && move.stance !== 'air' && f.t <= KARA && !f.connected && state.phase === 'fight') {
+        let up: string | null = null;
+        if (wantsUltimate(f, state)) up = 'ultimate';
+        else if (wantsThrow(f)) up = 'throw';
+        else {
+            const sp = specialSlot(f);
+            if (sp && def.moves[sp as keyof CharacterDef['moves']]) up = sp;
+        }
+        if (up) { startMove(state, f, up, events); return; }
+    }
     // Cancels: chains and specials open once the move has touched the opponent.
     if (f.connected && state.phase === 'fight') {
         const h = f.history;
