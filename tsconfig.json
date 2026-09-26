@@ -1,9 +1,0 @@
-{
-  "files": [],
-  "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/combat-core" },
-    { "path": "./packages/assets-pipeline" },
-    { "path": "./apps/server" }
-  ]
-}
