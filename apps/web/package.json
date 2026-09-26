@@ -1,29 +1,17 @@
 {
-  "name": "@opfg/web",
-  "version": "0.1.0",
+  "name": "web",
   "private": true,
-  "description": "Next.js application: menus, lobby, character select and the Phaser fight client.",
+  "type": "module",
   "scripts": {
-    "dev": "next dev -p 3000",
-    "prebuild": "tsc -b ../../packages/combat-core ../../packages/shared",
-    "build": "next build",
-    "start": "next start -p 3000",
-    "clean": "rm -rf .next"
-  },
-  "dependencies": {
-    "@opfg/combat-core": "*",
-    "@opfg/shared": "*",
-    "next": "15.5.25",
-    "phaser": "4.2.1",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
-    "socket.io-client": "^4.8.3"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "tailwindcss": "^4.3.3",
-    "typescript": "5.9.3"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
   }
 }
