@@ -5,7 +5,7 @@ import { createMatch, stepMatch } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, type CharacterDef, type MatchState, type MoveSlot } from '../engine/types';
 import { KEYS, endInputTick, keyLabel, readSide, type MenuInput } from '../input/devices';
-import { drawText } from '../render/font';
+import { drawText, textWidth } from '../render/font';
 import { FightView } from '../render/fightView';
 import { artOf, drawFrame } from '../render/sprites';
 import { STAGES, stageImage } from '../render/stage';
@@ -502,9 +502,11 @@ export class FightScene implements Scene {
     private drawTrainingInfo(ctx: CanvasRenderingContext2D): void {
         const f = this.state.fighters[0];
         const d = this.state.fighters[1];
-        panel(ctx, 234, 48, 172, 30, COLORS.dim);
+        const moveLine = `COUP : ${f.move ? getChar(f.char).moves[f.move as MoveSlot].name.toUpperCase() : '—'}`;
+        const w = Math.max(172, textWidth(moveLine) + 12);
+        panel(ctx, 320 - (w >> 1), 48, w, 30, COLORS.dim);
         drawText(ctx, `COMBO ${d.combo}  DÉGÂTS ${d.comboDamage}`, 320, 52, { color: '#fff', align: 'center' });
-        drawText(ctx, `COUP : ${f.move ? getChar(f.char).moves[f.move as MoveSlot].name.toUpperCase().slice(0, 22) : '—'}`, 320, 64, { color: COLORS.gold, align: 'center' });
+        drawText(ctx, moveLine, 320, 64, { color: COLORS.gold, align: 'center' });
         drawText(ctx, 'ÉCHAP : PAUSE / OPTIONS', 320, 330, { color: '#cfc4dc', outline: COLORS.ink, align: 'center' });
     }
 

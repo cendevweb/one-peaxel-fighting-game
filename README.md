@@ -59,7 +59,7 @@ longtemps (« CONTRE ! »).
 | --- | --- |
 | `npm run dev` | Serveur Vite |
 | `npm run build` | Vérification des types et build de production dans `apps/web/dist` |
-| `npm test` | Tests vitest : moteur, données des personnages, 25 matchs ordinateur contre ordinateur |
+| `npm test` | Tests vitest : moteur, données et combos de chaque personnage, 25 matchs ordinateur contre ordinateur |
 | `npm run sprites` | Ré-extrait les sprites des planches (`python3`, `pillow`, `numpy`, `scipy`) |
 
 Déploiement Vercel : *Root Directory* `apps/web`, le reste est dans

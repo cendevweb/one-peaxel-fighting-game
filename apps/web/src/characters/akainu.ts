@@ -29,14 +29,14 @@ export const akainu: CharacterDef = {
     moves: {
         lightA: {
             name: 'Direct de lave', anim: 'lightA', kind: 'normal', stance: 'stand',
-            durations: [4, 3, 4, 6],
-            hits: [{ frames: [1, 2], box: 'auto', damage: 36, guard: 'mid', hitstun: 14, blockstun: 9, push: 10, hitstop: 7 }],
+            durations: [2, 2, 5, 7],
+            hits: [{ frames: [2, 2], box: 'auto', damage: 36, guard: 'mid', hitstun: 14, blockstun: 9, push: 10, hitstop: 7 }],
             chain: ['lightB', 'crouchLight', 'heavy', 'heavyFwd', 'heavyBack', 'crouchHeavy'], cancelable: true, sfx: 'swing'
         },
         lightB: {
             name: 'Revers du poing', anim: 'lightB', kind: 'normal', stance: 'stand',
-            durations: [4, 3, 3, 4, 7],
-            hits: [{ frames: [1, 3], box: [6, 30, 30, 30], damage: 40, guard: 'mid', hitstun: 16, blockstun: 10, push: 12, hitstop: 8 }],
+            durations: [3, 3, 3, 5, 7],
+            hits: [{ frames: [2, 3], box: [8, 26, 30, 34], damage: 40, guard: 'mid', hitstun: 16, blockstun: 10, push: 12, hitstop: 8, spark: 'fire' }],
             chain: ['lightC', 'heavy', 'heavyFwd', 'crouchHeavy'], cancelable: true, sfx: 'swing'
         },
         lightC: {
@@ -62,11 +62,11 @@ export const akainu: CharacterDef = {
             name: 'Ruée du volcan', anim: 'heavy', kind: 'normal', stance: 'stand',
             durations: [8, 5, 4, 3, 4, 5, 8, 9],
             motion: [[2, 2.6, 0], [4, 0, 0]],
-            hits: [{ frames: [3, 5], box: 'auto', damage: 88, guard: 'mid', hitstun: 22, blockstun: 15, push: 22, hitstop: 12, spark: 'heavy', shake: 3 }],
+            hits: [{ frames: [3, 5], box: 'auto', damage: 88, guard: 'mid', hitstun: 26, blockstun: 15, push: 22, hitstop: 12, spark: 'magma', shake: 3 }],
             cancelable: true, sfx: 'swingHeavy'
         },
         heavyFwd: {
-            name: 'Marteau de lave (coup haut)', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
+            name: 'Marteau de lave', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
             durations: [7, 6, 6, 4, 4, 6, 8, 9],
             hits: [{ frames: [3, 4], box: [4, 0, 40, 76], damage: 95, guard: 'high', hitstun: 23, blockstun: 15, push: 14, hitstop: 13, spark: 'magma', shake: 5 }],
             cancelable: true, sfx: 'swingHeavy'
@@ -111,7 +111,7 @@ export const akainu: CharacterDef = {
         },
         specialF: {
             name: 'Meigo', anim: 'specialF', kind: 'special', stance: 'stand',
-            durations: [5, 5, 5, 4, 3, 3, 3, 4, 4, 4, 5, 6, 8, 9],
+            durations: [4, 4, 3, 3, 2, 2, 3, 4, 4, 4, 5, 6, 8, 9],
             motion: [[3, 5.2, 0], [6, 1.6, 0], [8, 0, 0]],
             hits: [{ frames: [6, 9], box: 'auto', damage: 135, guard: 'mid', hitstun: 26, blockstun: 18, push: 30, launch: [4.8, 4.0], wallBounce: true, hitstop: 16, spark: 'magma', shake: 7 }],
             fx: [[7, 'fx_hound', 64, 46]],
@@ -137,8 +137,8 @@ export const akainu: CharacterDef = {
             durations: [5, 5, 5, 6, 6, 6, 8, 8, 8, 8, 8, 10, 10, 12],
             superFreeze: 55, cost: 100, invuln: [0, 6],
             hits: [
-                { frames: [6, 10], box: [10, 0, 160, 130], damage: 50, guard: 'mid', hitstun: 40, blockstun: 18, push: 3, rehit: 8, hitstop: 5, spark: 'magma', shake: 6 },
-                { frames: [11, 11], box: [10, 0, 160, 130], damage: 150, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, knockdown: true, launch: [5.0, 5.2], wallBounce: true, hitstop: 22, spark: 'big', shake: 10 }
+                { frames: [6, 10], box: [10, 0, 160, 130], damage: 55, guard: 'mid', hitstun: 40, blockstun: 18, push: 3, rehit: 8, hitstop: 5, spark: 'magma', shake: 6 },
+                { frames: [11, 11], box: [10, 0, 160, 130], damage: 170, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, knockdown: true, launch: [5.0, 5.2], wallBounce: true, hitstop: 22, spark: 'big', shake: 10 }
             ],
             fx: [
                 [6, 'fx_meteor', 50, 70],

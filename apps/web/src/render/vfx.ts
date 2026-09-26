@@ -120,7 +120,7 @@ export class Vfx {
                 this.sprite('common', 'spark', x, y, dir, { per: 2, additive: true });
                 this.burst(x, y, 8, 'bolt', ['#ffffff', '#9ff3ff', '#ffe95e'], 4.5, { life: 9, size: 1 });
                 this.burst(x, y, 10, 'spark', ['#9ff3ff', '#fff'], 3, { life: 12 });
-                this.kick(0, 0.18, '#dff9ff');
+                if (heavy) this.kick(0, 0.1, '#dff9ff');
                 break;
             case 'sand':
                 this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2 });
@@ -132,8 +132,11 @@ export class Vfx {
                 this.sprite('common', 'spark', x, y, dir, { per: 2 });
                 break;
         }
-        if (counter) this.popup('CONTRE !', x, y - 22, '#ff5a3c');
-        if (heavy) this.kick(0, 0.08);
+        if (counter) {
+            this.popup('CONTRE !', x, y - 22, '#ff5a3c');
+            this.ring(x, y, '#ff5a3c', 4, 12, 1.5);
+        }
+        if (heavy && spark !== 'electric') this.kick(0, 0.06);
     }
 
     block(x: number, y: number, dir: 1 | -1): void {

@@ -36,7 +36,7 @@ export const crocodile: CharacterDef = {
         lightB: {
             name: 'Paume desséchante', anim: 'lightB', kind: 'normal', stance: 'stand',
             durations: [4, 3, 4, 7],
-            hits: [{ frames: [1, 2], box: [6, 22, 30, 18], damage: 36, guard: 'mid', hitstun: 15, blockstun: 10, push: 10, hitstop: 7 }],
+            hits: [{ frames: [1, 2], box: [6, 22, 30, 18], damage: 36, guard: 'mid', hitstun: 17, blockstun: 10, push: 10, hitstop: 7, spark: 'sand' }],
             chain: ['lightC', 'heavy', 'heavyFwd', 'crouchHeavy'], cancelable: true, sfx: 'swing'
         },
         lightC: {
@@ -65,7 +65,7 @@ export const crocodile: CharacterDef = {
             cancelable: true, sfx: 'sand'
         },
         heavyFwd: {
-            name: 'Crochet plongeant (coup haut)', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
+            name: 'Crochet plongeant', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
             durations: [5, 5, 4, 3, 4, 5, 5, 6, 7],
             hits: [{ frames: [3, 4], box: [4, 0, 40, 72], damage: 82, guard: 'high', hitstun: 22, blockstun: 14, push: 14, hitstop: 12, spark: 'cut', shake: 4 }],
             cancelable: true, sfx: 'slash'
@@ -99,10 +99,10 @@ export const crocodile: CharacterDef = {
         },
         specialN: {
             name: 'Desert Spada', anim: 'specialN', kind: 'special', stance: 'stand',
-            durations: [3, 3, 3, 3, 2, 6, 10, 9],
+            durations: [2, 2, 2, 2, 2, 2, 8, 7, 6, 6],
             hits: [],
             projectile: {
-                anim: 'fx_spada', atFrame: 5, offset: [34, 18], speed: 3.4, life: 100,
+                anim: 'fx_spada', atFrame: 6, offset: [34, 18], speed: 3.4, life: 100,
                 box: [-24, -10, 50, 20], fps: 12, hits: 1,
                 hit: { damage: 72, guard: 'low', hitstun: 22, blockstun: 14, push: 16, knockdown: true, launch: [1.4, 2.8], hitstop: 10, spark: 'sand', shake: 2, sfx: 'sand' }
             },
@@ -139,8 +139,8 @@ export const crocodile: CharacterDef = {
             motion: [[6, 2.4, 0], [14, 0, 0]],
             fx: [[8, 'fx_sandstorm', 56, 36]],
             hits: [
-                { frames: [8, 13], box: [-20, 0, 72, 90], damage: 30, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 5, hitstop: 4, spark: 'sand', shake: 5 },
-                { frames: [14, 15], box: [-20, 0, 72, 90], damage: 120, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, launch: [3.8, 7.4], wallBounce: true, hitstop: 20, spark: 'big', shake: 10 }
+                { frames: [8, 13], box: [-20, 0, 72, 90], damage: 60, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 8, hitstop: 5, spark: 'sand', shake: 5 },
+                { frames: [14, 15], box: [-20, 0, 72, 90], damage: 240, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, launch: [3.8, 7.4], wallBounce: true, hitstop: 20, spark: 'big', shake: 10 }
             ],
             sfx: 'sand'
         },

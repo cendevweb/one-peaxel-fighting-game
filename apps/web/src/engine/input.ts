@@ -58,17 +58,30 @@ export const currentDir = (history: number[]) => (history.length ? dirOf(history
  * with `|` (e.g. '3|2').
  */
 export function motion(history: number[], seq: string[], window: number, lastBy = 8): boolean {
+    return motionAt(history, seq, window, lastBy) >= 0;
+}
+
+/** Like `motion`, but tells where the first direction of the motion was read
+ *  (a history index), or -1 when the motion is not there. */
+export function motionAt(history: number[], seq: string[], window: number, lastBy = 8): number {
     let step = seq.length - 1;
     const start = history.length - 1;
     for (let i = start; i >= 0 && start - i <= window; i--) {
         const d = String(dirOf(history[i]));
         if (seq[step].split('|').includes(d)) {
-            if (step === seq.length - 1 && start - i > lastBy) return false;
+            if (step === seq.length - 1 && start - i > lastBy) return -1;
             step--;
-            if (step < 0) return true;
+            if (step < 0) return i;
         }
     }
-    return false;
+    return -1;
+}
+
+/** How many ticks in a row `dir` was held, going back from `index`. */
+export function heldRun(history: number[], index: number, dir: number): number {
+    let n = 0;
+    for (let i = index; i >= 0 && dirOf(history[i]) === dir; i--) n++;
+    return n;
 }
 
 export const QCF = ['2', '3|2', '6|3'];
@@ -76,8 +89,14 @@ export const QCB = ['2', '1|2', '4|1'];
 export const DP = ['6', '2|3', '3'];
 export const DOUBLE_QCF = ['2', '6|3', '2', '6|3'];
 
+/** Motion windows, in ticks. A keyboard quarter circle at a relaxed pace
+ *  takes 12–16 ticks from ↓ to the button. */
+export const QCF_WINDOW = 18;
+export const DP_WINDOW = 20;
+export const DOUBLE_QCF_WINDOW = 36;
+
 /** Two taps of the same direction: forward dash 6 5 6, back dash 4 5 4. */
-export function doubleTap(history: number[], dir: 4 | 6, window = 14): boolean {
+export function doubleTap(history: number[], dir: 4 | 6, window = 16): boolean {
     const start = history.length - 1;
     if (start < 2 || dirOf(history[start]) !== dir || dirOf(history[start - 1]) === dir) return false;
     let sawNeutral = false;

@@ -13,7 +13,24 @@ import { Vfx } from './vfx';
  * view), the HUD at ×1 for finer text.
  */
 
-interface Ghost { x: number; y: number; anim: string; frame: number; facing: 1 | -1; life: number }
+interface Ghost { x: number; y: number; anim: string; frame: number; facing: 1 | -1; life: number; tint: Tint }
+
+/** The afterimage tint closest to a character's colour: sand trails are
+ *  orange, lightning cyan, magma red. */
+function tintOf(color: string): Tint {
+    const n = parseInt(color.slice(1), 16);
+    const r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    if (max - min < 0.12) return 'white';
+    let h = max === r ? ((g - b) / (max - min)) % 6 : max === g ? (b - r) / (max - min) + 2 : (r - g) / (max - min) + 4;
+    h = (h * 60 + 360) % 360;
+    if (h < 20 || h >= 330) return 'red';
+    if (h < 48) return 'orange';
+    if (h < 75) return 'gold';
+    if (h < 215) return 'cyan';
+    if (h < 255) return 'blue';
+    return 'purple';
+}
 
 interface FighterFx {
     flash: number;
@@ -23,6 +40,7 @@ interface FighterFx {
     comboDamage: number;
     comboT: number;
     lastHealth: number;
+    lastMode: string;
 }
 
 interface Banner { text: string; sub?: string; t: number; dur: number; color: string; gradient: string; scale: number }
@@ -49,7 +67,7 @@ export class FightView {
 
     constructor(readonly state: MatchState, stageDef: StageDef, readonly options: ViewOptions = {}) {
         this.stage = new StageRenderer(stageDef, state.stageWidth / PX);
-        const mk = (): FighterFx => ({ flash: 0, flashTint: 'white', ghosts: [], comboHits: 0, comboDamage: 0, comboT: 0, lastHealth: 0 });
+        const mk = (): FighterFx => ({ flash: 0, flashTint: 'white', ghosts: [], comboHits: 0, comboDamage: 0, comboT: 0, lastHealth: 0, lastMode: '' });
         this.fx = [mk(), mk()];
         this.snapCamera();
     }
@@ -75,10 +93,16 @@ export class FightView {
                     const victim = this.fx[1 - e.attacker];
                     const attacker = s.fighters[e.attacker];
                     this.lastAttacker = e.attacker;
-                    if (e.damage > 0) { victim.flash = e.heavy ? 5 : 3; victim.flashTint = 'white'; }
-                    this.vfx.hit(x, y, e.spark, e.heavy, attacker.facing, e.counter);
+                    if (e.damage > 0) { victim.flash = e.heavy ? 5 : 3; victim.flashTint = e.counter ? 'red' : 'white'; }
+                    // The spark flies the way the blow travels, from the
+                    // attacker to the victim (not where the attacker faces,
+                    // which differs for projectiles and cross-ups).
+                    const dir: 1 | -1 = s.fighters[1 - e.attacker].x >= attacker.x ? 1 : -1;
+                    this.vfx.hit(x, y, e.spark, e.heavy, dir, e.counter);
                     if (e.shake) this.vfx.kick(e.shake);
+                    if (this.options.training && e.damage > 0) this.vfx.popup(String(e.damage), x + dir * 6, y - 12, e.counter ? '#ff8a5c' : '#ffffff');
                     play(e.damage >= 100 || e.spark === 'big' ? 'hitBig' : e.heavy ? 'hitHeavy' : 'hitLight');
+                    if (e.counter) play('counter');
                     if (e.sfx) play(e.sfx);
                     break;
                 }
@@ -86,7 +110,8 @@ export class FightView {
                     const victim = this.fx[1 - e.attacker];
                     victim.flash = 3;
                     victim.flashTint = 'blue';
-                    this.vfx.block(e.x / PX, GROUND_Y - e.y / PX, s.fighters[e.attacker].facing);
+                    const a = s.fighters[e.attacker];
+                    this.vfx.block(e.x / PX, GROUND_Y - e.y / PX, s.fighters[1 - e.attacker].x >= a.x ? 1 : -1);
                     play('block');
                     break;
                 }
@@ -179,12 +204,16 @@ export class FightView {
             const f = s.fighters[i];
             const fx = this.fx[i];
             if (fx.flash > 0 && !frozen) fx.flash--;
-            // Afterimages while dashing, rushing, or during the ultimate.
-            const trail = f.mode === 'dash' || f.mode === 'backdash' ||
-                (f.mode === 'move' && (f.move === 'ultimate' || f.move === 'specialF' || f.move === 'airSpecial' || f.move === 'specialU'));
-            if (trail && !frozen && this.t % 3 === 0) {
-                fx.ghosts.push({ x: this.sx(f), y: this.sy(f), anim: f.anim, frame: f.frame, facing: f.facing, life: 12 });
+            // Afterimages while dashing, or while a move carries the fighter
+            // fast (a rush, a rising uppercut), in the fighter's element.
+            const rushing = f.mode === 'move' && (Math.abs(f.vx) >= 2.5 * PX || f.vy >= 3 * PX);
+            const trail = f.mode === 'dash' || f.mode === 'backdash' || rushing;
+            if (trail && !frozen && f.hitstop === 0 && this.t % 3 === 0) {
+                const tint: Tint = f.move === 'ultimate' ? 'gold' : tintOf(getChar(f.char).color);
+                fx.ghosts.push({ x: this.sx(f), y: this.sy(f), anim: f.anim, frame: f.frame, facing: f.facing, life: 12, tint });
             }
+            if ((f.mode === 'dash' || f.mode === 'backdash') && fx.lastMode !== f.mode) play('dash');
+            fx.lastMode = f.mode;
             for (const g of fx.ghosts) g.life--;
             fx.ghosts = fx.ghosts.filter((g) => g.life > 0);
             // The combo counter stays up a moment after the combo ends.
@@ -222,9 +251,11 @@ export class FightView {
         const s = this.state;
         ctx.save();
         ctx.setTransform(2, 0, 0, 2, 0, 0);
-        const shake = this.vfx.shake;
-        const ox = shake ? (Math.random() - 0.5) * shake * 2 : 0;
-        const oy = shake ? (Math.random() - 0.5) * shake : 0;
+        // A quick decaying wobble rather than random jumps: readable, and
+        // never more than a few pixels.
+        const shake = Math.min(6, this.vfx.shake);
+        const ox = shake ? Math.round(Math.sin(this.t * 2.3) * shake * 2) / 2 : 0;
+        const oy = shake ? Math.round(Math.cos(this.t * 3.1) * shake) / 2 : 0;
         const freeze = s.freeze;
         this.stage.drawBack(ctx, this.camX, this.camY, this.t, freeze ? 0.55 : 0);
         if (freeze) this.drawSpeedLines(ctx);
@@ -279,7 +310,7 @@ export class FightView {
         }
         for (const g of fx.ghosts) {
             drawFrame(ctx, f.char, g.anim, g.frame, g.x, g.y, g.facing, {
-                tint: f.move === 'ultimate' ? 'gold' : 'cyan', alpha: (g.life / 12) * 0.45, additive: true
+                tint: g.tint, alpha: (g.life / 12) * 0.45, additive: true
             });
         }
         if (super_ || (f.mode === 'move' && f.move === 'ultimate')) {

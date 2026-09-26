@@ -93,8 +93,7 @@ export class Cpu {
         // Keep blocking while the threat lasts.
         if (this.blocking > 0) {
             this.blocking--;
-            const low = opp.move === 'crouchLight' || opp.move === 'crouchHeavy';
-            return this.back(me) | (low ? BTN.down : 0);
+            return this.back(me) | (this.guardLow(opp) ? BTN.down : 0);
         }
 
         // Combo: we hit them, keep going.
@@ -111,8 +110,7 @@ export class Cpu {
         const projectile = state.projectiles.some((p) => p.owner !== side && Math.abs(p.x - me.x) / PX < 120);
         if ((threat || projectile) && this.rand() < this.level.block) {
             this.blocking = 14;
-            const low = opp.move === 'crouchLight' || opp.move === 'crouchHeavy';
-            return this.back(me) | (low ? BTN.down : 0);
+            return this.back(me) | (this.guardLow(opp) ? BTN.down : 0);
         }
 
         // Anti-air: they jumped towards us.
@@ -140,6 +138,15 @@ export class Cpu {
         }
         this.neutral(me, opp, dist);
         return 0;
+    }
+
+    /** Guard low against the attack on screen when it hits low (read from
+     *  what it looks like: a crouching attack), high otherwise. */
+    private guardLow(opp: FighterState): boolean {
+        const move = opp.move ? getChar(opp.char).moves[opp.move as keyof ReturnType<typeof getChar>['moves']] : null;
+        if (!move) return false;
+        if (move.hits.some((h) => h.guard === 'high')) return false;
+        return move.hits.some((h) => h.guard === 'low') || move.stance === 'crouch';
     }
 
     private walkBits(me: FighterState, dist: number): number {
