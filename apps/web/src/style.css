@@ -1,0 +1,28 @@
+:root {
+  color-scheme: dark;
+  --bg: #07040c;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #1a0d24 0%, var(--bg) 70%);
+}
+
+#screen {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  box-shadow: 0 0 60px rgba(255, 180, 60, 0.08), 0 0 0 1px rgba(255, 210, 63, 0.15);
+}

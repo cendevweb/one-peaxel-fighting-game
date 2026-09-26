@@ -1,0 +1,26 @@
+{
+ "arlong-park": {
+  "sky": "#895653",
+  "horizon": "#625c5d"
+ },
+ "enies-lobby": {
+  "sky": "#6eb8bc",
+  "horizon": "#537d7a"
+ },
+ "impel-down": {
+  "sky": "#576471",
+  "horizon": "#578fb8"
+ },
+ "rain-dinners": {
+  "sky": "#4c859d",
+  "horizon": "#efe7b7"
+ },
+ "shandora": {
+  "sky": "#7a8d53",
+  "horizon": "#637339"
+ },
+ "marineford": {
+  "sky": "#7a8f9b",
+  "horizon": "#355263"
+ }
+}

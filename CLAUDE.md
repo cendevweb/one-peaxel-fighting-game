@@ -1,68 +1,48 @@
 # ONE PEAXEL FIGHTING GAME — notes de travail
 
-Jeu de combat 2D en ligne dans le navigateur, inspiré de *One Piece: Gigant
-Battle! 2 — New World* (Nintendo DS). Monorepo npm workspaces, TypeScript
-strict partout.
+Jeu de combat 2D local dans le navigateur (Vite + TypeScript + Canvas 2D,
+aucune bibliothèque de jeu). Tout vit dans `apps/web`.
 
 ## Commandes
 
-| Commande | Effet |
-| --- | --- |
-| `npm install --legacy-peer-deps` | **Obligatoire.** Sans ce drapeau, npm plante sur l'arbre de pairs de vitest (`Cannot read properties of null (reading 'edgesOut')`). |
-| `npm run build:packages` | Compile `@opfg/shared` puis `@opfg/combat-core`. Tout le reste en dépend. |
-| `npm run dev` | Compile ce qui doit l'être, puis lance le serveur de jeu (8080, ou `PORT`) et Next.js (3000). |
-| `npm test` | 106 tests vitest : moteur, ressources, salons, ordinateur. |
-| `npm run typecheck` | `tsc -b --force` sur tout le dépôt. |
-| `npm run assets` | Ré-extrait les sprites des planches et republie les atlas. |
-
-Le client lit l'adresse du serveur dans `NEXT_PUBLIC_GAME_SERVER_URL`, qui est
-figée **à la compilation** : changer de serveur veut dire recompiler.
+`npm install`, `npm run dev`, `npm test`, `npm run build` (inclut `tsc`),
+`npm run sprites` (Python : pillow, numpy, scipy).
 
 ## Découpage
 
 ```
-packages/combat-core    Simulation pure. Aucun import de Phaser, React ou DOM.
-packages/shared         Protocole réseau et schémas zod, partagés par les deux bouts.
-packages/assets-pipeline Extraction des sprites hors ligne (Node + sharp).
-apps/server             Serveur Socket.IO autoritaire (Render).
-apps/web                Next.js, React, Tailwind, Phaser (Vercel).
+apps/web/src/engine      Simulation pure et déterministe : aucun accès au DOM.
+apps/web/src/characters  Données des combattants (un fichier chacun, découverte auto).
+apps/web/src/render      Canvas : décor, sprites, VFX, HUD, police bitmap.
+apps/web/src/audio       Effets et musique synthétisés en WebAudio.
+apps/web/src/input       Clavier (codes physiques) et manettes → bits de boutons.
+apps/web/src/game        Scènes (menus, sélection, combat, résultats) et IA.
+tools/sprites            Extraction des planches → atlas + manifestes JSON.
+tools/stages             Découpe des décors.
 ```
 
-L'adversaire contrôlé par l'ordinateur (`packages/combat-core/src/ai.ts`)
-n'échappe pas à cette règle : il lit le même `MatchState` que tout le monde et
-répond par un masque d'entrées, un par frame. Il ne peut pas fixer une vie,
-forcer un coup, ni lire une touche qui n'a pas été pressée. Une IA qui écrirait
-dans l'état serait un bug, au même titre qu'un calcul de dégâts dans Phaser.
-
-La règle qui tient l'ensemble : **`combat-core` décide, tout le reste
-affiche.** Le serveur et le client exécutent le même `stepMatch`, avec les
-mêmes entiers, et doivent obtenir le même résultat au checksum près. Un calcul
-de dégâts dans une scène Phaser ou dans un composant React est un bug, pas un
-raccourci.
+**`engine` décide, tout le reste affiche.** `stepMatch(state, [bits, bits])`
+avance d'une frame (60 par seconde) et renvoie des événements que la vue
+transforme en effets et en sons. Positions en entiers (`PX = 256`
+sous-pixels) : pas de flottant dans l'état, pour qu'un futur mode en ligne
+puisse rejouer les entrées à l'identique. L'IA (`game/ai.ts`) ne fait que
+renvoyer des bits de boutons, comme un clavier.
 
 ## Pièges connus
 
-- **Pas de `const enum` exporté.** `apps/web` compile en modules isolés et ne
-  peut pas inliner un const enum venant d'un paquet. `Button` est un `enum`
-  ordinaire pour cette raison.
-- **Phaser 4 n'est pas Phaser 3.** `setTintFill(couleur)` ne fait plus rien ;
-  c'est `setTint(couleur).setTintMode(Phaser.TintModes.FILL)`.
-- **Pas d'extension `.js` dans les imports de `apps/web`**, contrairement aux
-  paquets qui sont en ESM Node.
-- **Les flottants sont interdits dans la simulation.** Les positions et les
-  vitesses sont en virgule fixe (`FP_BITS = 6`, donc 1/64 de pixel). Un
-  `Math.round` oublié suffit à désynchroniser deux machines.
-- **L'extraction écrit `manifest.json` en dernier.** Ne pas rediriger sa
-  sortie vers `head` : le SIGPIPE tue le processus avant l'écriture.
+- Chaque `durations` d'un coup a exactement une entrée par frame de son
+  animation ; `test/data.test.ts` le vérifie. Changer une animation dans
+  `tools/sprites/chars/*.json` oblige à revoir le coup.
+- `box: 'auto'` prend la portée calculée par l'extraction ; une frame sans
+  portée ne touche pas. Mettre une boîte explicite dans ce cas.
+- Un appui plus court qu'une frame est gardé par `gameTaps` jusqu'à
+  `endInputTick()` : appeler cette fonction après chaque tick de jeu.
+- La police bitmap n'a que les glyphes déclarés dans `render/font.ts` ; un
+  caractère inconnu s'affiche `?`.
+- Le site spritedatabase.net est bloqué depuis les sessions cloud : les
+  planches sont déjà dans `assets/sheets`.
 
-## Ressources graphiques
+## Ressources
 
-Les planches viennent d'un rip de ROM. Elles ne sont pas libres de droits, ne
-sont gardées que pour le prototype, et `assets/` n'est pas couvert par la
-licence du dépôt. Voir le README, section « Ressources graphiques ».
-
-## Documentation
-
-`docs/ARCHITECTURE.md`, `GAME_DESIGN.md`, `COMBAT_SYSTEM.md`,
-`NETWORKING.md`, `ASSET_PIPELINE.md`, `ROADMAP.md`, `DECISIONS.md`,
-`PROGRESS.md`. `NOW.md`, à la racine, dit où en est le travail en cours.
+Planches issues d'un rip de ROM, non libres de droits, hors licence MIT. Voir
+le README.
