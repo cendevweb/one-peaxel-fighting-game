@@ -111,6 +111,7 @@ const SOUNDS: Record<string, (t: number) => void> = {
         tone(t, 'sawtooth', 120, 30, { d: 0.35, peak: 0.45 });
         tone(t + 0.02, 'square', 70, 28, { d: 0.3, peak: 0.3 });
     },
+    counter: (t) => { tone(t, 'square', 1320, 1320, { d: 0.04, peak: 0.14 }); tone(t + 0.05, 'square', 1760, 1760, { d: 0.07, peak: 0.14 }); },
     block: (t) => { tone(t, 'square', 1400, 900, { d: 0.05, peak: 0.2 }); noise(t, 0.05, 'highpass', 4000, 6000, { d: 0.04, peak: 0.25 }); },
     crush: (t) => { tone(t, 'square', 800, 100, { d: 0.35, peak: 0.3 }); noise(t, 0.3, 'bandpass', 3000, 400, { d: 0.3, peak: 0.4 }); },
     jump: (t) => tone(t, 'square', 260, 520, { d: 0.07, peak: 0.08 }),

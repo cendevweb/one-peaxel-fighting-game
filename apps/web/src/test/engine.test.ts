@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import '../characters';
 import { createMatch, stepMatch } from '../engine/match';
+import { getChar } from '../engine/registry';
 import { BTN, PX, type MatchState } from '../engine/types';
 
 const { right, left, down, light, heavy, special } = BTN;
@@ -151,6 +152,96 @@ describe('engine', () => {
         stepMatch(s, [right, 0]);
         stepMatch(s, [right | special, 0]);
         expect(s.fighters[0].move).toBe('specialN');
+    });
+
+    it('a one-tick tap made entirely during hitstop still chains', () => {
+        const s = fight();
+        closeIn(s);
+        stepMatch(s, [light, 0]);
+        let guard = 0;
+        while (s.fighters[0].hitstop === 0 && guard++ < 30) stepMatch(s, [0, 0]);
+        expect(s.fighters[0].hitstop).toBeGreaterThan(2);
+        // Down one tick, up the next: both inside the freeze.
+        stepMatch(s, [light, 0]);
+        stepMatch(s, [0, 0]);
+        expect(s.fighters[0].hitstop).toBeGreaterThan(0);
+        hold(s, 0, 0, 12);
+        expect(s.fighters[0].move).toBe('lightB');
+        expect(s.fighters[1].combo).toBeGreaterThanOrEqual(2);
+    });
+
+    it('a button pressed 4 ticks before blockstun ends comes out on the first free tick', () => {
+        const s = fight();
+        closeIn(s);
+        // P2 attacks, P1 blocks.
+        stepMatch(s, [left, light]);
+        let guard = 0;
+        while (s.fighters[0].mode !== 'blockstun' && guard++ < 30) stepMatch(s, [left, 0]);
+        expect(s.fighters[0].mode).toBe('blockstun');
+        while ((s.fighters[0].hitstop > 0 || s.fighters[0].timer > 4) && guard++ < 60) stepMatch(s, [left, 0]);
+        stepMatch(s, [light, 0]);
+        stepMatch(s, [0, 0]);
+        let started = -1;
+        for (let i = 0; i < 6 && started < 0; i++) {
+            stepMatch(s, [0, 0]);
+            if (s.fighters[0].move === 'lightA') started = i;
+        }
+        expect(started).toBeGreaterThanOrEqual(0);
+        expect(s.fighters[0].t).toBeLessThanOrEqual(1);
+    });
+
+    it('a press during the recovery of a whiffed move comes out when it ends', () => {
+        const s = fight();
+        stepMatch(s, [heavy, 0]);
+        expect(s.fighters[0].move).toBe('heavy');
+        let guard = 0;
+        // Press while the move still has a few ticks to go.
+        const remaining = () => {
+            const f = s.fighters[0];
+            const d = getChar(f.char).moves.heavy.durations;
+            return d.slice(f.frame).reduce((a, b) => a + b, 0) - f.frameT;
+        };
+        while (remaining() > 5 && guard++ < 80) stepMatch(s, [0, 0]);
+        stepMatch(s, [light, 0]);
+        stepMatch(s, [0, 0]);
+        guard = 0;
+        while (s.fighters[0].move === 'heavy' && guard++ < 20) stepMatch(s, [0, 0]);
+        expect(s.fighters[0].move).toBe('lightA');
+    });
+
+    it('a sloppy quarter circle, with a neutral gap and no diagonal, is still the special', () => {
+        const s = fight();
+        hold(s, down, 0, 4);
+        hold(s, 0, 0, 2);
+        hold(s, right, 0, 5);
+        stepMatch(s, [right | special, 0]);
+        expect(s.fighters[0].move).toBe('specialN');
+    });
+
+    it('walking forward into a quarter circle is not read as the uppercut', () => {
+        const s = fight();
+        hold(s, right, 0, 20);
+        hold(s, down, 0, 3);
+        hold(s, down | right, 0, 2);
+        hold(s, right, 0, 2);
+        stepMatch(s, [right | special, 0]);
+        expect(s.fighters[0].move).toBe('specialN');
+
+        const dp = fight();
+        hold(dp, right, 0, 3);
+        hold(dp, down, 0, 3);
+        hold(dp, down | right, 0, 2);
+        stepMatch(dp, [down | right | special, 0]);
+        expect(dp.fighters[0].move).toBe('specialU');
+    });
+
+    it('a jump-in button pressed during the jump startup comes out as soon as the fighter leaves the ground', () => {
+        const s = fight();
+        stepMatch(s, [BTN.up, 0]);
+        expect(s.fighters[0].mode).toBe('prejump');
+        stepMatch(s, [BTN.up | heavy, 0]);
+        hold(s, BTN.up, 0, 6);
+        expect(s.fighters[0].move).toBe('airHeavy');
     });
 
     it('replays identically from the same inputs', () => {

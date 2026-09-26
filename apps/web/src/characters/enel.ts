@@ -28,27 +28,28 @@ export const enel: CharacterDef = {
     manifest: manifest as unknown as SpriteManifest,
     moves: {
         lightA: {
-            name: 'Estoc du bâton', anim: 'lightA', kind: 'normal', stance: 'stand',
+            name: 'Doigt de foudre', anim: 'lightA', kind: 'normal', stance: 'stand',
             durations: [4, 2, 3, 6],
-            hits: [{ frames: [1, 2], box: 'auto', damage: 30, guard: 'mid', hitstun: 13, blockstun: 9, push: 10, hitstop: 6 }],
-            chain: ['lightB', 'crouchLight', 'heavy', 'heavyFwd', 'heavyBack', 'crouchHeavy'], cancelable: true, sfx: 'swing'
+            hits: [{ frames: [1, 2], box: 'auto', damage: 30, guard: 'mid', hitstun: 14, blockstun: 9, push: 5, hitstop: 6, spark: 'electric' }],
+            fx: [[2, 'fx_tip', 41, 64]],
+            chain: ['lightB', 'crouchLight', 'heavy', 'heavyFwd', 'heavyBack', 'crouchHeavy'], cancelable: true, sfx: 'electric'
         },
         lightB: {
             name: 'Revers du Nonosama', anim: 'lightB', kind: 'normal', stance: 'stand',
             durations: [4, 3, 3, 7],
-            hits: [{ frames: [1, 2], box: 'auto', damage: 36, guard: 'mid', hitstun: 15, blockstun: 10, push: 12, hitstop: 7 }],
+            hits: [{ frames: [1, 2], box: 'auto', damage: 36, guard: 'mid', hitstun: 16, blockstun: 10, push: 7, hitstop: 7 }],
             chain: ['lightC', 'heavy', 'heavyFwd', 'crouchHeavy'], cancelable: true, sfx: 'swing'
         },
         lightC: {
             name: 'Moulinet divin', anim: 'lightC', kind: 'normal', stance: 'stand',
             durations: [5, 5, 5, 8],
-            hits: [{ frames: [1, 2], box: [0, 6, 36, 62], damage: 18, guard: 'mid', hitstun: 16, blockstun: 10, push: 6, rehit: 4, hitstop: 4, spark: 'light' }],
+            hits: [{ frames: [1, 2], box: [0, 6, 42, 62], damage: 18, guard: 'mid', hitstun: 16, blockstun: 10, push: 3, rehit: 5, hitstop: 4, spark: 'light' }],
             cancelable: true, sfx: 'swingHeavy'
         },
         crouchLight: {
             name: 'Pique basse', anim: 'crouchLight', kind: 'normal', stance: 'crouch',
-            durations: [4, 4, 6],
-            hits: [{ frames: [1, 1], box: [6, 2, 34, 18], damage: 24, guard: 'low', hitstun: 12, blockstun: 8, push: 8, hitstop: 6 }],
+            durations: [3, 3, 3, 6],
+            hits: [{ frames: [1, 2], box: [8, 0, 50, 20], damage: 24, guard: 'low', hitstun: 12, blockstun: 8, push: 8, hitstop: 6 }],
             chain: ['crouchLight', 'lightB', 'crouchHeavy'], cancelable: true, sfx: 'swing'
         },
         crouchHeavy: {
@@ -64,7 +65,7 @@ export const enel: CharacterDef = {
             cancelable: true, sfx: 'swingHeavy'
         },
         heavyFwd: {
-            name: 'Voltige du bâton (coup haut)', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
+            name: 'Voltige du bâton', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
             durations: [4, 4, 3, 3, 3, 3, 4, 4, 6, 6, 6],
             motion: [[2, 1.6, 0], [7, 0, 0]],
             hits: [{ frames: [6, 7], box: [4, 0, 36, 76], damage: 80, guard: 'high', hitstun: 22, blockstun: 14, push: 14, hitstop: 12, spark: 'heavy', shake: 4 }],
@@ -89,7 +90,7 @@ export const enel: CharacterDef = {
             cancelable: true, landLag: 5, sfx: 'swingHeavy'
         },
         airSpecial: {
-            name: 'Plongeon de l’éclair', anim: 'airSpecial', kind: 'special', stance: 'air',
+            name: "Plongeon de l'éclair", anim: 'airSpecial', kind: 'special', stance: 'air',
             durations: [3, 3, 4, 30, 6, 8],
             motion: [[0, 3.8, -5.2]],
             noGravity: true, landFrame: 4,
@@ -119,7 +120,7 @@ export const enel: CharacterDef = {
             sfx: 'electric'
         },
         specialU: {
-            name: 'Kari — 1 million de volts', anim: 'specialU', kind: 'special', stance: 'stand',
+            name: 'Vari — 1 000 000 V', anim: 'specialU', kind: 'special', stance: 'stand',
             durations: [4, 4, 4, 4, 5, 6, 7, 8],
             invuln: [0, 3],
             hits: [{ frames: [1, 3], box: [-30, 0, 70, 88], damage: 105, guard: 'mid', hitstun: 24, blockstun: 16, push: 12, launch: [1.4, 6.8], knockdown: true, hitstop: 12, spark: 'electric', shake: 4 }],
@@ -138,18 +139,18 @@ export const enel: CharacterDef = {
             durations: [6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 8, 8, 8, 10, 12],
             superFreeze: 55, cost: 100, invuln: [0, 8],
             hits: [
-                { frames: [4, 12], box: 'auto', damage: 22, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 5, hitstop: 4, spark: 'electric', shake: 4 },
-                { frames: [13, 14], box: [0, 0, 110, 200], damage: 150, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, launch: [5.4, 6.0], wallBounce: true, hitstop: 22, spark: 'big', shake: 10 }
+                { frames: [4, 12], box: 'auto', damage: 64, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 14, hitstop: 6, spark: 'electric', shake: 4 },
+                { frames: [13, 14], box: [0, 0, 110, 200], damage: 240, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, launch: [5.4, 6.0], wallBounce: true, hitstop: 22, spark: 'big', shake: 10 }
             ],
             fx: [[13, 'fx_raigo', 70, 0]],
             sfx: 'beam'
         },
         throw: {
-            name: 'Vari — décharge à bout portant', anim: 'throw', kind: 'throw', stance: 'stand',
+            name: 'Hōden — décharge', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 5, 5, 4, 6, 6, 8],
             hits: [{ frames: [0, 1], box: [4, 10, 30, 44], damage: 0, guard: 'unblockable', hitstun: 0, blockstun: 0, push: 0 }],
             throwRelease: { frame: 5, damage: 110, launch: [4.0, 4.6] },
-            fx: [[5, 'fx_zap', 34, 52]],
+            fx: [[5, 'fx_zap', 44, 60]],
             sfx: 'grab'
         }
     }

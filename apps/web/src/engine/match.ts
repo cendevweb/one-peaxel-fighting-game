@@ -1,6 +1,6 @@
 import {
-    DOUBLE_QCF, DP, QCB, QCF, currentDir, doubleTap, motion, numpad, pack, pressed,
-    pressedWithin, pushHistory
+    DOUBLE_QCF, DOUBLE_QCF_WINDOW, DP, DP_WINDOW, QCB, QCF, QCF_WINDOW, currentDir, dirOf, doubleTap, heldRun, motion,
+    motionAt, numpad, pack, pressed, pressedWithin, pushHistory
 } from './input';
 import { getChar } from './registry';
 import {
@@ -27,7 +27,10 @@ const BACKDASH_TICKS = 20;
 const DOWN_TICKS = 34;
 const THROW_RANGE = 26;
 const THROW_TECH_WINDOW = 9;
-const BUFFER = 8;
+/** Ticks a press stays wanted while the fighter cannot act yet (recovery,
+ *  stun, landing, hitstop does not count): pressed a little early, a move
+ *  still comes out on the first tick it can. */
+export const BUFFER = 8;
 /** Ticks after a normal starts during which a second button still upgrades it. */
 const KARA = 3;
 const GROUND_FRICTION = 0.32 * PX;
@@ -205,15 +208,19 @@ function wantsUltimate(f: FighterState, state: MatchState): boolean {
     const h = f.history;
     const hs = (pressedWithin(h, BTN.heavy, 3) && pressedWithin(h, BTN.special, 3) &&
         (pressed(h, BTN.heavy) || pressed(h, BTN.special)));
-    return hs || (pressed(h, BTN.special) && motion(h, DOUBLE_QCF, 30));
+    return hs || (pressed(h, BTN.special) && motion(h, DOUBLE_QCF, DOUBLE_QCF_WINDOW));
 }
 
 function specialSlot(f: FighterState): string | null {
     const h = f.history;
     if (!pressed(h, BTN.special)) return null;
-    if (motion(h, DP, 16)) return 'specialU';
-    if (motion(h, QCF, 14)) return 'specialN';
-    if (motion(h, QCB, 14)) return 'specialD';
+    const dp = motionAt(h, DP, DP_WINDOW);
+    const qcf = motion(h, QCF, QCF_WINDOW);
+    // Walking forward into ↓↘→ also reads as →↓↘: a long walk before the
+    // ↓ and a stick back on → mean the quarter circle was meant.
+    if (dp >= 0 && !(qcf && currentDir(h) === 6 && heldRun(h, dp, 6) > 8)) return 'specialU';
+    if (qcf) return 'specialN';
+    if (motion(h, QCB, QCF_WINDOW)) return 'specialD';
     const d = currentDir(h);
     if (d === 7 || d === 8 || d === 9) return 'specialU';
     if (d === 6 || d === 3) return 'specialF';
@@ -226,7 +233,7 @@ function normalSlot(f: FighterState, air: boolean): string | null {
     const d = currentDir(h);
     const down = d === 1 || d === 2 || d === 3;
     if (air) {
-        if (pressedWithin(h, BTN.heavy, 2) && pressed(h, BTN.heavy)) return 'airHeavy';
+        if (pressed(h, BTN.heavy)) return 'airHeavy';
         if (pressed(h, BTN.light)) return 'airLight';
         return null;
     }
@@ -257,18 +264,72 @@ function throwable(state: MatchState, a: FighterState, d: FighterState): boolean
     return gap <= THROW_RANGE * PX && state.phase === 'fight';
 }
 
-/** Try every action a free fighter on the ground can take. */
-function groundActions(state: MatchState, f: FighterState, _o: FighterState, events: GameEvent[]): boolean {
+const isAirSlot = (slot: string) => slot === 'airLight' || slot === 'airHeavy' || slot === 'airSpecial';
+const isSpecialSlot = (slot: string) => slot.startsWith('special') || slot === 'airSpecial';
+const isLightSlot = (slot: string) => slot === 'lightA' || slot === 'crouchLight' || slot === 'airLight' || slot === 'throw';
+
+/**
+ * What the buttons pressed this tick ask for, read with the stick and the
+ * motions of that very tick. Stored in `f.buffer` and played on the first
+ * tick the fighter is free to act, so a press never depends on landing on
+ * the exact tick recovery ends — nor on hitstop, during which the fighter
+ * is not updated at all.
+ */
+function intentOf(state: MatchState, f: FighterState): string | null {
+    const h = f.history;
+    if (!pressed(h, BTN.light) && !pressed(h, BTN.heavy) && !pressed(h, BTN.special)) return null;
     const def = getChar(f.char);
-    if (wantsUltimate(f, state)) { startMove(state, f, 'ultimate', events); return true; }
-    // Out of range the grab still comes out and whiffs, so the button always
-    // answers with the throw and never with a stray jab.
-    if (wantsThrow(f)) { startMove(state, f, 'throw', events); return true; }
+    const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
+    if (wantsUltimate(f, state)) return 'ultimate';
+    if (f.y > 0 || f.mode === 'air' || f.mode === 'prejump') {
+        if (pressed(h, BTN.special)) return f.mode === 'prejump' ? 'specialU' : has('airSpecial') ? 'airSpecial' : null;
+        return normalSlot(f, true);
+    }
+    if (wantsThrow(f)) return 'throw';
     const sp = specialSlot(f);
-    if (sp && def.moves[sp as keyof CharacterDef['moves']]) { startMove(state, f, sp, events); return true; }
-    const n = normalSlot(f, false);
-    if (n) { startMove(state, f, n, events); return true; }
-    return false;
+    if (sp && has(sp)) return sp;
+    return normalSlot(f, false);
+}
+
+function canStart(state: MatchState, f: FighterState, slot: string): boolean {
+    const move = getChar(f.char).moves[slot as keyof CharacterDef['moves']];
+    if (!move) return false;
+    return !move.cost || state.training || f.meter >= move.cost;
+}
+
+/** Starts the buffered move if `ok` accepts it. */
+function useBuffer(state: MatchState, f: FighterState, events: GameEvent[], ok: (slot: string) => boolean): boolean {
+    const slot = f.buffer?.slot;
+    if (!slot || state.phase !== 'fight' || !ok(slot) || !canStart(state, f, slot)) return false;
+    startMove(state, f, slot, events);
+    return true;
+}
+
+/** Try every action a free fighter on the ground can take. Out of range the
+ *  grab still comes out and whiffs, so the button always answers with the
+ *  throw and never with a stray jab. */
+function groundActions(state: MatchState, f: FighterState, _o: FighterState, events: GameEvent[]): boolean {
+    return useBuffer(state, f, events, (slot) => !isAirSlot(slot));
+}
+
+/** The move a buffered press cancels the current one into, if any. */
+function cancelInto(f: FighterState, move: MoveDef, want: string): string | null {
+    const def = getChar(f.char);
+    const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
+    if (want === 'ultimate') {
+        return move.kind !== 'ultimate' && (move.cancelable || move.kind === 'special') ? 'ultimate' : null;
+    }
+    if (isSpecialSlot(want)) {
+        if (!move.cancelable || f.airActions >= 2) return null;
+        const slot = f.y > 0 ? 'airSpecial' : want === 'airSpecial' ? 'specialN' : want;
+        return has(slot) ? slot : null;
+    }
+    if (!move.chain) return null;
+    if (move.chain.includes(want)) return want;
+    // Pressing L again during the L chain means "next link", whatever the
+    // stick says: lightA → lightB → lightC.
+    if (isLightSlot(want)) return move.chain.find((c) => c.startsWith('light')) ?? null;
+    return null;
 }
 
 // ——— Blocking ———
@@ -630,7 +691,6 @@ function freeGround(state: MatchState, f: FighterState, o: FighterState, events:
     const d = currentDir(h);
     if (d >= 7) {
         setMode(f, 'prejump', PREJUMP);
-        f.timer = d; // remembers which way to jump
         setAnim(f, 'jump', 0);
         f.vx = 0;
         return;
@@ -682,48 +742,19 @@ function freeGround(state: MatchState, f: FighterState, o: FighterState, events:
 
 function stepMove(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): void {
     const move = moveOf(f)!;
-    const def = getChar(f.char);
     // Two fingers never land on the same tick: a second button pressed just
     // after a grounded normal upgrades it to the throw, the ultimate or a
     // special, as if both had been pressed together.
-    if (move.kind === 'normal' && move.stance !== 'air' && f.t <= KARA && !f.connected && state.phase === 'fight') {
-        let up: string | null = null;
-        if (wantsUltimate(f, state)) up = 'ultimate';
-        else if (wantsThrow(f)) up = 'throw';
-        else {
-            const sp = specialSlot(f);
-            if (sp && def.moves[sp as keyof CharacterDef['moves']]) up = sp;
-        }
-        if (up) { startMove(state, f, up, events); return; }
-    }
-    // Cancels: chains and specials open once the move has touched the opponent.
-    if (f.connected && state.phase === 'fight') {
-        const h = f.history;
-        let next: string | null = null;
-        if (move.kind !== 'ultimate' && wantsUltimate(f, state) && (move.cancelable || move.kind === 'special')) next = 'ultimate';
-        else if (move.cancelable) {
-            const sp = f.y > 0 ? (pressed(h, BTN.special) ? 'airSpecial' : null) : specialSlot(f);
-            if (sp && def.moves[sp as keyof CharacterDef['moves']] && f.airActions < 2) next = sp;
-        }
-        if (!next && move.chain) {
-            const n = f.buffer && f.t - f.buffer.t <= BUFFER ? f.buffer.slot : normalSlot(f, f.y > 0);
-            if (n && move.chain.includes(n)) next = n;
-            // Pressing L again during the L chain means "next link", whatever
-            // the stick says: lightA → lightB → lightC.
-            if (!next && pressed(h, BTN.light) && move.chain.length) {
-                const link = move.chain.find((c) => c.startsWith('light'));
-                if (link) next = link;
-            }
-        }
-        if (next && f.frame > firstActive(move) - 1) {
+    if (move.kind === 'normal' && move.stance !== 'air' && f.t <= KARA && !f.connected &&
+        useBuffer(state, f, events, (slot) => slot === 'ultimate' || slot === 'throw' || (isSpecialSlot(slot) && !isAirSlot(slot)))) return;
+    // Cancels: chains and specials open once the move has touched the
+    // opponent. A press made any time since the move started (hitstop
+    // included) is kept in the buffer and comes out here.
+    if (f.connected && f.buffer && f.frame >= firstActive(move) && state.phase === 'fight') {
+        const next = cancelInto(f, move, f.buffer.slot);
+        if (next && canStart(state, f, next)) {
             startMove(state, f, next, events);
             return;
-        }
-    } else if (move.chain) {
-        const n = normalSlot(f, f.y > 0);
-        if (n && move.chain.includes(n)) f.buffer = { slot: n, t: f.t };
-        else if (pressed(f.history, BTN.light) && move.chain.some((c) => c.startsWith('light'))) {
-            f.buffer = { slot: move.chain.find((c) => c.startsWith('light'))!, t: f.t };
         }
     }
 
@@ -745,7 +776,7 @@ function stepMove(state: MatchState, f: FighterState, o: FighterState, events: G
         f.frameT = 0;
         f.frame++;
         if (f.frame >= move.durations.length) {
-            endMove(f, o);
+            endMove(state, f, o, events);
             return;
         }
         applyMotion(f, move);
@@ -754,7 +785,7 @@ function stepMove(state: MatchState, f: FighterState, o: FighterState, events: G
     if (move.invuln) f.invuln = f.frame >= move.invuln[0] && f.frame <= move.invuln[1] ? 1 : 0;
 }
 
-function endMove(f: FighterState, o: FighterState): void {
+function endMove(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): void {
     const move = moveOf(f);
     if (f.y > 0) {
         setMode(f, 'air');
@@ -767,6 +798,16 @@ function endMove(f: FighterState, o: FighterState): void {
     f.crouching = holdingDown;
     if (!move || move.stance !== 'air') f.vx = 0;
     faceOpponent(f, o);
+    // A move buffered during recovery starts on the very next animation tick.
+    if (state.phase === 'fight') groundActions(state, f, o, events);
+}
+
+/** Back to neutral after stun: act on this same tick, so a buffered
+ *  reversal or a guard held back does not lose a frame. */
+function recover(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): void {
+    setMode(f, 'idle');
+    setAnim(f, 'idle');
+    freeGround(state, f, o, events);
 }
 
 function updateFighter(state: MatchState, f: FighterState, o: FighterState, events: GameEvent[]): void {
@@ -790,12 +831,15 @@ function updateFighter(state: MatchState, f: FighterState, o: FighterState, even
             else if (state.phase === 'fight' && groundActions(state, f, o, events)) { /* landing cancel */ }
             break;
         case 'prejump': {
-            if (pressed(f.history, BTN.special) && def.moves.specialU) {
-                startMove(state, f, 'specialU', events);
-                break;
-            }
+            if (useBuffer(state, f, events, (slot) => slot === 'specialU')) break;
             if (--f.timer <= 0) {
-                const d = f.t > 0 ? currentDir(f.history) : 8;
+                // The latest upward direction held during the startup: letting
+                // go of → a tick early still jumps forward.
+                const h = f.history;
+                let d = 8;
+                for (let i = h.length - 1; i >= Math.max(0, h.length - 1 - PREJUMP); i--) {
+                    if (dirOf(h[i]) >= 7) { d = dirOf(h[i]); break; }
+                }
                 const dir = d === 9 ? 1 : d === 7 ? -1 : 0;
                 setMode(f, 'air');
                 f.vx = px(def.jump[0]) * dir * f.facing;
@@ -808,14 +852,7 @@ function updateFighter(state: MatchState, f: FighterState, o: FighterState, even
             break;
         }
         case 'air': {
-            if (state.phase === 'fight') {
-                if (pressed(f.history, BTN.special) && def.moves.airSpecial && f.airActions < 1 && !wantsUltimate(f, state)) {
-                    startMove(state, f, 'airSpecial', events);
-                    break;
-                }
-                const n = normalSlot(f, true);
-                if (n) { startMove(state, f, n, events); break; }
-            }
+            if (useBuffer(state, f, events, (slot) => (slot === 'airSpecial' && f.airActions < 1) || slot === 'airLight' || slot === 'airHeavy')) break;
             setAnim(f, 'jump', f.vy > px(1.5) ? 1 : 2);
             break;
         }
@@ -839,14 +876,13 @@ function updateFighter(state: MatchState, f: FighterState, o: FighterState, even
         case 'blockstun':
             tickAnim(f, def);
             if (--f.timer <= 0) {
-                setMode(f, 'idle');
-                setAnim(f, 'idle');
                 f.combo = 0;
+                recover(state, f, o, events);
             }
             break;
         case 'dizzy':
             tickAnim(f, def);
-            if (--f.timer <= 0) { setMode(f, 'idle'); setAnim(f, 'idle'); }
+            if (--f.timer <= 0) recover(state, f, o, events);
             break;
         case 'juggle':
             // Tumble frames follow the arc: rising, peak, falling.
@@ -854,7 +890,7 @@ function updateFighter(state: MatchState, f: FighterState, o: FighterState, even
             break;
         case 'thrown': {
             const holder = state.fighters[f.thrownBy];
-            if (f.t <= THROW_TECH_WINDOW && wantsThrow(f)) {
+            if (f.t <= THROW_TECH_WINDOW && (wantsThrow(f) || f.buffer?.slot === 'throw')) {
                 // Throw tech: both fighters spring apart, nobody takes damage.
                 const dir = f.x >= holder.x ? 1 : -1;
                 setMode(f, 'blockstun', 14); setAnim(f, 'guard');
@@ -882,11 +918,10 @@ function updateFighter(state: MatchState, f: FighterState, o: FighterState, even
             tickAnim(f, def);
             const n = def.manifest.anims.getup?.frames.length ?? 1;
             if (f.t > n * 7) {
-                setMode(f, 'idle');
-                setAnim(f, 'idle');
                 f.invuln = 4;
                 f.combo = 0;
                 faceOpponent(f, o);
+                recover(state, f, o, events);
             }
             break;
         }
@@ -1131,6 +1166,12 @@ export function stepMatch(state: MatchState, inputs: [number, number]): GameEven
     // in hitstop still comes out.
     pushHistory(a.history, pack(numpad(inputs[0], a.facing), inputs[0]));
     pushHistory(b.history, pack(numpad(inputs[1], b.facing), inputs[1]));
+    if (state.phase === 'fight') {
+        for (const f of state.fighters) {
+            const want = intentOf(state, f);
+            if (want) f.buffer = { slot: want, t: BUFFER };
+        }
+    }
 
     if (state.freeze) {
         state.freeze.t--;
@@ -1149,6 +1190,8 @@ export function stepMatch(state: MatchState, inputs: [number, number]): GameEven
     for (const [f, o] of [[a, b], [b, a]] as const) {
         if (f.hitstop > 0) { f.hitstop--; continue; }
         updateFighter(state, f, o, events);
+        // The buffer only ages on ticks the fighter actually plays.
+        if (f.buffer && --f.buffer.t <= 0) f.buffer = null;
     }
     for (const f of state.fighters) {
         if (f.hitstop > 0) continue;

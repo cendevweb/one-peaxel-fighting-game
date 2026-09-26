@@ -68,9 +68,10 @@ export const lucci: CharacterDef = {
             cancelable: true, sfx: 'slash'
         },
         heavyFwd: {
-            name: 'Rankyaku Gaichō (coup haut)', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
+            name: 'Rankyaku Gaichō', anim: 'heavyFwd', kind: 'normal', stance: 'stand',
             durations: [7, 5, 4, 4, 6, 9],
             hits: [{ frames: [2, 3], box: [0, 0, 40, 72], damage: 72, guard: 'high', hitstun: 22, blockstun: 14, push: 14, hitstop: 12, spark: 'cut', shake: 3 }],
+            fx: [[2, 'fx_gaicho', 34, 34]],
             cancelable: true, sfx: 'slash'
         },
         heavyBack: {
@@ -150,9 +151,9 @@ export const lucci: CharacterDef = {
             motion: [[4, 7.5, 0], [6, 0, 0]],
             hits: [
                 { frames: [4, 5], box: 'auto', damage: 70, guard: 'mid', hitstun: 50, blockstun: 20, push: 2, hitstop: 8, spark: 'cut', shake: 4 },
-                { frames: [8, 10], box: [0, 0, 70, 64], damage: 260, guard: 'mid', hitstun: 50, blockstun: 22, push: 34, launch: [6.6, 5.2], wallBounce: true, hitstop: 24, spark: 'big', shake: 10 }
+                { frames: [7, 10], box: [0, 0, 70, 64], damage: 260, guard: 'mid', hitstun: 50, blockstun: 22, push: 34, launch: [6.6, 5.2], wallBounce: true, hitstop: 24, spark: 'big', shake: 10 }
             ],
-            fx: [[8, 'fx_rokuogan', 44, 32]],
+            fx: [[7, 'fx_rokuogan', 44, 32]],
             sfx: 'beam'
         },
         throw: {
