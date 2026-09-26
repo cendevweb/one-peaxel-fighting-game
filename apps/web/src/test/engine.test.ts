@@ -102,6 +102,33 @@ describe('engine', () => {
         expect(s2.fighters[1].health).toBe(1000);
     });
 
+    it('A then B a tick apart still throws, and a far throw whiffs instead of jabbing', () => {
+        const s = fight();
+        closeIn(s);
+        stepMatch(s, [light, 0]);
+        expect(s.fighters[0].move).toBe('lightA');
+        stepMatch(s, [light | heavy, 0]);
+        expect(s.fighters[0].move).toBe('throw');
+        hold(s, 0, 0, 40);
+        expect(s.fighters[1].health).toBeLessThan(1000);
+
+        const far = fight();
+        stepMatch(far, [light | heavy, 0]);
+        expect(far.fighters[0].move).toBe('throw');
+        hold(far, 0, 0, 40);
+        expect(far.fighters[1].health).toBe(1000);
+    });
+
+    it('B then C two ticks apart comes out as the ultimate', () => {
+        const s = fight();
+        closeIn(s);
+        s.fighters[0].meter = 200;
+        stepMatch(s, [heavy, 0]);
+        stepMatch(s, [heavy, 0]);
+        stepMatch(s, [heavy | special, 0]);
+        expect(s.fighters[0].move).toBe('ultimate');
+    });
+
     it('the ultimate needs a full bar', () => {
         const s = fight();
         closeIn(s);
