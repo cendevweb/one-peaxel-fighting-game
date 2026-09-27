@@ -16,7 +16,8 @@ apps/web/src/characters  Données des combattants (un fichier chacun, découvert
 apps/web/src/render      Canvas : décor, sprites, VFX, HUD, police bitmap.
 apps/web/src/audio       Effets et musique synthétisés en WebAudio.
 apps/web/src/input       Clavier (codes physiques) et manettes → bits de boutons.
-apps/web/src/game        Scènes (menus, sélection, combat, résultats) et IA.
+apps/web/src/game        Scènes (menus, sélection, combat, résultats), IA, salon et combat en ligne.
+apps/web/src/net         En ligne : protocole, rollback, transport WebRTC (peerjs).
 tools/sprites            Extraction des planches → atlas + manifestes JSON.
 tools/stages             Découpe des décors.
 ```
@@ -24,8 +25,10 @@ tools/stages             Découpe des décors.
 **`engine` décide, tout le reste affiche.** `stepMatch(state, [bits, bits])`
 avance d'une frame (60 par seconde) et renvoie des événements que la vue
 transforme en effets et en sons. Positions en entiers (`PX = 256`
-sous-pixels) : pas de flottant dans l'état, pour qu'un futur mode en ligne
-puisse rejouer les entrées à l'identique. L'IA (`game/ai.ts`) ne fait que
+sous-pixels) : pas de flottant dans l'état, pour que le mode en ligne
+(rollback, `net/rollback.ts`) rejoue les entrées à l'identique sur les deux
+machines. Toute modification du moteur doit rester déterministe :
+`net/fingerprint.ts` refuse de jumeler deux versions différentes. L'IA (`game/ai.ts`) ne fait que
 renvoyer des bits de boutons, comme un clavier.
 
 ## Pièges connus
