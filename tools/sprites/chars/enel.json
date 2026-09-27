@@ -28,13 +28,13 @@
  ],
  "images": {
   "portrait": {
+   "sheet": "enel-gb2.png",
    "rect": [
-    584,
-    4935,
-    677,
-    5010
-   ],
-   "key": true
+    891,
+    6816,
+    953,
+    6902
+   ]
   },
   "face": {
    "rect": [
@@ -46,11 +46,12 @@
    "key": true
   },
   "art": {
+   "sheet": "enel-gb2.png",
    "rect": [
-    584,
-    4935,
-    677,
-    5032
+    968,
+    6738,
+    1168,
+    6904
    ],
    "key": true
   },

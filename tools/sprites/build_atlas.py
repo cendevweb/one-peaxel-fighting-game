@@ -181,7 +181,16 @@ def build(cid: str, src: dict, contact_dir: str | None) -> None:
     sheet_img = Image.open(path).convert("RGBA")
     for name, spec in src.get("images", {}).items():
         x0, y0, x1, y1 = spec["rect"]
-        if spec.get("key"):
+        if spec.get("sheet"):
+            # A still taken from another sheet of the same fighter (a better
+            # portrait on a later game's sheet, for instance).
+            other = Image.open(os.path.join(os.path.dirname(path), spec["sheet"])).convert("RGBA")
+            if spec.get("key"):
+                raw = np.asarray(other.convert("RGB"))
+                img = Image.fromarray(key_background(raw, src.get("cut", 24), src.get("fade", 24))[y0:y1, x0:x1].copy())
+            else:
+                img = other.crop((x0, y0, x1, y1))
+        elif spec.get("key"):
             # Keyed from the untouched sheet: art usually sits inside an
             # ignore rect, which would blank it.
             raw = np.asarray(sheet_img.convert("RGB"))

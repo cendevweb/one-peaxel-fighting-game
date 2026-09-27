@@ -3,9 +3,15 @@ import type { CharacterDef } from '../engine/types';
 
 /**
  * Every `characters/<id>.ts` exporting a CharacterDef joins the roster by
- * itself; ORDER only decides the select-screen order.
+ * itself; ORDER only decides the select-screen order
+ * (seven per row: Straw Hats and Whitebeard's crew, then the Warlords and
+ * rookies, then the Emperors and admirals).
  */
-const ORDER = ['luffy', 'enel', 'lucci', 'crocodile', 'akainu', 'zoro', 'sanji', 'ace', 'law', 'doflamingo'];
+const ORDER = [
+    'luffy', 'zoro', 'sanji', 'robin', 'ace', 'marco', 'whitebeard',
+    'law', 'kid', 'hancock', 'crocodile', 'doflamingo', 'kuma', 'magellan',
+    'enel', 'lucci', 'shanks', 'blackbeard', 'aokiji', 'kizaru', 'akainu'
+];
 
 const modules = import.meta.glob<Record<string, unknown>>('./*.ts', { eager: true });
 

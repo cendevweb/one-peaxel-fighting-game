@@ -44,8 +44,8 @@ renvoyer des bits de boutons, comme un clavier.
   existent dans `audio/sound.ts`. Les `spark` sont typés (`engine/types.ts`)
   et dessinés dans `render/vfx.ts`.
 - Nouveau combattant : l'ajouter à `ORDER` (`characters/index.ts`) et à
-  `ARCADE_RANK` (`game/scenes.ts`). La sélection est une grille de 5 par
-  rangée.
+  `ARCADE_RANK` (`game/scenes.ts`). La sélection est une grille de 7 par
+  rangée (`GRID_COLS`, `game/scenes.ts`).
 - La police bitmap n'a que les glyphes déclarés dans `render/font.ts` ; un
   caractère inconnu s'affiche `?`.
 - Le site spritedatabase.net est bloqué depuis les sessions cloud : les

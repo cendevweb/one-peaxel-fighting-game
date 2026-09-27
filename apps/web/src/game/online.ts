@@ -11,7 +11,7 @@ import { artOf } from '../render/sprites';
 import { STAGES, stageImage } from '../render/stage';
 import { OptionList, type App, type Scene } from './app';
 import { OnlineFightScene } from './onlineFight';
-import { MainMenuScene, SelectScene, VersusScene, sceneHooks, type Setup } from './scenes';
+import { MainMenuScene, SelectScene, VersusScene, gridStep, gridTop, sceneHooks, type Setup } from './scenes';
 import { COLORS, hint, menuBackdrop, menuItems, panel, title } from './ui';
 
 /**
@@ -573,7 +573,7 @@ export class OnlineSelectScene extends SelectScene {
             const before = c.index;
             if (m.action === 'left') c.index = (c.index + n - 1) % n;
             if (m.action === 'right') c.index = (c.index + 1) % n;
-            if (m.action === 'up' || m.action === 'down') c.index = gridNeighbour(c.index, m.action === 'up' ? -1 : 1);
+            if (m.action === 'up' || m.action === 'down') c.index = gridStep(c.index, m.action === 'up' ? -1 : 1);
             if (c.index !== before) { play('uiMove'); changed = true; }
             if (m.action === 'confirm') { c.locked = true; changed = true; play('uiSelect'); }
         }
@@ -594,8 +594,8 @@ export class OnlineSelectScene extends SelectScene {
         drawPing(ctx, this.session);
         if (this.waitHost) {
             ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillRect(0, 196, 640, 20);
-            drawText(ctx, 'L\'HÔTE VA CHOISIR L\'ARÈNE…', 320, 202, { color: COLORS.gold, outline: COLORS.ink, align: 'center' });
+            ctx.fillRect(0, gridTop() - 26, 640, 20);
+            drawText(ctx, 'L\'HÔTE VA CHOISIR L\'ARÈNE…', 320, gridTop() - 20, { color: COLORS.gold, outline: COLORS.ink, align: 'center' });
         }
         this.quitBox.draw(ctx, this.t);
     }
@@ -615,24 +615,6 @@ export class OnlineSelectScene extends SelectScene {
     }
 }
 
-/** Same grid walk as the local select screen (five per row). */
-function gridNeighbour(i: number, dir: 1 | -1): number {
-    const cols = 5;
-    const rows = Math.ceil(ROSTER.length / cols);
-    if (rows < 2) return i;
-    const row = Math.floor(i / cols);
-    const nextRow = (row + dir + rows) % rows;
-    const inRow = (r: number) => Math.min(cols, ROSTER.length - r * cols);
-    // Centre-aligned rows: compare positions relative to each row's centre.
-    const offset = (i % cols) - (inRow(row) - 1) / 2;
-    let best = nextRow * cols;
-    let bestD = Infinity;
-    for (let j = 0; j < inRow(nextRow); j++) {
-        const d = Math.abs(j - (inRow(nextRow) - 1) / 2 - offset);
-        if (d < bestD) { bestD = d; best = nextRow * cols + j; }
-    }
-    return best;
-}
 
 // ——— Stage: the host picks, the guest watches ———
 
