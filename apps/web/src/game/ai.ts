@@ -1,4 +1,4 @@
-import { ULTIMATE_COST } from '../engine/match';
+import { ULTIMATE2_COST, ULTIMATE_COST } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, PX, type FighterState, type MatchState } from '../engine/types';
 
@@ -126,9 +126,9 @@ export class Cpu {
             return 0;
         }
 
-        // Ultimate when it will connect.
+        // Ultimate when it will connect; with both bars, the strongest one.
         if (me.meter >= ULTIMATE_COST && dist < 70 && (opp.mode === 'move' || opp.mode === 'land') && this.rand() < 0.6) {
-            this.push([BTN.heavy | BTN.special, 2], [0, 20]);
+            this.push([this.superBits(me.meter), 2], [0, 20]);
             return 0;
         }
 
@@ -211,8 +211,13 @@ export class Cpu {
                 break;
             }
             default:
-                if (me.meter >= ULTIMATE_COST && this.rand() < 0.5) this.push([BTN.heavy | BTN.special, 2], [0, 30]);
+                if (me.meter >= ULTIMATE_COST && this.rand() < 0.5) this.push([this.superBits(me.meter), 2], [0, 30]);
         }
+    }
+
+    /** H + S for the ultimate, L + H + S for the second one once two bars are full. */
+    private superBits(meter: number): number {
+        return meter >= ULTIMATE2_COST && this.rand() < 0.7 ? BTN.light | BTN.heavy | BTN.special : BTN.heavy | BTN.special;
     }
 }
 

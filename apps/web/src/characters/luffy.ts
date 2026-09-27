@@ -135,6 +135,22 @@ export const luffy: CharacterDef = {
             ],
             sfx: 'gigant'
         },
+        // Gear Second steam, a Jet Pistol that pins the foe, then Gear Third:
+        // the leg inflates into a giant foot that comes down in front of him
+        // (Gigant Axe) and stamps the ground with Luffy riding on top.
+        ultimate2: {
+            name: 'Gear Third — Gigant Axe', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 3, 3, 2, 3, 4, 6, 5, 5, 5, 5, 6, 5, 5, 5, 6, 3, 3, 4, 4, 4, 5, 8, 12, 7, 7, 8],
+            superFreeze: 70, cost: 200, invuln: [0, 4],
+            hits: [
+                { frames: [5, 6], box: [6, 20, 48, 26], damage: 40, guard: 'mid', hitstun: 75, blockstun: 22, push: 3, rehit: 4, hitstop: 7, spark: 'heavy', shake: 3 },
+                { frames: [17, 19], box: [0, 0, 72, 130], damage: 170, guard: 'mid', hitstun: 60, blockstun: 24, push: 0, hitstop: 16, spark: 'quake', shake: 10, sfx: 'quake' },
+                { frames: [20, 21], box: [0, 0, 92, 70], damage: 70, guard: 'mid', hitstun: 50, blockstun: 20, push: 0, rehit: 4, hitstop: 6, spark: 'big', shake: 6 },
+                { frames: [22, 23], box: [0, 0, 96, 70], damage: 220, guard: 'mid', hitstun: 40, blockstun: 24, push: 30, knockdown: true, launch: [4.2, 5.6], hitstop: 24, spark: 'big', shake: 14, sfx: 'gigant' }
+            ],
+            fx: [[22, 'fx_blast', 52, 12]],
+            sfx: 'gigant'
+        },
         throw: {
             name: 'Projection élastique', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 5, 3, 3, 3, 6, 9],

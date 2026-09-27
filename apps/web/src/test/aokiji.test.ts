@@ -97,6 +97,35 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(250);
         });
 
+        it('Ice Time Capsule (O) with two bars locks the foe in ice and hurts', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.filter((h) => h === 'ultimate2').length).toBeGreaterThanOrEqual(4);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('Ice Time Capsule does nothing with a single bar, and the bar stays', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 200)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into Ice Time Capsule and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 16), light | heavy | special, ...holdFor(0, 260)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(4);
+        });
+
         it('Partisan flies across mid range', () => {
             const s = fight(foe);
             place(s, 110);

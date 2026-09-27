@@ -5,7 +5,9 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * Sir Crocodile — the zoner and grappler. Slow on his feet and heavier than
  * the rest, but the golden hook reaches far, the Desert Spada crawls along the
  * ground (a low projectile), the Barchan crescent caves a guard in, and the
- * Ground Death grab dries whoever he gets his hand on.
+ * Ground Death grab dries whoever he gets his hand on. Sables Pesado (O, two
+ * bars) dries the ground into a line of tornadoes across the screen, then
+ * fires a compressed sandstorm from his palm.
  *
  * Every `durations` array has exactly one entry per frame of the animation
  * it plays (see tools/sprites/chars/crocodile.json); a test checks it.
@@ -141,6 +143,36 @@ export const crocodile: CharacterDef = {
             hits: [
                 { frames: [8, 13], box: [-20, 0, 72, 90], damage: 60, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 8, hitstop: 5, spark: 'sand', shake: 5 },
                 { frames: [14, 15], box: [-20, 0, 72, 90], damage: 240, guard: 'mid', hitstun: 40, blockstun: 20, push: 30, launch: [3.8, 7.4], wallBounce: true, hitstop: 20, spark: 'big', shake: 10 }
+            ],
+            sfx: 'sand'
+        },
+        ultimate2: {
+            // Ground Death then Sables Pesado: Crocodile plants his hand in
+            // the ground, the earth dries up and a line of sand tornadoes
+            // rises across the whole screen; then he packs the storm into a
+            // ball in his palm and fires it, a front of tornadoes and ground
+            // blades that throws the foe into the wall.
+            name: 'Sables Pesado', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 6, 4, 3, 3, 5, 4, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 5, 7, 4, 6, 6, 8, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 7],
+            fx: [
+                [5, 'fx_dust', 30, 38], [5, 'fx_dust', -30, 38], [5, 'fx_spada', 50, 18],
+                [6, 'fx_pesado', 60, 42], [7, 'fx_pesado', 110, 42], [8, 'fx_pesado', 160, 42],
+                [9, 'fx_pesado', 210, 42], [9, 'fx_pesado', -40, 42],
+                [10, 'fx_pesado', 85, 42], [10, 'fx_pesado', 135, 42],
+                [11, 'fx_pesado', 185, 42], [11, 'fx_pesado', 235, 42],
+                [12, 'fx_pesado', 40, 42],
+                [21, 'fx_pesado', 70, 42], [21, 'fx_spada', 60, 18],
+                [22, 'fx_pesado', 130, 42], [22, 'fx_spada', 120, 18],
+                [23, 'fx_pesado', 190, 42], [23, 'fx_spada', 180, 18],
+                [24, 'fx_pesado', 250, 42]
+            ],
+            hits: [
+                { frames: [5, 5], box: [-30, 0, 200, 60], damage: 80, guard: 'mid', hitstun: 70, blockstun: 22, push: 1, hitstop: 12, spark: 'sand', shake: 8, sfx: 'quake' },
+                { frames: [8, 8], box: [-40, 0, 250, 110], damage: 60, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'sand', shake: 6, sfx: 'sand' },
+                { frames: [10, 10], box: [-40, 0, 250, 110], damage: 60, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'sand', shake: 6 },
+                { frames: [12, 12], box: [-40, 0, 250, 110], damage: 60, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'sand', shake: 6, sfx: 'sand' },
+                { frames: [21, 22], box: [10, 0, 250, 100], damage: 340, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [5.6, 6.2], wallBounce: true, hitstop: 24, spark: 'big', shake: 14, sfx: 'sand' }
             ],
             sfx: 'sand'
         },

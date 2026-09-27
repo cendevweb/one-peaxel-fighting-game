@@ -19,6 +19,8 @@ const WALL = 18 * PX;
 const ROUND_TICKS = 99 * FPS;
 export const METER_MAX = 200;
 export const ULTIMATE_COST = 100;
+/** The second ultimate spends both bars. */
+export const ULTIMATE2_COST = 200;
 export const GUARD_MAX = 100;
 const PREJUMP = 4;
 const LAND_LAG = 3;
@@ -193,7 +195,7 @@ function startMove(state: MatchState, f: FighterState, slot: string, events: Gam
     events.push({ type: 'move', side: f.side, slot, sfx: move.sfx });
     if (move.superFreeze) {
         state.freeze = { by: f.side, t: move.superFreeze };
-        events.push({ type: 'superFreeze', side: f.side, char: f.char });
+        events.push({ type: 'superFreeze', side: f.side, char: f.char, slot });
     }
 }
 
@@ -209,6 +211,13 @@ function wantsUltimate(f: FighterState, state: MatchState): boolean {
     const hs = (pressedWithin(h, BTN.heavy, 3) && pressedWithin(h, BTN.special, 3) &&
         (pressed(h, BTN.heavy) || pressed(h, BTN.special)));
     return hs || (pressed(h, BTN.special) && motion(h, DOUBLE_QCF, DOUBLE_QCF_WINDOW));
+}
+
+/** L + H + S together (the O key): the second ultimate. */
+function wantsUltimate2(f: FighterState): boolean {
+    const h = f.history;
+    return pressedWithin(h, BTN.light, 3) && pressedWithin(h, BTN.heavy, 3) && pressedWithin(h, BTN.special, 3) &&
+        (pressed(h, BTN.light) || pressed(h, BTN.heavy) || pressed(h, BTN.special));
 }
 
 function specialSlot(f: FighterState): string | null {
@@ -280,6 +289,9 @@ function intentOf(state: MatchState, f: FighterState): string | null {
     if (!pressed(h, BTN.light) && !pressed(h, BTN.heavy) && !pressed(h, BTN.special)) return null;
     const def = getChar(f.char);
     const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
+    // Three buttons ask for the second ultimate only: short of two bars
+    // they do nothing, rather than spend one bar on the first.
+    if (wantsUltimate2(f)) return (f.meter >= ULTIMATE2_COST || state.training) && has('ultimate2') ? 'ultimate2' : null;
     if (wantsUltimate(f, state)) return 'ultimate';
     if (f.y > 0 || f.mode === 'air' || f.mode === 'prejump') {
         if (pressed(h, BTN.special)) return f.mode === 'prejump' ? 'specialU' : has('airSpecial') ? 'airSpecial' : null;
@@ -316,8 +328,8 @@ function groundActions(state: MatchState, f: FighterState, _o: FighterState, eve
 function cancelInto(f: FighterState, move: MoveDef, want: string): string | null {
     const def = getChar(f.char);
     const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
-    if (want === 'ultimate') {
-        return move.kind !== 'ultimate' && (move.cancelable || move.kind === 'special') ? 'ultimate' : null;
+    if (want === 'ultimate' || want === 'ultimate2') {
+        return move.kind !== 'ultimate' && (move.cancelable || move.kind === 'special') && has(want) ? want : null;
     }
     if (isSpecialSlot(want)) {
         if (!move.cancelable || f.airActions >= 2) return null;
@@ -746,7 +758,7 @@ function stepMove(state: MatchState, f: FighterState, o: FighterState, events: G
     // after a grounded normal upgrades it to the throw, the ultimate or a
     // special, as if both had been pressed together.
     if (move.kind === 'normal' && move.stance !== 'air' && f.t <= KARA && !f.connected &&
-        useBuffer(state, f, events, (slot) => slot === 'ultimate' || slot === 'throw' || (isSpecialSlot(slot) && !isAirSlot(slot)))) return;
+        useBuffer(state, f, events, (slot) => slot === 'ultimate' || slot === 'ultimate2' || slot === 'throw' || (isSpecialSlot(slot) && !isAirSlot(slot)))) return;
     // Cancels: chains and specials open once the move has touched the
     // opponent. A press made any time since the move started (hitstop
     // included) is kept in the buffer and comes out here.

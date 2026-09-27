@@ -149,6 +149,21 @@ export const blackbeard: CharacterDef = {
             fx: [[1, 'fx_hole', 64, -2], [6, 'fx_burst', 56, 0], [6, 'fx_rise', 104, 0], [6, 'fx_pillar', 18, 0]],
             sfx: 'dark'
         },
+        ultimate2: {
+            name: 'Kaishin des ténèbres', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [8, 8, 10, 6, 6, 6, 6, 6, 8, 6, 12, 12, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 9],
+            hits: [
+                { frames: [3, 7], box: [0, 0, 200, 120], damage: 60, guard: 'mid', hitstun: 50, blockstun: 18, push: 0, rehit: 10, hitstop: 4, spark: 'dark', shake: 3, sfx: 'dark' },
+                { frames: [9, 10], box: [-10, 0, 210, 160], damage: 350, guard: 'mid', hitstun: 50, blockstun: 24, push: 24, knockdown: true, launch: [3.2, 7.6], hitstop: 26, spark: 'quake', shake: 12, sfx: 'quake' }
+            ],
+            fx: [
+                [3, 'fx_cracks', 64, 0], [3, 'fx_pillar', 40, 0], [3, 'fx_pillar', 90, 0], [3, 'fx_pillar', 140, 0], [3, 'fx_pillar', 190, 0],
+                [5, 'fx_cracks', 150, 0], [6, 'fx_pillar', 60, 0], [6, 'fx_pillar', 115, 0], [6, 'fx_pillar', 170, 0],
+                [9, 'fx_dust', 26, 0], [9, 'fx_quake', 60, 36], [9, 'fx_nova', 80, 0], [9, 'fx_nova', 170, 0]
+            ],
+            sfx: 'quake'
+        },
         throw: {
             name: 'Poigne du trou noir', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 6, 4, 6, 6, 8],

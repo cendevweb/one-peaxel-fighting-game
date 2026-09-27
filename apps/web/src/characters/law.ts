@@ -7,7 +7,9 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * rest: Radio Knife (the cyan flying cut), Injection Shot (the spinning
  * scabbard and the lunge), Takt (the rising thrust, his reversal),
  * Shambles — Counter Shock (a swap-dash into the electric palm), Gamma
- * Knife as the throw, and the Room — Amputate as the ultimate.
+ * Knife as the throw, the Room — Amputate as the ultimate and K-Room —
+ * Puncture Wille (the Kikoku whirl, then the far-reaching thrust) as the
+ * two-bar ultimate.
  *
  * Every animation and effect comes from the Gigant Battle 2 sheet
  * (tools/sprites/chars/law.json): the cyan slash arcs, the Room dome and the
@@ -152,6 +154,23 @@ export const law: CharacterDef = {
                 { frames: [13, 14], box: [-10, 0, 80, 80], damage: 190, guard: 'mid', hitstun: 50, blockstun: 22, push: 32, launch: [5.8, 5.4], wallBounce: true, hitstop: 22, spark: 'big', shake: 10 }
             ],
             fx: [[1, 'fx_room', 0, 0], [4, 'fx_shambles', -6, 0], [7, 'fx_shambles', 0, 0]],
+            sfx: 'room'
+        },
+        // Two bars: the K-Room (the sheet's violet dome) swells over the
+        // whole exchange, the Kikoku whirl (the orange-ringed spin row) bores
+        // in, a low lunge pins the foe, then Law shoulders the nodachi and
+        // drives it through: the far-reaching draw-thrust row, Puncture Wille.
+        ultimate2: {
+            name: 'K-Room — Puncture Wille', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [7, 6, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 6, 5, 5, 7, 3, 4, 5, 6, 8, 10, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 11],
+            motion: [[1, 4.2, 0], [10, 1.6, 0], [12, 0, 0]],
+            hits: [
+                { frames: [2, 9], box: [-14, 0, 62, 72], damage: 40, guard: 'mid', hitstun: 60, blockstun: 18, push: 1, rehit: 12, hitstop: 6, spark: 'room', shake: 2 },
+                { frames: [11, 11], box: [0, 4, 70, 50], damage: 60, guard: 'mid', hitstun: 70, blockstun: 20, push: 2, hitstop: 10, spark: 'blade', shake: 4 },
+                { frames: [16, 18], box: [-4, 10, 112, 96], damage: 440, guard: 'mid', hitstun: 50, blockstun: 24, push: 34, launch: [6.0, 6.2], wallBounce: true, knockdown: true, hitstop: 26, spark: 'big', shake: 12, sfx: 'slashHeavy' }
+            ],
+            fx: [[0, 'fx_kroom', 36, 0], [2, 'fx_shambles', 0, 0], [12, 'fx_kroom', 44, 0], [16, 'fx_shambles', 40, 40]],
             sfx: 'room'
         },
         throw: {

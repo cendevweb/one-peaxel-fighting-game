@@ -18,6 +18,8 @@ export interface KeyBinding {
     /** Shortcuts: both buttons at once. */
     throwKey: string[];
     ultimate: string[];
+    /** L + H + S: the second ultimate. */
+    ultimate2: string[];
     start: string[];
 }
 
@@ -25,12 +27,12 @@ export const KEYS: [KeyBinding, KeyBinding] = [
     {
         up: ['KeyW'], down: ['KeyS'], left: ['KeyA'], right: ['KeyD'],
         light: ['KeyJ'], heavy: ['KeyK'], special: ['KeyL'],
-        throwKey: ['KeyU'], ultimate: ['KeyI'], start: ['Escape']
+        throwKey: ['KeyU'], ultimate: ['KeyI'], ultimate2: ['KeyO'], start: ['Escape']
     },
     {
         up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'],
         light: ['Numpad1', 'Comma'], heavy: ['Numpad2', 'Period'], special: ['Numpad3', 'Slash'],
-        throwKey: ['Numpad4'], ultimate: ['Numpad5'], start: ['Backspace']
+        throwKey: ['Numpad4'], ultimate: ['Numpad5'], ultimate2: ['Numpad6'], start: ['Backspace']
     }
 ];
 
@@ -103,7 +105,8 @@ function padBits(index: number): number {
     if (b(3)) bits |= BTN.heavy;
     if (b(1)) bits |= BTN.special;
     if (b(4)) bits |= BTN.light | BTN.heavy;
-    if (b(5) || b(7)) bits |= BTN.heavy | BTN.special;
+    if (b(5)) bits |= BTN.heavy | BTN.special;
+    if (b(6) || b(7)) bits |= BTN.light | BTN.heavy | BTN.special;
     if (b(9)) bits |= BTN.start;
     return bits;
 }
@@ -130,6 +133,7 @@ export function readSide(side: 0 | 1): number {
     if (anyGame(k.special)) bits |= BTN.special;
     if (anyGame(k.throwKey)) bits |= BTN.light | BTN.heavy;
     if (anyGame(k.ultimate)) bits |= BTN.heavy | BTN.special;
+    if (anyGame(k.ultimate2)) bits |= BTN.light | BTN.heavy | BTN.special;
     if (anyGame(k.start)) bits |= BTN.start;
     if (padOf[side] >= 0) bits |= padBits(padOf[side]);
     return bits;

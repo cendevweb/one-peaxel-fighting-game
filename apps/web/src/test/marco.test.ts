@@ -105,6 +105,44 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(250);
         });
 
+        it('the giant phoenix dive (O) with two bars hits hard', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.length).toBeGreaterThanOrEqual(4);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('the giant phoenix dive (O) reaches mid range', () => {
+            const s = fight(foe);
+            place(s, 90);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(300);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into the giant phoenix dive (O) and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 8), ...mash(light | heavy | special, 10), ...holdFor(0, 260)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(4);
+        });
+
         it('the blue flame (S) flies across mid range', () => {
             const s = fight(foe);
             place(s, 110);

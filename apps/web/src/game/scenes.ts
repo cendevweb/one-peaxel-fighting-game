@@ -502,7 +502,7 @@ const SLOT_NOTATION: [MoveSlot, string][] = [
     ['crouchLight', '↓ [A]'], ['crouchHeavy', '↓ [B]'],
     ['airLight', 'SAUT [A]'], ['airHeavy', 'SAUT [B]'], ['airSpecial', 'SAUT [C]'],
     ['specialN', '[C]  OU  ↓↘→ [C]'], ['specialF', '→ [C]'], ['specialU', '↑ [C]  OU  →↓↘ [C]'],
-    ['specialD', '↓ [C]  OU  ↓↙← [C]'], ['throw', '[A]+[B] (PRÈS)'], ['ultimate', '[B]+[C] (1 BARRE)']
+    ['specialD', '↓ [C]  OU  ↓↙← [C]'], ['throw', '[A]+[B] (PRÈS)'], ['ultimate', '[B]+[C] (1 BARRE)'], ['ultimate2', '[A]+[B]+[C] (2 BARRES)']
 ];
 
 export class FightScene implements Scene {
@@ -763,18 +763,19 @@ export class ControlsScene implements Scene {
                 ['[C] SPÉCIAL', keyLabel(k.special[0])],
                 ['CHOPE [A]+[B]', keyLabel(k.throwKey[0])],
                 ['ULTIME [B]+[C]', keyLabel(k.ultimate[0])],
+                ['ULTIME MAX [A]+[B]+[C]', keyLabel(k.ultimate2[0])],
                 ['PAUSE', keyLabel(k.start[0])]
             ];
             rows.forEach(([label, key], i) => {
-                notation(ctx, label, x + 14, 82 + i * 20, '#cfc4dc');
-                drawText(ctx, key, x + 266, 82 + i * 20, { color: '#fff', outline: COLORS.ink, align: 'right' });
+                notation(ctx, label, x + 14, 80 + i * 18, '#cfc4dc');
+                drawText(ctx, key, x + 266, 80 + i * 18, { color: '#fff', outline: COLORS.ink, align: 'right' });
             });
         }
         panel(ctx, 30, 236, 580, 96, COLORS.dim);
         drawText(ctx, 'MANETTE', 44, 246, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink });
         const lines = [
             'CROIX / STICK : DÉPLACEMENT    A OU X : [A] LÉGER    Y : [B] FORT    B : [C] SPÉCIAL',
-            'LB : CHOPE    RB / RT : ULTIME    START : PAUSE',
+            'LB : CHOPE    RB : ULTIME    LT / RT : ULTIME MAX    START : PAUSE',
             'LA PREMIÈRE MANETTE BRANCHÉE JOUE J1, LA SECONDE J2.'
         ];
         lines.forEach((l, i) => notation(ctx, l, 44, 266 + i * 18, '#cfc4dc'));

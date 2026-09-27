@@ -97,6 +97,41 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(250);
         });
 
+        it('O with two bars fires the Gigant Axe, which hits in full at point-blank', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 320));
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.length).toBeGreaterThanOrEqual(5);
+            expect(log.maxCombo).toBe(log.hits.length);
+            expect(s.fighters[1].mode).not.toBe('hitstun');
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 200)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into the Gigant Axe (O) and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 8), ...mash(light | heavy | special, 16), ...holdFor(0, 320)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBe(log.hits.length);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
         it('the Pistol reaches mid range', () => {
             const s = fight(foe);
             place(s, 70);

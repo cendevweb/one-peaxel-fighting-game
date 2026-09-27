@@ -150,6 +150,29 @@ export const kuma: CharacterDef = {
             fx: [[1, 'fx_gather', 10, 100], [8, 'fx_ursus', 96, 54]],
             sfx: 'gigant'
         },
+        ultimate2: {
+            // PX-0's mouth laser: Kuma tips his head back, light gathers
+            // between his jaws, the beam cuts forward, a rain of lasers
+            // sweeps the whole floor, then the target blows up twice over.
+            name: 'Laser du Pacifista', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 3, 5, 16, 14, 10, 24, 22],
+            superFreeze: 70, cost: 200, invuln: [0, 4],
+            hits: [
+                { frames: [4, 4], box: [6, 20, 160, 70], damage: 120, guard: 'mid', hitstun: 70, blockstun: 20, push: 2, hitstop: 12, spark: 'laser', shake: 6, sfx: 'laser' },
+                { frames: [5, 5], box: [0, 0, 240, 110], damage: 80, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'laser', shake: 6, sfx: 'laser' },
+                { frames: [6, 6], box: [0, 0, 200, 110], damage: 80, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 10, spark: 'fire', shake: 8, sfx: 'fire' },
+                { frames: [7, 7], box: [0, 0, 240, 130], damage: 250, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [5.4, 6.4], hitstop: 26, spark: 'big', shake: 14, sfx: 'quake' }
+            ],
+            fx: [
+                [1, 'fx_glint', 14, 76],
+                [4, 'fx_beam', 60, 66], [4, 'fx_glint', 14, 76],
+                [5, 'fx_rain', 210, 52], [5, 'fx_beam', 60, 66],
+                [6, 'fx_boom', 70, 48], [6, 'fx_rain', 230, 52],
+                [7, 'fx_boom', 60, 50], [7, 'fx_boom', 150, 48], [7, 'fx_ursus', 110, 60],
+                [8, 'fx_boom', 230, 48], [8, 'fx_shock', 80, 10]
+            ],
+            sfx: 'laser'
+        },
         throw: {
             name: 'Nikyu — répulsion', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 6, 5, 3, 6, 12],

@@ -111,6 +111,36 @@ for (const foe of ['luffy', 'akainu']) {
             expect(log.hits[0]).toBe('ultimate');
         });
 
+        it('Laser du Pacifista (O) connects with two bars and hurts', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 300)]);
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.length).toBeGreaterThanOrEqual(4);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(380);
+        });
+
+        it('Laser du Pacifista does nothing with a single bar', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into Laser du Pacifista and it combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 10), ...mash(light | heavy | special, 6), ...holdFor(0, 300)]);
+            expect(log.hits[0]).toBe('heavy');
+            expect(log.hits).toContain('ultimate2');
+            expect(log.maxCombo).toBeGreaterThanOrEqual(5);
+        });
+
         it('Tsuppari Pad Ho flies across the screen', () => {
             const s = fight(foe);
             place(s, 140);

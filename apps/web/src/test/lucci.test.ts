@@ -106,6 +106,40 @@ for (const foe of ['luffy', 'akainu']) {
             expect(lost(s, foe)).toBeGreaterThanOrEqual(250);
         });
 
+        it('O with two bars: the full-power Rokuōgan connects for the whole sequence', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            stepMatch(s, [light | heavy | special, 0]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 260));
+            expect(unique(log.hits)).toEqual(['ultimate2']);
+            expect(log.hits.length).toBeGreaterThanOrEqual(4);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(380);
+            expect(lost(s, foe)).toBeLessThanOrEqual(500);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+            expect(lost(s, foe)).toBe(0);
+        });
+
+        it('heavy cancels into the full-power Rokuōgan (O) and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 26), ...mash(light | heavy | special, 10), ...holdFor(0, 260)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(8);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(300);
+        });
+
         it('Rankyaku (S) reaches mid range', () => {
             const s = fight(foe);
             place(s, 90);

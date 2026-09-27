@@ -10,6 +10,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * raises a giant pillar of arms that pops the foe up then slams down on
  * them, Clutch folds the foe in two, and Mil Fleurs: Gigantesco Mano is the
  * ultimate (two giant hands that grab then sweep the whole screen).
+ * Cien Fleurs — Delphinium is the 2-bar ultimate: a field of paired arms
+ * clutches the foe, then two giant trees of arms bloom over half the screen.
  *
  * Every animation and effect comes from the Gigant Battle 2 sheet
  * (tools/sprites/chars/robin.json): the sprouting arms, the petals, the tree
@@ -156,6 +158,22 @@ export const robin: CharacterDef = {
                 { frames: [8, 9], box: [0, 0, 240, 90], damage: 290, guard: 'mid', hitstun: 50, blockstun: 22, push: 30, launch: [6.0, 5.4], wallBounce: true, hitstop: 24, spark: 'big', shake: 10 }
             ],
             fx: [[2, 'fx_mano', 24, 0]],
+            sfx: 'flutter'
+        },
+        ultimate2: {
+            // SP.2 row of the sheet (arms spread wide, palm thrust, hands
+            // clasped): a single arm blooms out of the petals, a field of
+            // paired arms grabs the foe (Clutch), then two giant trees of
+            // arms, the ^>BBB ones, burst out and the clasp snaps them shut.
+            name: 'Cien Fleurs — Delphinium', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [4, 4, 4, 4, 5, 6, 6, 6, 5, 5, 10, 8, 8, 10, 10, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 5],
+            hits: [
+                { frames: [6, 8], box: [0, 0, 150, 72], damage: 60, guard: 'mid', hitstun: 60, blockstun: 20, push: 0, rehit: 7, hitstop: 3, spark: 'petal', shake: 2, sfx: 'grab' },
+                { frames: [10, 11], box: [0, 0, 230, 150], damage: 90, guard: 'mid', hitstun: 60, blockstun: 22, push: 0, launch: [0.2, 3.2], rehit: 6, hitstop: 4, spark: 'petal', shake: 5, sfx: 'flutter' },
+                { frames: [13, 13], box: [0, 0, 230, 170], damage: 270, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [3.6, 5.2], hitstop: 24, spark: 'big', shake: 12, sfx: 'gigant' }
+            ],
+            fx: [[1, 'fx_bloom', 44, 0], [2, 'fx_bloom', 96, 0], [3, 'fx_clutchfield', 38, 0], [3, 'fx_clutchfield', 68, 0], [4, 'fx_clutchfield', 98, 0], [4, 'fx_clutchfield', 128, 0], [9, 'fx_delph', 30, 0], [10, 'fx_delph', 112, 0]],
             sfx: 'flutter'
         },
         throw: {

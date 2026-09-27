@@ -8,7 +8,9 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * that petrifies: very long hitstun), Slave Arrow (the heart bubble drawn
  * like a bow, loosing a volley of arrows) and a somersault kick as the
  * reversal. Perfume Femur, the full dance of kicks ending on the handstand
- * spin, is the ultimate.
+ * spin, is the ultimate. Grand Mero Mero Mellow (two bars) charges the
+ * charm aura, then rolls a wall of growing hearts and arrows across the whole
+ * screen: whoever it touches is petrified, then shattered with a point.
  *
  * Every animation and effect comes from the Gigant Battle sheet
  * (tools/sprites/chars/hancock.json). Every `durations` array has one entry
@@ -157,6 +159,46 @@ export const hancock: CharacterDef = {
                 { frames: [17, 19], box: [-10, 0, 72, 90], damage: 280, guard: 'mid', hitstun: 50, blockstun: 22, push: 30, launch: [5.6, 5.8], wallBounce: true, hitstop: 24, spark: 'love', shake: 10, sfx: 'love' }
             ],
             sfx: 'flutter'
+        },
+        ultimate2: {
+            name: 'Grand Mero Mero Mellow', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [6, 5, 5, 6, 3, 3, 4, 4, 5, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 6, 16, 10, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 11],
+            hits: [
+                { frames: [12, 19], box: [0, 0, 290, 110], damage: 55, guard: 'mid', hitstun: 60, blockstun: 20, push: 1, rehit: 11, hitstop: 6, spark: 'love', shake: 3, sfx: 'love' },
+                { frames: [21, 22], box: [0, 0, 300, 120], damage: 380, guard: 'mid', hitstun: 50, blockstun: 24, push: 24, knockdown: true, wallBounce: true, launch: [4.4, 6.2], hitstop: 26, spark: 'love', shake: 12, sfx: 'love' }
+            ],
+            fx: [
+                [1, 'fx_sparkle', -6, 62],
+                [3, 'fx_sparkle', 12, 74],
+                [9, 'fx_sparkle', 32, 46],
+                [12, 'fx_mellow', 40, 44],
+                [12, 'fx_mellow', 58, 30],
+                [13, 'fx_mellow', 74, 44],
+                [13, 'fx_mellow', 92, 84],
+                [13, 'fx_arrows', 104, 30],
+                [14, 'fx_mellow', 108, 44],
+                [14, 'fx_mellow', 126, 30],
+                [15, 'fx_mellow', 142, 44],
+                [15, 'fx_mellow', 160, 84],
+                [15, 'fx_arrows', 172, 60],
+                [16, 'fx_mellow', 176, 44],
+                [16, 'fx_mellow', 194, 30],
+                [17, 'fx_mellow', 210, 44],
+                [17, 'fx_mellow', 228, 84],
+                [17, 'fx_arrows', 240, 30],
+                [18, 'fx_mellow', 244, 44],
+                [18, 'fx_mellow', 262, 30],
+                [19, 'fx_mellow', 278, 44],
+                [19, 'fx_mellow', 296, 84],
+                [19, 'fx_arrows', 308, 60],
+                [21, 'fx_sparkle', 90, 60],
+                [21, 'fx_sparkle', 170, 36],
+                [21, 'fx_sparkle', 250, 70],
+                [22, 'fx_sparkle', 130, 84],
+                [22, 'fx_sparkle', 210, 20]
+            ],
+            sfx: 'love'
         },
         throw: {
             name: 'Coup de pied de l\'Impératrice', anim: 'throw', kind: 'throw', stance: 'stand',

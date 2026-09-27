@@ -97,6 +97,40 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(250);
         });
 
+        it('K-Room — Puncture Wille (O) spends both bars and runs through at point-blank', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBeLessThan(100);
+            const log = play(s, holdFor(0, 300));
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(unique(log.hits)).toEqual(['ultimate2']);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 200)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(s.fighters[1].health).toBe(getChar(foe).health);
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into K-Room — Puncture Wille and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 20), light | heavy | special, ...holdFor(0, 300)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            // heavy, two whirl cuts, the lunge and the thrust: one unbroken combo.
+            expect(log.maxCombo).toBeGreaterThanOrEqual(5);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
         it('Radio Knife reaches mid range', () => {
             const s = fight(foe);
             place(s, 70);
