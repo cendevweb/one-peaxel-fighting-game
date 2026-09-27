@@ -170,14 +170,17 @@ export class Cpu {
             if (hasProjectile && r < 0.3) this.qcf(me, BTN.special);
             else if (r < 0.5) this.push([this.fwd(me), 16]);
             else if (r < 0.7) {
-                // Jump in with a heavy.
-                this.push([BTN.up | this.fwd(me), 4], [0, 14], [BTN.heavy, 2], [0, 20]);
+                // Jump in with a heavy, or with the air special (dives,
+                // plunging kicks) now and then.
+                const btn = this.rand() < 0.3 ? BTN.special : BTN.heavy;
+                this.push([BTN.up | this.fwd(me), 4], [0, 14], [btn, 2], [0, 20]);
             } else if (r < 0.85) this.press(this.fwd(me), BTN.special, 18);
             else this.push([this.fwd(me), 1], [0, 2], [this.fwd(me), 1], [this.fwd(me), 8], [0, 1]);
             return;
         }
         // Close.
         if (r < 0.15 && opp.mode !== 'move') this.push([BTN.light | BTN.heavy, 2], [0, 20]); // throw
+        else if (r < 0.22 && !hasProjectile) this.push([0, 1], [BTN.special, 2], [0, 16]); // close-range special (Sanji)
         else if (r < 0.45) this.openCombo(dist);
         else if (r < 0.6) this.press(BTN.down, BTN.heavy, 20); // sweep
         else if (r < 0.72) this.press(this.fwd(me), BTN.heavy, 20); // overhead
@@ -197,10 +200,16 @@ export class Cpu {
             case 'lightB': this.push([BTN.light, 2], [0, 5]); break;
             case 'lightC':
             case 'heavy':
-            case 'crouchLight':
-                if (this.rand() < 0.5) this.push([f | BTN.special, 2], [0, 20]);
-                else this.push([BTN.down, 2], [BTN.down | BTN.special, 2], [0, 20]);
+            case 'crouchLight': {
+                // Cancel into one of the three ground specials: the rush,
+                // the down special, or the neutral one (a point-blank
+                // projectile, or a close-range flurry for those without).
+                const r = this.rand();
+                if (r < 0.4) this.push([f | BTN.special, 2], [0, 20]);
+                else if (r < 0.75) this.push([BTN.down, 2], [BTN.down | BTN.special, 2], [0, 20]);
+                else this.push([0, 1], [BTN.special, 2], [0, 20]);
                 break;
+            }
             default:
                 if (me.meter >= ULTIMATE_COST && this.rand() < 0.5) this.push([BTN.heavy | BTN.special, 2], [0, 30]);
         }

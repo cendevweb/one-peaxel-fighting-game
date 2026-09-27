@@ -100,6 +100,24 @@ const SOUNDS: Record<string, (t: number) => void> = {
     sand: (t) => noise(t, 0.4, 'bandpass', 600, 2400, { a: 0.05, d: 0.34, peak: 0.28 }, 0.8),
     magma: (t) => { tone(t, 'sawtooth', 90, 40, { a: 0.02, d: 0.4, peak: 0.25 }); noise(t, 0.45, 'lowpass', 900, 120, { a: 0.03, d: 0.42, peak: 0.4 }); },
     slash: (t) => noise(t, 0.12, 'highpass', 3000, 7000, { d: 0.1, peak: 0.3 }, 1.2),
+    /** A heavy sword draw: a long swish with a metallic ring under it. */
+    slashHeavy: (t) => {
+        noise(t, 0.2, 'highpass', 1800, 7000, { a: 0.01, d: 0.18, peak: 0.38 }, 1);
+        tone(t + 0.03, 'triangle', 2400, 1900, { d: 0.25, peak: 0.07 });
+        tone(t + 0.03, 'sine', 3600, 3300, { d: 0.2, peak: 0.05 });
+    },
+    /** A string pulled taut: a short, bent twang. */
+    thread: (t) => {
+        tone(t, 'triangle', 1500, 700, { d: 0.12, peak: 0.16 });
+        tone(t + 0.01, 'sawtooth', 760, 380, { d: 0.09, peak: 0.06 });
+        noise(t, 0.05, 'highpass', 5000, 8000, { d: 0.04, peak: 0.16 });
+    },
+    /** Law's Room opening: a hollow, rising hum. */
+    room: (t) => {
+        tone(t, 'sine', 180, 520, { a: 0.05, d: 0.45, peak: 0.22 });
+        tone(t, 'triangle', 362, 1046, { a: 0.05, d: 0.4, peak: 0.08 });
+        noise(t, 0.5, 'bandpass', 800, 2400, { a: 0.1, d: 0.35, peak: 0.1 }, 4);
+    },
     grab: (t) => { tone(t, 'square', 220, 110, { d: 0.06, peak: 0.2 }); noise(t, 0.06, 'lowpass', 1200, 400, { d: 0.05, peak: 0.3 }); },
     beam: (t) => { tone(t, 'sawtooth', 300, 1400, { a: 0.05, d: 0.4, peak: 0.18 }); tone(t, 'square', 150, 700, { a: 0.05, d: 0.4, peak: 0.1 }); },
     gigant: (t) => { tone(t, 'sawtooth', 60, 30, { a: 0.05, d: 0.7, peak: 0.35 }); noise(t, 0.8, 'lowpass', 1500, 80, { a: 0.1, d: 0.7, peak: 0.45 }); },
@@ -142,6 +160,9 @@ const SOUNDS: Record<string, (t: number) => void> = {
     win: (t) => { [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(t + i * 0.11, 'square', f, f, { d: 0.12, peak: 0.15 })); },
     lose: (t) => { [392, 370, 349, 262].forEach((f, i) => tone(t + i * 0.18, 'triangle', f, f, { d: 0.2, peak: 0.2 })); }
 };
+
+/** Whether a sound of that name exists (character data is checked against it). */
+export const hasSound = (name: string): boolean => name in SOUNDS;
 
 export function play(name: string | undefined, delay = 0): void {
     if (!name || !ctx) return;

@@ -33,6 +33,8 @@ export interface ManifestAnim {
     fps?: number;
     loop?: boolean;
     fx?: boolean;
+    /** Opacity of a character effect (default 1), for see-through effects like Law's Room dome. */
+    alpha?: number;
 }
 
 export interface SpriteManifest {
@@ -45,7 +47,12 @@ export interface SpriteManifest {
 // ——— Character data ———
 
 export type Guard = 'mid' | 'low' | 'high' | 'unblockable';
-export type Spark = 'light' | 'heavy' | 'big' | 'fire' | 'electric' | 'sand' | 'magma' | 'cut';
+/**
+ * Hit spark kinds, drawn by render/vfx.ts. `cut` is a light blade nick,
+ * `blade` a heavy sword crescent (Zoro), `room` Law's cyan Kikoku arc,
+ * `thread` Doflamingo's crossing strings.
+ */
+export type Spark = 'light' | 'heavy' | 'big' | 'fire' | 'electric' | 'sand' | 'magma' | 'cut' | 'blade' | 'room' | 'thread';
 
 /** Box relative to the fighter's feet, facing right: x forward, y up. */
 export type Rect = [x: number, y: number, w: number, h: number];

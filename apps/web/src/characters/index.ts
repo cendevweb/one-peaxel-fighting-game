@@ -5,7 +5,7 @@ import type { CharacterDef } from '../engine/types';
  * Every `characters/<id>.ts` exporting a CharacterDef joins the roster by
  * itself; ORDER only decides the select-screen order.
  */
-const ORDER = ['luffy', 'enel', 'lucci', 'crocodile', 'akainu'];
+const ORDER = ['luffy', 'enel', 'lucci', 'crocodile', 'akainu', 'zoro', 'sanji', 'ace', 'law', 'doflamingo'];
 
 const modules = import.meta.glob<Record<string, unknown>>('./*.ts', { eager: true });
 

@@ -38,6 +38,12 @@ interface Particle {
 
 interface Ring { x: number; y: number; r: number; vr: number; life: number; max: number; color: string; width: number }
 
+/** A curved blade trail: an arc that sweeps open, then thins out. */
+interface Slash { x: number; y: number; r: number; a0: number; sweep: number; life: number; max: number; color: string; width: number }
+
+/** A taut string across the hit point, drawn as a straight line that fades. */
+interface Thread { x: number; y: number; dx: number; dy: number; len: number; life: number; max: number; color: string }
+
 interface Popup { text: string; x: number; y: number; t: number; color: string; big: boolean }
 
 export class Vfx {
@@ -45,6 +51,8 @@ export class Vfx {
     particles: Particle[] = [];
     rings: Ring[] = [];
     popups: Popup[] = [];
+    slashes: Slash[] = [];
+    threads: Thread[] = [];
     shake = 0;
     flash = 0;
     flashColor = '#fff';
@@ -77,6 +85,16 @@ export class Vfx {
 
     ring(x: number, y: number, color: string, speed = 3, life = 14, width = 1.5): void {
         this.rings.push({ x, y, r: 2, vr: speed, life, max: life, color, width });
+    }
+
+    /** A crescent cut centred on (x, y); `dir` mirrors it with the attacker. */
+    slash(x: number, y: number, r: number, angle: number, sweep: number, color: string, width: number, life = 10, dir: 1 | -1 = 1): void {
+        const a0 = dir === 1 ? angle : Math.PI - angle - sweep;
+        this.slashes.push({ x, y, r, a0, sweep, life, max: life, color, width });
+    }
+
+    thread(x: number, y: number, angle: number, len: number, color: string, life = 14): void {
+        this.threads.push({ x, y, dx: Math.cos(angle), dy: Math.sin(angle), len, life, max: life, color });
     }
 
     popup(text: string, x: number, y: number, color = '#ffe45e', big = false): void {
@@ -131,6 +149,39 @@ export class Vfx {
                 this.burst(x, y, 10, 'streak', ['#fff', '#dff'], 5, { dir: dir === 1 ? -0.5 : Math.PI + 0.5, spread: 0.5, life: 9 });
                 this.sprite('common', 'spark', x, y, dir, { per: 2 });
                 break;
+            case 'blade': {
+                // Two crossing crescents, white core over a steel-blue edge.
+                const d = dir;
+                this.slash(x - d * 4, y + 2, heavy ? 20 : 15, -2.3, 2.2, '#9fc8ff', heavy ? 5 : 4, 11, d);
+                this.slash(x - d * 4, y + 2, heavy ? 20 : 15, -2.3, 2.2, '#ffffff', heavy ? 2 : 1.5, 9, d);
+                if (heavy) this.slash(x + d * 2, y - 4, 16, 0.6, 2.0, '#dff0ff', 2, 9, d);
+                this.burst(x, y, heavy ? 14 : 8, 'streak', ['#fff', '#cfe6ff', '#7fb2ff'], 5.5, { dir: d === 1 ? -0.4 : Math.PI + 0.4, spread: 0.7, life: 10 });
+                this.sprite('common', 'spark', x, y, dir, { per: 2, additive: true });
+                this.ring(x, y, '#cfe6ff', 3.4, 9, 1);
+                break;
+            }
+            case 'room': {
+                // Kikoku inside the Room: a cyan arc and a thin dome ripple.
+                const d = dir;
+                this.slash(x - d * 3, y, heavy ? 19 : 14, -2.0, 2.4, '#3fe0ff', heavy ? 4 : 3, 11, d);
+                this.slash(x - d * 3, y, heavy ? 19 : 14, -2.0, 2.4, '#e8ffff', 1.5, 9, d);
+                this.burst(x, y, heavy ? 12 : 7, 'streak', ['#e8ffff', '#8ff0ff', '#3fe0ff'], 5, { dir: d === 1 ? -0.3 : Math.PI + 0.3, spread: 0.6, life: 9 });
+                this.burst(x, y, 6, 'spark', ['#9ff3ff', '#ffffff'], 2, { life: 14 });
+                this.ring(x, y, '#3fe0ff', 3.8, 14, 1);
+                break;
+            }
+            case 'thread': {
+                // Doflamingo's strings: a fan of taut lines through the target.
+                const base = dir === 1 ? -0.35 : Math.PI + 0.35;
+                const n = heavy ? 5 : 3;
+                for (let i = 0; i < n; i++) {
+                    const a = base + (i - (n - 1) / 2) * 0.32 + (this.rand() - 0.5) * 0.12;
+                    this.thread(x, y, a, heavy ? 34 : 26, i % 2 ? '#ffb6e1' : '#ffffff', 12 + i * 2);
+                }
+                this.burst(x, y, 8, 'spark', ['#ff7ac8', '#ffffff', '#ffd0ec'], 3.2, { life: 12 });
+                this.sprite('common', 'spark', x, y, dir, { per: 2 });
+                break;
+            }
         }
         if (counter) {
             this.popup('CONTRE !', x, y - 22, '#ff5a3c');
@@ -162,6 +213,10 @@ export class Vfx {
         this.particles = this.particles.filter((p) => p.life > 0);
         for (const r of this.rings) { r.r += r.vr; r.vr *= 0.86; r.life--; }
         this.rings = this.rings.filter((r) => r.life > 0);
+        for (const s of this.slashes) s.life--;
+        this.slashes = this.slashes.filter((s) => s.life > 0);
+        for (const t of this.threads) t.life--;
+        this.threads = this.threads.filter((t) => t.life > 0);
         for (const p of this.popups) p.t++;
         this.popups = this.popups.filter((p) => p.t < 50);
         this.shake *= 0.82;
@@ -182,6 +237,31 @@ export class Vfx {
             ctx.lineWidth = r.width;
             ctx.beginPath();
             ctx.ellipse(r.x, r.y, r.r, r.r * 0.8, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        for (const s of this.slashes) {
+            const k = s.life / s.max;
+            // Opens over the first ticks, then thins while it fades.
+            const open = Math.min(1, (1 - k) * 3 + 0.35);
+            ctx.globalAlpha = Math.min(1, k * 1.6);
+            ctx.strokeStyle = s.color;
+            ctx.lineWidth = Math.max(0.5, s.width * k);
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, s.a0, s.a0 + s.sweep * open);
+            ctx.stroke();
+        }
+        ctx.lineCap = 'butt';
+        for (const t of this.threads) {
+            const k = t.life / t.max;
+            // Snaps taut from the centre outwards, then fades.
+            const half = (t.len / 2) * Math.min(1, (1 - k) * 4 + 0.3);
+            ctx.globalAlpha = Math.min(1, k * 1.5);
+            ctx.strokeStyle = t.color;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(t.x - t.dx * half, t.y - t.dy * half);
+            ctx.lineTo(t.x + t.dx * half, t.y + t.dy * half);
             ctx.stroke();
         }
         for (const p of this.particles) {

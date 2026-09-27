@@ -3,7 +3,7 @@ import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes } from '
 import { getChar } from '../engine/registry';
 import { PX, type FighterState, type GameEvent, type MatchState, type Rect } from '../engine/types';
 import { drawText } from './font';
-import { artOf, drawFrame, frameOf, hasAnim, type Tint } from './sprites';
+import { artOf, drawFrame, frameOf, hasAnim, animAlpha, type Tint } from './sprites';
 import { GROUND_Y, StageRenderer, type StageDef } from './stage';
 import { Vfx } from './vfx';
 
@@ -126,7 +126,7 @@ export class FightView {
                 case 'fx': {
                     const f = s.fighters[e.side];
                     const atlas = hasAnim(f.char, e.anim) ? f.char : 'common';
-                    this.vfx.sprite(atlas, e.anim, e.x / PX, GROUND_Y - e.y / PX, e.facing, { per: 3 });
+                    this.vfx.sprite(atlas, e.anim, e.x / PX, GROUND_Y - e.y / PX, e.facing, { per: 3, alpha: animAlpha(atlas, e.anim) });
                     break;
                 }
                 case 'dust':

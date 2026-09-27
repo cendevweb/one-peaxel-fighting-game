@@ -28,6 +28,29 @@ export interface Setup {
     beaten?: number;
 }
 
+/**
+ * Arcade road, weakest to strongest: the Straw Hats and the Corsairs first,
+ * then the heavy hitters, Doflamingo before the last fight and the Admiral
+ * at the end. Neighbours in rank swap at random so no two runs are
+ * identical. A fighter missing from the list (a new file) slots in mid-road.
+ */
+const ARCADE_RANK = ['luffy', 'zoro', 'sanji', 'crocodile', 'lucci', 'ace', 'law', 'enel', 'doflamingo', 'akainu'];
+
+export function arcadeLadder(p1: string, rand: () => number): string[] {
+    const rank = (id: string) => {
+        const r = ARCADE_RANK.indexOf(id);
+        return r < 0 ? ARCADE_RANK.length / 2 : r;
+    };
+    const others = ROSTER.map((c) => c.id).filter((id) => id !== p1);
+    others.sort((a, b) => rank(a) - rank(b));
+    // The two strongest stay last; the road before them is shuffled a little.
+    const bosses = others.splice(Math.max(0, others.length - 2));
+    for (let i = 0; i + 1 < others.length; i++) {
+        if (rand() < 0.5) [others[i], others[i + 1]] = [others[i + 1], others[i]];
+    }
+    return [...others, ...bosses];
+}
+
 const randomStage = () => STAGES[Math.floor(Math.random() * STAGES.length)].id;
 
 // ——— Title ———
@@ -48,21 +71,26 @@ export class TitleScene implements Scene {
 
     draw(ctx: CanvasRenderingContext2D): void {
         menuBackdrop(ctx, this.t, 'marineford', 'rgba(16,4,28,0.55)');
-        // The roster, standing in a row and breathing.
+        // The roster, breathing in two staggered ranks: odd places stand
+        // behind, so ten fighters fit the width without covering each other.
         const n = ROSTER.length;
-        ROSTER.forEach((c, i) => {
-            const x = 320 + (i - (n - 1) / 2) * 104;
+        const gap = Math.min(104, 600 / n);
+        const order = ROSTER.map((c, i) => ({ c, i })).sort((a, b) => (b.i % 2) - (a.i % 2));
+        for (const { c, i } of order) {
+            const x = 320 + (i - (n - 1) / 2) * gap;
+            const back = n > 5 && i % 2 === 1;
+            const ground = back ? 138 : 152;
             ctx.save();
             ctx.setTransform(2, 0, 0, 2, 0, 0);
             ctx.fillStyle = 'rgba(0,0,0,0.35)';
             ctx.beginPath();
-            ctx.ellipse(x / 2, 150, 16, 3, 0, 0, Math.PI * 2);
+            ctx.ellipse(x / 2, ground, 16, 3, 0, 0, Math.PI * 2);
             ctx.fill();
             const anim = c.manifest.anims.idle;
             const per = Math.round(60 / (anim.fps ?? 6));
-            drawFrame(ctx, c.id, 'idle', Math.floor((this.t + i * 7) / per) % anim.frames.length, x / 2, 150, i < n / 2 ? 1 : -1);
+            drawFrame(ctx, c.id, 'idle', Math.floor((this.t + i * 7) / per) % anim.frames.length, x / 2, ground, i < n / 2 ? 1 : -1);
             ctx.restore();
-        });
+        }
         const bob = Math.sin(this.t / 30) * 2;
         drawText(ctx, 'ONE PEAXEL', 320, 44 + bob, { color: '#ffffff', gradient: '#ffd23f', outline: COLORS.ink, shadow: '#7a1a10', scale: 7, align: 'center' });
         drawText(ctx, 'FIGHTING GAME', 320, 110 + bob, { color: '#ff8a5c', gradient: '#e8412c', outline: COLORS.ink, scale: 3, align: 'center' });
@@ -116,6 +144,33 @@ export class MainMenuScene implements Scene {
 
 // ——— Character select ———
 
+/** Portrait grid geometry: five per row, so ten fighters make a 5×2 block. */
+const GRID_COLS = 5;
+const CELL_W = 58;
+const CELL_H = 48;
+const CELL_GAP = 4;
+const GRID_Y = 238;
+
+function cellPos(i: number): { x: number; y: number } {
+    const row = Math.floor(i / GRID_COLS);
+    const inRow = Math.min(GRID_COLS, ROSTER.length - row * GRID_COLS);
+    const width = inRow * CELL_W + (inRow - 1) * CELL_GAP;
+    return { x: 320 - width / 2 + (i % GRID_COLS) * (CELL_W + CELL_GAP), y: GRID_Y + row * (CELL_H + CELL_GAP) };
+}
+
+/** Up/down: the nearest cell of the next row, wrapping round. */
+function gridStep(i: number, dir: 1 | -1): number {
+    const rows = Math.ceil(ROSTER.length / GRID_COLS);
+    if (rows < 2) return i;
+    const row = (Math.floor(i / GRID_COLS) + dir + rows) % rows;
+    const cx = cellPos(i).x;
+    let best = row * GRID_COLS;
+    for (let j = best; j < Math.min(ROSTER.length, (row + 1) * GRID_COLS); j++) {
+        if (Math.abs(cellPos(j).x - cx) < Math.abs(cellPos(best).x - cx)) best = j;
+    }
+    return best;
+}
+
 interface Cursor { index: number; locked: boolean; side: 0 | 1 }
 
 export class SelectScene implements Scene {
@@ -161,6 +216,10 @@ export class SelectScene implements Scene {
             const n = ROSTER.length;
             if (m.action === 'left') { c.index = (c.index + n - 1) % n; play('uiMove'); }
             if (m.action === 'right') { c.index = (c.index + 1) % n; play('uiMove'); }
+            if (m.action === 'up' || m.action === 'down') {
+                const next = gridStep(c.index, m.action === 'up' ? -1 : 1);
+                if (next !== c.index) { c.index = next; play('uiMove'); }
+            }
             if (m.action === 'confirm') {
                 c.locked = true;
                 play('uiSelect');
@@ -178,11 +237,7 @@ export class SelectScene implements Scene {
     private finish(): void {
         const p1 = ROSTER[this.cursors[0].index].id;
         if (this.mode === 'arcade') {
-            const others = ROSTER.map((c) => c.id).filter((id) => id !== p1);
-            // The Admiral waits at the end of the road.
-            const boss = others.includes('akainu') ? 'akainu' : others[others.length - 1];
-            const rest = others.filter((id) => id !== boss).sort(() => Math.random() - 0.5);
-            const ladder = [...rest, boss];
+            const ladder = arcadeLadder(p1, Math.random);
             const setup: Setup = { mode: 'arcade', p1, p2: ladder[0], stage: randomStage(), cpuLevel: 1, ladder, beaten: 0 };
             this.app.go(new VersusScene(this.app, setup));
             return;
@@ -208,38 +263,45 @@ export class SelectScene implements Scene {
             this.drawSide(ctx, c, side, this.cursors[side].locked);
         }
 
-        // Portrait grid.
-        const n = ROSTER.length;
-        const cw = 62;
-        const x0 = 320 - (n * cw) / 2;
-        const y0 = 262;
+        // Portrait grid: GRID_COLS per row, the last row centred.
         ROSTER.forEach((c, i) => {
-            const x = x0 + i * cw;
+            const { x, y } = cellPos(i);
             ctx.fillStyle = '#12091c';
-            ctx.fillRect(x + 2, y0, cw - 4, 70);
+            ctx.fillRect(x, y, CELL_W, CELL_H);
             const p = artOf(c.id, 'portrait');
             if (p) {
-                const s = Math.min((cw - 8) / p.width, 64 / p.height);
-                ctx.drawImage(p, x + (cw - p.width * s) / 2, y0 + 3 + (64 - p.height * s), p.width * s, p.height * s);
+                // Cover the cell, keeping the upper part of the card where
+                // the face is; odd-sized portraits are centred.
+                const s = Math.max(CELL_W / p.width, CELL_H / p.height);
+                const sw = CELL_W / s;
+                const sh = CELL_H / s;
+                ctx.drawImage(p, (p.width - sw) / 2, (p.height - sh) * 0.3, sw, sh, x, y, CELL_W, CELL_H);
             }
             ctx.strokeStyle = '#3a2a4a';
-            ctx.strokeRect(x + 2.5, y0 + 0.5, cw - 5, 69);
+            ctx.strokeRect(x + 0.5, y + 0.5, CELL_W - 1, CELL_H - 1);
         });
         for (const side of [0, 1] as const) {
             if (this.mode === 'arcade' && side === 1) continue;
             if (!this.twoPlayers && side === 1 && this.picking === 0 && !this.cursors[1].locked) continue;
             const c = this.cursors[side];
-            const x = x0 + c.index * cw;
+            const { x, y } = cellPos(c.index);
             const color = side === 0 ? '#ff5a3c' : '#4cc3ff';
             const blink = c.locked || this.t % 20 < 14;
             if (blink) {
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 2;
                 const inset = side === 0 ? 1 : 4;
-                ctx.strokeRect(x + 1 + inset, y0 - 1 + inset, cw - 2 - inset * 2, 72 - inset * 2);
+                ctx.strokeRect(x + inset, y + inset, CELL_W - inset * 2, CELL_H - inset * 2);
                 ctx.lineWidth = 1;
             }
-            drawText(ctx, side === 0 ? 'J1' : (this.twoPlayers ? 'J2' : 'CPU'), x + (side === 0 ? 6 : cw - 20), y0 - 10, { color, outline: COLORS.ink });
+            // Tags on the cell's top edge, J1 left and J2 right, so both
+            // stay readable when the cursors share a portrait.
+            const label = side === 0 ? 'J1' : (this.twoPlayers ? 'J2' : 'CPU');
+            const w = textWidth(label);
+            const tx = side === 0 ? x + 2 : x + CELL_W - 4 - w;
+            ctx.fillStyle = color;
+            ctx.fillRect(tx - 1, y - 5, w + 4, 10);
+            drawText(ctx, label, tx + 1, y - 3, { color: '#fff', outline: COLORS.ink });
         }
         if (this.levelStep) {
             panel(ctx, 220, 150, 200, 60, COLORS.blue);
@@ -247,20 +309,24 @@ export class SelectScene implements Scene {
             const names = ['FACILE', 'NORMAL', 'DIFFICILE', 'EXPERT', 'AMIRAL'];
             drawText(ctx, `← ${names[this.level]} →`, 320, 182, { color: COLORS.gold, outline: COLORS.ink, scale: 2, align: 'center' });
         }
-        hint(ctx, this.twoPlayers ? 'J1 : ← → ET J · J2 : ← → ET PAVÉ 1 · RETOUR : K / PAVÉ 2' : '← → : CHOISIR · J / ENTRÉE : VALIDER · K / ÉCHAP : RETOUR');
+        const [k1, k2] = KEYS;
+        const dirs = (k: typeof k1) => `${keyLabel(k.up[0])}${keyLabel(k.left[0])}${keyLabel(k.down[0])}${keyLabel(k.right[0])}`;
+        hint(ctx, this.twoPlayers
+            ? `J1 : ${dirs(k1)} ET ${keyLabel(k1.light[0])} · J2 : ${dirs(k2)} ET ${keyLabel(k2.light[0])} · RETOUR : ${keyLabel(k1.heavy[0])} / ${keyLabel(k2.heavy[0])}`
+            : `${dirs(k1)} : CHOISIR · ${keyLabel(k1.light[0])} / ENTRÉE : VALIDER · ${keyLabel(k1.heavy[0])} / ÉCHAP : RETOUR`);
     }
 
     private drawSide(ctx: CanvasRenderingContext2D, c: CharacterDef, side: 0 | 1, locked: boolean): void {
         const art = artOf(c.id, 'art');
         const x = side === 0 ? 20 : 620;
         if (art) {
-            const s = Math.min(1.4, 190 / art.height);
+            const s = Math.min(1.4, 170 / art.height, 230 / art.width);
             const w = art.width * s;
             const h = art.height * s;
             ctx.save();
             if (side === 1) { ctx.translate(x, 0); ctx.scale(-1, 1); ctx.translate(-x, 0); }
             ctx.globalAlpha = locked ? 1 : 0.9;
-            ctx.drawImage(art, x, 250 - h, w, h);
+            ctx.drawImage(art, x, GRID_Y - 6 - h, w, h);
             ctx.restore();
         }
         const tx = side === 0 ? 30 : 610;
@@ -409,7 +475,9 @@ export class FightScene implements Scene {
         const names: [string, string] = setup.mode === 'versus' ? ['J1', 'J2'] : ['J1', training ? 'MANNEQUIN' : 'CPU'];
         this.view = new FightView(this.state, stage, { names, training });
         if (setup.mode === 'arcade' || setup.mode === 'versusCpu') {
-            const level = setup.mode === 'arcade' ? Math.min(LEVELS.length - 1, 1 + (setup.beaten ?? 0)) : setup.cpuLevel;
+            // Arcade climbs from NORMAL to the top level over the whole road.
+            const road = Math.max(1, (setup.ladder?.length ?? 1) - 1);
+            const level = setup.mode === 'arcade' ? Math.min(LEVELS.length - 1, 1 + Math.round(((setup.beaten ?? 0) * (LEVELS.length - 2)) / road)) : setup.cpuLevel;
             this.cpu[1] = new Cpu(LEVELS[level], Date.now() & 0xffff);
         }
         this.pauseList = new OptionList(this.pauseItems());

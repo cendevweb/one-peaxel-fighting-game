@@ -5,8 +5,7 @@ construit comme un Street Fighter : combos, gardes haute et basse, coups
 directionnels, spéciaux à manipulation, projections, jauge de garde et
 ultimes avec arrêt sur image.
 
-Cinq combattants : **Luffy**, **Enel**, **Rob Lucci**, **Crocodile** et
-**Akainu**, six arènes, un mode arcade avec fin, un versus à deux sur le même
+Dix combattants (voir le tableau plus bas), six arènes, un mode arcade avec fin, un versus à deux sur le même
 clavier (ou deux manettes), un versus contre l'ordinateur (5 niveaux) et un
 mode entraînement (mannequin configurable, affichage des boîtes de coup,
 liste des coups dans le menu pause).
@@ -48,6 +47,29 @@ disposition marche en AZERTY et en QWERTY.
 | [B]+[C] | Ultime, coûte une barre |
 | →→ / ←← | Ruée / pas arrière |
 
+### Combattants
+
+Chaque coup reprend l'animation et les effets de la planche du jeu DS.
+
+| Combattant | [C] | → [C] | ↑ [C] | ↓ [C] | Ultime |
+| --- | --- | --- | --- | --- | --- |
+| Luffy | Gomu Gomu no Pistol | Gatling | Rocket Uppercut | Bazooka | Gear Third — Gigant Rifle |
+| Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan |
+| Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan |
+| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert |
+| Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan |
+| Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Rokudō no Tsuji |
+| Sanji | Diable Jambe — Premier Hachis | Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre |
+| Ace | Hiken | Higan | Hibashira | Enjōmō | Dai Enkai — Entei |
+| Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate |
+| Doflamingo | Tamaito | Overheat | Fulbright | Parasite | Torikago — Birdcage |
+
+Sanji n'a pas de projectile : son [C] est une rafale de coups de pied à bout
+portant. Le mode arcade enchaîne les neuf autres combattants, du plus
+abordable au plus coriace, avec Doflamingo en avant-dernier et Akainu au bout
+(Doflamingo si l'on joue Akainu) ; l'ordinateur y monte en difficulté à
+chaque combat.
+
 Garder = reculer (accroupi pour les coups bas). Trop garder brise la garde.
 Les dégâts diminuent au fil d'un combo, et un coup qui touche
 l'adversaire en pleine attaque fait 20 % de dégâts en plus et l'étourdit plus
@@ -59,7 +81,7 @@ longtemps (« CONTRE ! »).
 | --- | --- |
 | `npm run dev` | Serveur Vite |
 | `npm run build` | Vérification des types et build de production dans `apps/web/dist` |
-| `npm test` | Tests vitest : moteur, données et combos de chaque personnage, 25 matchs ordinateur contre ordinateur |
+| `npm test` | Tests vitest : moteur, données et combos de chaque personnage, 30 matchs ordinateur contre ordinateur (chaque combattant, des deux côtés) |
 | `npm run sprites` | Ré-extrait les sprites des planches (`python3`, `pillow`, `numpy`, `scipy`) |
 
 Déploiement Vercel : *Root Directory* `apps/web`, le reste est dans
