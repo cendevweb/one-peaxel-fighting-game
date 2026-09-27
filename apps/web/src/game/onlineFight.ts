@@ -48,9 +48,11 @@ function inputDelay(): number {
     return Number.isInteger(v) && v >= 0 && v <= 8 ? v : 2;
 }
 
-/** Debug: `?bot=0..N` lets the CPU of that level play our side (tests). */
+/** Debug (dev server or ?netdebug): `?bot=0..N` lets the CPU play our side. */
 function debugBot(side: 0 | 1): Cpu | null {
-    const raw = new URLSearchParams(location.search).get('bot');
+    const params = new URLSearchParams(location.search);
+    if (!import.meta.env.DEV && !params.has('netdebug')) return null;
+    const raw = params.get('bot');
     if (raw === null) return null;
     const lvl = Math.max(0, Math.min(LEVELS.length - 1, Number(raw) || 0));
     return new Cpu(LEVELS[lvl], (Date.now() & 0xffff) + side * 977);
@@ -127,9 +129,9 @@ export class OnlineFightScene implements Scene {
         } else {
             bits = this.bot ? this.bot.next(this.rb.state, this.session.side) : readSide(0) & ~BTN.start;
         }
-        endInputTick();
-
         const r = this.rb.tick(bits);
+        // A stalled tick drops our input: keep a short tap for the next one.
+        if (!r.stalled) endInputTick();
         for (const m of r.outgoing) this.session.send({ ...m, m: this.seed } as NetMsg);
         this.stalledFor = r.stallReason === 'remote' ? this.stalledFor + 1 : 0;
         this.view.state = this.rb.state;
@@ -180,7 +182,8 @@ export class OnlineFightScene implements Scene {
                 const n = (count.get(k) ?? 0) + 1;
                 count.set(k, n);
                 const id = `${k}#${n}`;
-                if (seen.has(id)) continue;
+                // A correction can move the same event by a frame.
+                if (seen.has(id) || this.shown.get(f - 1)?.has(id) || this.shown.get(f + 1)?.has(id)) continue;
                 seen.add(id);
                 out.push(e);
             }

@@ -361,6 +361,7 @@ export async function joinRoom(codeOrUrl: string, signal?: AbortSignal): Promise
     const code = codeFromText(codeOrUrl);
     if (!code) throw new NetError('notFound', 'code invalide');
     const peer = await openPeer(undefined);
+    if (signal?.aborted) { peer.destroy(); throw new Error('annulé'); }
     const abort = () => peer.destroy();
     signal?.addEventListener('abort', abort);
     try {

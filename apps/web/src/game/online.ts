@@ -801,7 +801,8 @@ export class OnlineResultsScene implements Scene {
                 return;
             }
         }
-        const r = this.list.handle(menu);
+        // Both asked: the host is starting, a late cancel would desync.
+        const r = this.want && this.theyWant ? null : this.list.handle(menu);
         if (r === 'back' && this.want) {
             this.want = false;
             this.session.send({ type: 'rematch', want: false });
