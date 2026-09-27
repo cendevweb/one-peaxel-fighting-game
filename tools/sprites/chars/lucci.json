@@ -2,13 +2,13 @@
  "sheet": "lucci.png",
  "images": {
   "portrait": {
+   "sheet": "lucci-gb2.png",
    "rect": [
-    71,
-    347,
-    109,
-    380
-   ],
-   "key": true
+    679,
+    4544,
+    741,
+    4630
+   ]
   },
   "face": {
    "rect": [
@@ -20,11 +20,12 @@
    "key": true
   },
   "art": {
+   "sheet": "lucci-gb2.png",
    "rect": [
-    104,
-    1861,
-    182,
-    1937
+    750,
+    4542,
+    882,
+    4724
    ],
    "key": true
   },

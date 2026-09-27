@@ -5,7 +5,7 @@ construit comme un Street Fighter : combos, gardes haute et basse, coups
 directionnels, spéciaux à manipulation, projections, jauge de garde et
 ultimes avec arrêt sur image.
 
-Dix combattants (voir le tableau plus bas), six arènes, un mode arcade avec fin, un versus à deux sur le même
+Vingt et un combattants (voir le tableau plus bas), six arènes, un mode arcade avec fin, un versus à deux sur le même
 clavier (ou deux manettes), un versus contre l'ordinateur (5 niveaux) et un
 mode entraînement (mannequin configurable, affichage des boîtes de coup,
 liste des coups dans le menu pause).
@@ -54,21 +54,33 @@ Chaque coup reprend l'animation et les effets de la planche du jeu DS.
 | Combattant | [C] | → [C] | ↑ [C] | ↓ [C] | Ultime |
 | --- | --- | --- | --- | --- | --- |
 | Luffy | Gomu Gomu no Pistol | Gatling | Rocket Uppercut | Bazooka | Gear Third — Gigant Rifle |
-| Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan |
-| Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan |
-| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert |
-| Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan |
 | Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Rokudō no Tsuji |
 | Sanji | Diable Jambe — Premier Hachis | Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre |
+| Robin | Seis Fleurs | Cien Fleurs — arbre de bras | Cien Fleurs Wing | Gigante Fleur | Mil Fleurs — Gigantesco Mano |
 | Ace | Hiken | Higan | Hibashira | Enjōmō | Dai Enkai — Entei |
+| Marco | Flamme bleue | Vol du phénix | Envol du phénix | Charge des ailes | Phénix — flammes régénératrices |
+| Barbe Blanche | Gura Gura — onde de choc | Gura Gura — poing séisme | Moulinet du bisento | Gura Gura — saisie de l'air | Kaishin |
 | Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate |
+| Kid | Repel | Attraction | Uppercut de ferraille | Pilier de ferraille | Punk Gibson |
+| Hancock | Pistol Kiss | Mero Mero Mellow | Salto de la Gorgone | Slave Arrow | Perfume Femur |
+| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert |
 | Doflamingo | Tamaito | Overheat | Fulbright | Parasite | Torikago — Birdcage |
+| Kuma | Tsuppari Pad Hō | Téléportation — Pad Hō | Pad Hō ascendant | Onde du tyran | Ursus Shock |
+| Magellan | Hydra | Doku Fugu | Hydra ascendante | Doku Gumo | Venom Demon — Jigoku no Shinpan |
+| Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan |
+| Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan |
+| Shanks | Onde tranchante du Haki | Gryphon — ruée | Estoc céleste | Haoshoku Haki | Kamusari |
+| Barbe Noire | Kurouzu | Gura Gura — poing du séisme | Uppercut des ténèbres | Black Hole | Liberation |
+| Aokiji | Ice Block — Partisan | Ice Time | Ice Block — Poing du givre | Ice Age | Ice Block — Pheasant Beak |
+| Kizaru | Laser du doigt | Ama no Murakumo | Ama no Murakumo — ascension | Yata no Kagami | Yasakani no Magatama |
+| Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan |
 
 Sanji n'a pas de projectile : son [C] est une rafale de coups de pied à bout
-portant. Le mode arcade enchaîne les neuf autres combattants, du plus
-abordable au plus coriace, avec Doflamingo en avant-dernier et Akainu au bout
-(Doflamingo si l'on joue Akainu) ; l'ordinateur y monte en difficulté à
-chaque combat.
+portant. Le mode arcade enchaîne huit
+combats, du plus abordable au plus coriace : six adversaires tirés au sort,
+un par tranche du classement, puis Barbe Blanche et Akainu au bout (Barbe
+Noire remplace celui des deux que l'on joue). L'ordinateur y monte en
+difficulté à chaque combat.
 
 Garder = reculer (accroupi pour les coups bas). Trop garder brise la garde.
 Les dégâts diminuent au fil d'un combo, et un coup qui touche

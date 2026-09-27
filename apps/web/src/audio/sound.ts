@@ -121,6 +121,31 @@ const SOUNDS: Record<string, (t: number) => void> = {
     grab: (t) => { tone(t, 'square', 220, 110, { d: 0.06, peak: 0.2 }); noise(t, 0.06, 'lowpass', 1200, 400, { d: 0.05, peak: 0.3 }); },
     beam: (t) => { tone(t, 'sawtooth', 300, 1400, { a: 0.05, d: 0.4, peak: 0.18 }); tone(t, 'square', 150, 700, { a: 0.05, d: 0.4, peak: 0.1 }); },
     gigant: (t) => { tone(t, 'sawtooth', 60, 30, { a: 0.05, d: 0.7, peak: 0.35 }); noise(t, 0.8, 'lowpass', 1500, 80, { a: 0.1, d: 0.7, peak: 0.45 }); },
+    /** Frost forming: a glassy crackle over a cold hiss. */
+    ice: (t) => {
+        for (let i = 0; i < 4; i++) tone(t + i * 0.03, 'sine', 2600 + i * 400, 1800 + i * 300, { d: 0.06, peak: 0.08 });
+        noise(t, 0.3, 'highpass', 4000, 7000, { a: 0.02, d: 0.26, peak: 0.2 });
+    },
+    /** A beam of light: a bright, rising whine. */
+    laser: (t) => { tone(t, 'sine', 1200, 3200, { d: 0.18, peak: 0.16 }); tone(t, 'square', 2400, 4800, { d: 0.1, peak: 0.05 }); noise(t, 0.1, 'highpass', 6000, 9000, { d: 0.08, peak: 0.12 }); },
+    /** Whitebeard's quake: a crack, then a long rumble. */
+    quake: (t) => {
+        noise(t, 0.06, 'highpass', 3000, 5000, { d: 0.05, peak: 0.4 });
+        tone(t, 'sine', 55, 30, { a: 0.02, d: 0.8, peak: 0.45 });
+        noise(t, 0.9, 'lowpass', 600, 60, { a: 0.03, d: 0.85, peak: 0.5 });
+    },
+    /** Magnetism: a metallic clank and a pulsing hum. */
+    magnet: (t) => { tone(t, 'square', 90, 140, { a: 0.02, d: 0.3, peak: 0.16 }); tone(t, 'triangle', 1700, 1300, { d: 0.12, peak: 0.12 }); noise(t, 0.08, 'bandpass', 2500, 1200, { d: 0.07, peak: 0.25 }, 3); },
+    /** Darkness: a low, inward suck. */
+    dark: (t) => { tone(t, 'sawtooth', 220, 50, { a: 0.03, d: 0.5, peak: 0.2 }); noise(t, 0.5, 'lowpass', 400, 1600, { a: 0.2, d: 0.3, peak: 0.3 }); },
+    /** Venom: a wet, bubbling splash. */
+    poison: (t) => { for (let i = 0; i < 5; i++) tone(t + i * 0.05, 'sine', 300 + Math.random() * 300, 700 + Math.random() * 400, { d: 0.04, peak: 0.1 }); noise(t, 0.3, 'bandpass', 900, 400, { a: 0.02, d: 0.26, peak: 0.25 }, 1.5); },
+    /** Kuma's paw: a soft pop and a blast of air. */
+    paw: (t) => { tone(t, 'sine', 400, 80, { d: 0.12, peak: 0.3 }); noise(t, 0.3, 'bandpass', 1400, 400, { a: 0.01, d: 0.27, peak: 0.35 }, 0.7); },
+    /** A charm: a sparkling two-note chime. */
+    love: (t) => { tone(t, 'sine', 1319, 1319, { d: 0.12, peak: 0.12 }); tone(t + 0.07, 'sine', 1760, 1760, { d: 0.2, peak: 0.12 }); noise(t, 0.2, 'highpass', 6000, 9000, { d: 0.18, peak: 0.06 }); },
+    /** Petals, feathers: a soft flutter. */
+    flutter: (t) => { for (let i = 0; i < 4; i++) noise(t + i * 0.04, 0.05, 'bandpass', 3000, 2000, { d: 0.04, peak: 0.12 }, 2); },
 
     hitLight: (t) => { noise(t, 0.07, 'bandpass', 2600, 900, { d: 0.06, peak: 0.55 }, 1.2); tone(t, 'square', 320, 90, { d: 0.05, peak: 0.25 }); },
     hitHeavy: (t) => { noise(t, 0.14, 'lowpass', 4000, 300, { d: 0.13, peak: 0.7 }); tone(t, 'square', 180, 45, { d: 0.12, peak: 0.4 }); },

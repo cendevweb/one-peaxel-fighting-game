@@ -34,7 +34,12 @@ export interface Setup {
  * at the end. Neighbours in rank swap at random so no two runs are
  * identical. A fighter missing from the list (a new file) slots in mid-road.
  */
-const ARCADE_RANK = ['luffy', 'zoro', 'sanji', 'crocodile', 'lucci', 'ace', 'law', 'enel', 'doflamingo', 'akainu'];
+const ARCADE_RANK = [
+    'luffy', 'zoro', 'sanji', 'robin', 'hancock', 'crocodile', 'lucci', 'enel', 'law', 'kid', 'ace',
+    'marco', 'magellan', 'kuma', 'doflamingo', 'kizaru', 'aokiji', 'shanks', 'blackbeard', 'whitebeard', 'akainu'
+];
+/** Fights in one arcade run, bosses included. */
+const ARCADE_LENGTH = 8;
 
 export function arcadeLadder(p1: string, rand: () => number): string[] {
     const rank = (id: string) => {
@@ -43,12 +48,17 @@ export function arcadeLadder(p1: string, rand: () => number): string[] {
     };
     const others = ROSTER.map((c) => c.id).filter((id) => id !== p1);
     others.sort((a, b) => rank(a) - rank(b));
-    // The two strongest stay last; the road before them is shuffled a little.
+    // The two strongest stay last. The road before them takes one fighter
+    // at random from each slice of the ranking, weakest first.
     const bosses = others.splice(Math.max(0, others.length - 2));
-    for (let i = 0; i + 1 < others.length; i++) {
-        if (rand() < 0.5) [others[i], others[i + 1]] = [others[i + 1], others[i]];
+    const n = Math.min(others.length, ARCADE_LENGTH - bosses.length);
+    const road: string[] = [];
+    for (let i = 0; i < n; i++) {
+        const lo = Math.floor((i * others.length) / n);
+        const hi = Math.floor(((i + 1) * others.length) / n);
+        road.push(others[lo + Math.floor(rand() * (hi - lo))]);
     }
-    return [...others, ...bosses];
+    return [...road, ...bosses];
 }
 
 const randomStage = () => STAGES[Math.floor(Math.random() * STAGES.length)].id;
@@ -152,23 +162,30 @@ export class MainMenuScene implements Scene {
 
 // ——— Character select ———
 
-/** Portrait grid geometry: five per row, so ten fighters make a 5×2 block. */
-const GRID_COLS = 5;
-const CELL_W = 58;
-const CELL_H = 48;
-const CELL_GAP = 4;
-const GRID_Y = 238;
+/**
+ * Portrait grid geometry: seven per row, so 21 fighters make a 7×3 block
+ * sitting just above the hint bar; a shorter last row is centred.
+ */
+export const GRID_COLS = 7;
+const CELL_W = 50;
+const CELL_H = 38;
+const CELL_GAP = 3;
+const GRID_BOTTOM = 338;
+
+const gridRows = () => Math.ceil(ROSTER.length / GRID_COLS);
+/** Top of the grid; also the floor the big art stands on. */
+export const gridTop = () => GRID_BOTTOM - gridRows() * (CELL_H + CELL_GAP) + CELL_GAP;
 
 function cellPos(i: number): { x: number; y: number } {
     const row = Math.floor(i / GRID_COLS);
     const inRow = Math.min(GRID_COLS, ROSTER.length - row * GRID_COLS);
     const width = inRow * CELL_W + (inRow - 1) * CELL_GAP;
-    return { x: 320 - width / 2 + (i % GRID_COLS) * (CELL_W + CELL_GAP), y: GRID_Y + row * (CELL_H + CELL_GAP) };
+    return { x: 320 - width / 2 + (i % GRID_COLS) * (CELL_W + CELL_GAP), y: gridTop() + row * (CELL_H + CELL_GAP) };
 }
 
 /** Up/down: the nearest cell of the next row, wrapping round. */
-function gridStep(i: number, dir: 1 | -1): number {
-    const rows = Math.ceil(ROSTER.length / GRID_COLS);
+export function gridStep(i: number, dir: 1 | -1): number {
+    const rows = gridRows();
     if (rows < 2) return i;
     const row = (Math.floor(i / GRID_COLS) + dir + rows) % rows;
     const cx = cellPos(i).x;
@@ -270,11 +287,17 @@ export class SelectScene implements Scene {
             this.drawSide(ctx, c, side, this.cursors[side].locked);
         }
 
-        // Portrait grid: GRID_COLS per row, the last row centred.
+        // Portrait grid: GRID_COLS per row, the last row centred. Cells no
+        // cursor sits on are dimmed, so the picks stand out in a full grid.
+        const top = gridTop();
+        ctx.fillStyle = 'rgba(8,2,16,0.75)';
+        ctx.fillRect(0, top - 4, 640, GRID_BOTTOM - top + 6);
+        const hovered = new Set(this.cursors.filter((_, side) => this.cursorShown(side as 0 | 1)).map((c) => c.index));
         ROSTER.forEach((c, i) => {
             const { x, y } = cellPos(i);
             ctx.fillStyle = '#12091c';
             ctx.fillRect(x, y, CELL_W, CELL_H);
+            ctx.globalAlpha = hovered.has(i) ? 1 : 0.62;
             const p = artOf(c.id, 'portrait');
             if (p) {
                 // Cover the cell, keeping the upper part of the card where
@@ -284,12 +307,12 @@ export class SelectScene implements Scene {
                 const sh = CELL_H / s;
                 ctx.drawImage(p, (p.width - sw) / 2, (p.height - sh) * 0.3, sw, sh, x, y, CELL_W, CELL_H);
             }
-            ctx.strokeStyle = '#3a2a4a';
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = hovered.has(i) ? '#8a6aa8' : '#3a2a4a';
             ctx.strokeRect(x + 0.5, y + 0.5, CELL_W - 1, CELL_H - 1);
         });
         for (const side of [0, 1] as const) {
-            if (this.mode === 'arcade' && side === 1) continue;
-            if (!this.twoPlayers && side === 1 && this.picking === 0 && !this.cursors[1].locked) continue;
+            if (!this.cursorShown(side)) continue;
             const c = this.cursors[side];
             const { x, y } = cellPos(c.index);
             const color = side === 0 ? '#ff5a3c' : '#4cc3ff';
@@ -319,6 +342,11 @@ export class SelectScene implements Scene {
         hint(ctx, this.hintText());
     }
 
+    protected cursorShown(side: 0 | 1): boolean {
+        if (this.mode === 'arcade' && side === 1) return false;
+        return this.twoPlayers || side === 0 || this.picking === 1 || this.cursors[1].locked;
+    }
+
     // Overridden by the online select screen (game/online.ts).
     protected subtitle(): string {
         const labels: Record<Mode, string> = { arcade: 'ARCADE', versus: 'VERSUS', versusCpu: 'CONTRE L\'ORDINATEUR', training: 'ENTRAÎNEMENT' };
@@ -341,13 +369,13 @@ export class SelectScene implements Scene {
         const art = artOf(c.id, 'art');
         const x = side === 0 ? 20 : 620;
         if (art) {
-            const s = Math.min(1.4, 170 / art.height, 230 / art.width);
+            const s = Math.min(1.4, 150 / art.height, 220 / art.width);
             const w = art.width * s;
             const h = art.height * s;
             ctx.save();
             if (side === 1) { ctx.translate(x, 0); ctx.scale(-1, 1); ctx.translate(-x, 0); }
             ctx.globalAlpha = locked ? 1 : 0.9;
-            ctx.drawImage(art, x, GRID_Y - 6 - h, w, h);
+            ctx.drawImage(art, x, gridTop() - 6 - h, w, h);
             ctx.restore();
         }
         const tx = side === 0 ? 30 : 610;

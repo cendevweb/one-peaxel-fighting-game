@@ -1,0 +1,213 @@
+import { describe, expect, it } from 'vitest';
+import '../characters';
+import { createMatch, stepMatch } from '../engine/match';
+import { getChar } from '../engine/registry';
+import { BTN, PX, type MatchState } from '../engine/types';
+
+/**
+ * Kuma's combos, checked frame by frame at point-blank against a dummy that
+ * does nothing (or only guards). Against Luffy and against Akainu, who is
+ * much bigger.
+ */
+
+const { up, down, right, left, light, heavy, special } = BTN;
+
+function fight(p2: string): MatchState {
+    const s = createMatch('kuma', p2);
+    while (s.phase !== 'fight') stepMatch(s, [0, 0]);
+    return s;
+}
+
+/** Puts P1 `gap` pixels in front of P2's body (0 = bodies touching). */
+function place(s: MatchState, gap = 4) {
+    const [a, b] = s.fighters;
+    a.x = b.x - (getChar(a.char).width + getChar(b.char).width + gap) * PX;
+}
+
+interface Log { hits: string[]; blocks: number; maxCombo: number }
+
+function play(s: MatchState, p1: number[], p2 = 0): Log {
+    const log: Log = { hits: [], blocks: 0, maxCombo: 0 };
+    for (const input of p1) {
+        for (const e of stepMatch(s, [input, p2])) {
+            if (e.type === 'hit' && e.attacker === 0) log.hits.push(s.fighters[0].move ?? '?');
+            if (e.type === 'block' && e.attacker === 0) log.blocks++;
+            if (e.type === 'combo' && e.side === 0) log.maxCombo = Math.max(log.maxCombo, e.hits);
+        }
+    }
+    return log;
+}
+
+const holdFor = (input: number, n: number) => Array<number>(n).fill(input);
+const press = (input: number, n: number, held = 0) => [input, ...holdFor(held, n - 1)];
+const mash = (input: number, n: number, held = 0) => Array.from({ length: n }, (_, i) => (i % 2 ? held : input | held));
+const unique = (xs: string[]) => xs.filter((x, i) => xs.indexOf(x) === i);
+const lost = (s: MatchState, foe: string) => getChar(foe).health - s.fighters[1].health;
+
+for (const foe of ['luffy', 'akainu']) {
+    describe(`Kuma vs ${foe}`, () => {
+        it('lightA → lightB → lightC connects all three', () => {
+            const s = fight(foe);
+            place(s);
+            const log = play(s, [...press(light, 2), ...mash(light, 60), ...holdFor(0, 40)]);
+            expect(unique(log.hits)).toEqual(['lightA', 'lightB', 'lightC']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(4);
+        });
+
+        it('lightA → crouchHeavy combos', () => {
+            const s = fight(foe);
+            place(s);
+            const log = play(s, [...press(light, 3), ...mash(down | heavy, 20, down), ...holdFor(0, 60)]);
+            expect(unique(log.hits)).toEqual(['lightA', 'crouchHeavy']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(2);
+        });
+
+        it('heavy cancels into Tsuppari Pad Ho (S) and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            const log = play(s, [...press(heavy, 10), ...mash(special, 16), ...holdFor(0, 100)]);
+            expect(log.hits[0]).toBe('heavy');
+            expect(log.hits).toContain('specialN');
+            expect(log.maxCombo).toBeGreaterThanOrEqual(2);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(120);
+        });
+
+        it('heavy cancels into the teleport palm (→S)', () => {
+            const s = fight(foe);
+            place(s);
+            const log = play(s, [...press(heavy, 10), ...mash(special, 16, right), ...holdFor(0, 100)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'specialF']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(2);
+        });
+
+        it('the throw lands, pressed together or a tick apart', () => {
+            const s = fight(foe);
+            place(s);
+            play(s, [light | heavy, ...holdFor(0, 60)]);
+            expect(s.fighters[1].health).toBeLessThan(getChar(foe).health);
+
+            const s2 = fight(foe);
+            place(s2);
+            play(s2, [light, light | heavy, ...holdFor(0, 60)]);
+            expect(s2.fighters[0].move === null || s2.fighters[0].move === 'throw').toBe(true);
+            expect(s2.fighters[1].health).toBeLessThan(getChar(foe).health);
+        });
+
+        it('Ursus Shock connects with a full bar and hurts', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [heavy | special, ...holdFor(0, 240)]);
+            expect(log.hits[0]).toBe('ultimate');
+            expect(log.hits.length).toBeGreaterThanOrEqual(3);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(300);
+        });
+
+        it('Ursus Shock also reaches from mid range', () => {
+            const s = fight(foe);
+            place(s, 70);
+            s.fighters[0].meter = 100;
+            const log = play(s, [heavy | special, ...holdFor(0, 240)]);
+            expect(log.hits[0]).toBe('ultimate');
+        });
+
+        it('Tsuppari Pad Ho flies across the screen', () => {
+            const s = fight(foe);
+            place(s, 140);
+            const log = play(s, [special, ...holdFor(0, 90)]);
+            expect(log.hits).toEqual(['specialN']);
+            expect(s.fighters[1].health).toBeLessThan(getChar(foe).health);
+        });
+
+        it('the teleport palm (→S) reaches from a distance', () => {
+            const s = fight(foe);
+            place(s, 60);
+            const log = play(s, [right | special, ...holdFor(0, 60)]);
+            expect(log.hits).toEqual(['specialF']);
+        });
+
+        it('the teleport goes through a projectile', () => {
+            const s = fight(foe);
+            place(s, 60);
+            const log = play(s, [right | special, ...holdFor(0, 6)]);
+            expect(s.fighters[0].invuln).toBeGreaterThan(0);
+            expect(log.hits).toEqual([]);
+        });
+
+        it('the stomp (↓S) knocks down and is low', () => {
+            const s = fight(foe);
+            place(s, 20);
+            const log = play(s, [down | special, ...holdFor(0, 70)], right);
+            expect(log.hits).toEqual(['specialD']);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(80);
+
+            const s2 = fight(foe);
+            place(s2, 20);
+            const blocked = play(s2, [down | special, ...holdFor(0, 70)], right | down);
+            expect(blocked.hits).toEqual([]);
+            expect(blocked.blocks).toBe(1);
+        });
+
+        it('the rising Pad Ho (↑S) catches a jump', () => {
+            const s = fight(foe);
+            place(s, 10);
+            stepMatch(s, [0, up]);
+            let t = 0;
+            while (s.fighters[1].y < 24 * PX && t++ < 40) stepMatch(s, [0, 0]);
+            expect(s.fighters[1].y).toBeGreaterThan(0);
+            const log = play(s, [up | special, ...holdFor(0, 50)]);
+            expect(log.hits).toContain('specialU');
+        });
+
+        it('the air dive (air S) hits a standing foe', () => {
+            const s = fight(foe);
+            place(s, 30);
+            play(s, [up | right, ...holdFor(0, 12)]);
+            const log = play(s, [special, ...holdFor(0, 60)]);
+            expect(log.hits).toContain('airSpecial');
+        });
+
+        it('jumping airLight → airHeavy connects', () => {
+            const s = fight(foe);
+            place(s, 40);
+            play(s, [up | right, ...holdFor(0, 24)]);
+            const log = play(s, [light, ...holdFor(0, 7), ...mash(heavy, 10), ...holdFor(0, 40)]);
+            expect(log.hits).toContain('airLight');
+            expect(log.hits).toContain('airHeavy');
+        });
+
+        it('crouchLight is low: only a crouching guard stops it', () => {
+            const s = fight(foe);
+            place(s);
+            const hit = play(s, [down, down | light, ...holdFor(down, 25)], right);
+            expect(hit.hits).toEqual(['crouchLight']);
+
+            const s2 = fight(foe);
+            place(s2);
+            const blocked = play(s2, [down, down | light, ...holdFor(down, 25)], right | down);
+            expect(blocked.hits).toEqual([]);
+            expect(blocked.blocks).toBe(1);
+        });
+
+        it('heavyFwd is an overhead: only a standing guard stops it', () => {
+            const s = fight(foe);
+            place(s);
+            const hit = play(s, [right | heavy, ...holdFor(0, 50)], right | down);
+            expect(hit.hits).toEqual(['heavyFwd']);
+
+            const s2 = fight(foe);
+            place(s2);
+            const blocked = play(s2, [right | heavy, ...holdFor(0, 50)], right);
+            expect(blocked.hits).toEqual([]);
+            expect(blocked.blocks).toBe(1);
+        });
+
+        it('heavyBack launches', () => {
+            const s = fight(foe);
+            place(s);
+            const log = play(s, [heavy | left, ...holdFor(0, 20)]);
+            expect(log.hits).toEqual(['heavyBack']);
+            expect(s.fighters[1].y).toBeGreaterThan(0);
+        });
+    });
+}
