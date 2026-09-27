@@ -53,6 +53,13 @@ export function arcadeLadder(p1: string, rand: () => number): string[] {
 
 const randomStage = () => STAGES[Math.floor(Math.random() * STAGES.length)].id;
 
+/**
+ * Routing hooks filled in by other modules (game/online.ts), so this file
+ * does not import them back: "VERSUS J1 CONTRE J2" opens the local / online
+ * submenu when one is registered.
+ */
+export const sceneHooks: { versusMenu?: (app: App, back: Scene) => Scene } = {};
+
 // ——— Title ———
 
 export class TitleScene implements Scene {
@@ -106,7 +113,7 @@ export class MainMenuScene implements Scene {
     private list = new OptionList(['ARCADE', 'VERSUS J1 CONTRE J2', 'VERSUS ORDINATEUR', 'ENTRAÎNEMENT', 'COMMANDES']);
     private blurbs = [
         'Affrontez tout le roster, l\'un après l\'autre.',
-        'Deux joueurs sur le même clavier ou deux manettes.',
+        'Deux joueurs sur le même clavier, ou en ligne par un lien.',
         'Choisissez votre adversaire et sa difficulté.',
         'Adversaire immobile, vie et jauge infinies, boîtes visibles.',
         'Touches, manettes et toutes les mécaniques du jeu.'
@@ -121,6 +128,7 @@ export class MainMenuScene implements Scene {
         const modes: (Mode | 'controls')[] = ['arcade', 'versus', 'versusCpu', 'training', 'controls'];
         const m = modes[this.list.index];
         if (m === 'controls') this.app.go(new ControlsScene(this.app, this));
+        else if (m === 'versus' && sceneHooks.versusMenu) this.app.go(sceneHooks.versusMenu(this.app, this));
         else this.app.go(new SelectScene(this.app, m));
     }
 
@@ -171,11 +179,11 @@ function gridStep(i: number, dir: 1 | -1): number {
     return best;
 }
 
-interface Cursor { index: number; locked: boolean; side: 0 | 1 }
+export interface Cursor { index: number; locked: boolean; side: 0 | 1 }
 
 export class SelectScene implements Scene {
-    private t = 0;
-    private cursors: Cursor[];
+    protected t = 0;
+    protected cursors: Cursor[];
     /** In one-player modes, player 1 picks both, one after the other. */
     private picking: 0 | 1 = 0;
     private level = 2;
@@ -251,8 +259,7 @@ export class SelectScene implements Scene {
     draw(ctx: CanvasRenderingContext2D): void {
         menuBackdrop(ctx, this.t, 'enies-lobby', 'rgba(14,4,24,0.8)');
         title(ctx, 'CHOIX DU COMBATTANT', 16);
-        const labels: Record<Mode, string> = { arcade: 'ARCADE', versus: 'VERSUS', versusCpu: 'CONTRE L\'ORDINATEUR', training: 'ENTRAÎNEMENT' };
-        drawText(ctx, labels[this.mode], 320, 44, { color: COLORS.dim, align: 'center' });
+        drawText(ctx, this.subtitle(), 320, 44, { color: COLORS.dim, align: 'center' });
 
         // Big art for each side.
         for (const side of [0, 1] as const) {
@@ -296,7 +303,7 @@ export class SelectScene implements Scene {
             }
             // Tags on the cell's top edge, J1 left and J2 right, so both
             // stay readable when the cursors share a portrait.
-            const label = side === 0 ? 'J1' : (this.twoPlayers ? 'J2' : 'CPU');
+            const label = this.tagLabel(side);
             const w = textWidth(label);
             const tx = side === 0 ? x + 2 : x + CELL_W - 4 - w;
             ctx.fillStyle = color;
@@ -309,11 +316,25 @@ export class SelectScene implements Scene {
             const names = ['FACILE', 'NORMAL', 'DIFFICILE', 'EXPERT', 'AMIRAL'];
             drawText(ctx, `← ${names[this.level]} →`, 320, 182, { color: COLORS.gold, outline: COLORS.ink, scale: 2, align: 'center' });
         }
+        hint(ctx, this.hintText());
+    }
+
+    // Overridden by the online select screen (game/online.ts).
+    protected subtitle(): string {
+        const labels: Record<Mode, string> = { arcade: 'ARCADE', versus: 'VERSUS', versusCpu: 'CONTRE L\'ORDINATEUR', training: 'ENTRAÎNEMENT' };
+        return labels[this.mode];
+    }
+
+    protected tagLabel(side: 0 | 1): string {
+        return side === 0 ? 'J1' : (this.twoPlayers ? 'J2' : 'CPU');
+    }
+
+    protected hintText(): string {
         const [k1, k2] = KEYS;
         const dirs = (k: typeof k1) => `${keyLabel(k.up[0])}${keyLabel(k.left[0])}${keyLabel(k.down[0])}${keyLabel(k.right[0])}`;
-        hint(ctx, this.twoPlayers
+        return this.twoPlayers
             ? `J1 : ${dirs(k1)} ET ${keyLabel(k1.light[0])} · J2 : ${dirs(k2)} ET ${keyLabel(k2.light[0])} · RETOUR : ${keyLabel(k1.heavy[0])} / ${keyLabel(k2.heavy[0])}`
-            : `${dirs(k1)} : CHOISIR · ${keyLabel(k1.light[0])} / ENTRÉE : VALIDER · ${keyLabel(k1.heavy[0])} / ÉCHAP : RETOUR`);
+            : `${dirs(k1)} : CHOISIR · ${keyLabel(k1.light[0])} / ENTRÉE : VALIDER · ${keyLabel(k1.heavy[0])} / ÉCHAP : RETOUR`;
     }
 
     private drawSide(ctx: CanvasRenderingContext2D, c: CharacterDef, side: 0 | 1, locked: boolean): void {
@@ -394,7 +415,7 @@ export class StageScene implements Scene {
 // ——— Versus splash ———
 
 export class VersusScene implements Scene {
-    private t = 0;
+    protected t = 0;
     constructor(private app: App, private setup: Setup) {}
 
     enter(): void { stopMusic(); play('uiSelect'); }

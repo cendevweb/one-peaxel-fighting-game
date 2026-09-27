@@ -7,11 +7,18 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "peer:local": "node scripts/peer-local.mjs",
+    "e2e:online": "node scripts/e2e-online.mjs"
   },
   "devDependencies": {
+    "peer": "^1.0.2",
+    "playwright-core": "1.63",
     "typescript": "^7.0.2",
     "vite": "^8.3.1",
     "vitest": "^5.0.2"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.5"
   }
 }

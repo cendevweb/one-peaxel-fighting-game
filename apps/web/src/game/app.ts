@@ -12,7 +12,15 @@ export interface Scene {
     /** One simulation tick; `menu` holds menu actions since the last tick. */
     tick(menu: MenuInput[]): void;
     draw(ctx: CanvasRenderingContext2D): void;
+    /**
+     * Keep ticking while the tab is hidden (requestAnimationFrame stops
+     * there). Online scenes set it: the other player must not freeze
+     * because this one switched tabs. Offline scenes pause as before.
+     */
+    readonly runsHidden?: boolean;
 }
+
+const STEP = 1000 / 60;
 
 export const WIDTH = 640;
 export const HEIGHT = 360;
@@ -47,20 +55,37 @@ export class App {
 
     start(): void {
         const frame = (now: number) => {
-            if (!this.last) this.last = now;
-            this.acc += Math.min(100, now - this.last);
-            this.last = now;
-            let steps = 0;
-            while (this.acc >= 1000 / 60 && steps < 4) {
-                this.acc -= 1000 / 60;
-                this.tick();
-                steps++;
-            }
-            if (steps === 4) this.acc = 0;
+            this.pump(now, 4, 100);
             this.draw();
             requestAnimationFrame(frame);
         };
         requestAnimationFrame(frame);
+        // Hidden tab: no animation frames. Timers still run (throttled, down
+        // to once a second), and `nudge` runs on every network message.
+        setInterval(() => this.nudge(), STEP);
+    }
+
+    /** Catches up on missed ticks while the tab is hidden, if the scene wants it. */
+    nudge(): void {
+        if (typeof document === 'undefined' || !document.hidden) return;
+        if (!(this.scene?.runsHidden || this.next?.runsHidden)) return;
+        this.pump(performance.now(), 60, 1000);
+    }
+
+    /** Runs the ticks due at `now` (at most `maxSteps`; time beyond `maxLag` ms is dropped). */
+    private pump(now: number, maxSteps: number, maxLag: number): void {
+        if (!this.last) this.last = now;
+        // rAF timestamps and performance.now() share a clock but may be a
+        // little out of order: never let time run backwards.
+        this.acc += Math.max(0, Math.min(maxLag, now - this.last));
+        this.last = Math.max(this.last, now);
+        let steps = 0;
+        while (this.acc >= STEP && steps < maxSteps) {
+            this.acc -= STEP;
+            this.tick();
+            steps++;
+        }
+        if (steps === maxSteps) this.acc = 0;
     }
 
     private tick(): void {
@@ -83,6 +108,8 @@ export class App {
             if (this.fade <= 0) this.fadeDir = 0;
         }
         this.scene?.tick(menu);
+        // Dev only: which scene is up, for the end-to-end tests.
+        if (import.meta.env.DEV) (window as unknown as { __opfgScene?: string }).__opfgScene = this.scene?.constructor.name;
     }
 
     private draw(): void {

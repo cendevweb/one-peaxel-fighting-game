@@ -75,6 +75,28 @@ Les dégâts diminuent au fil d'un combo, et un coup qui touche
 l'adversaire en pleine attaque fait 20 % de dégâts en plus et l'étourdit plus
 longtemps (« CONTRE ! »).
 
+## Jouer en ligne
+
+Dans **VERSUS J1 CONTRE J2**, choisir **EN LIGNE — CRÉER UN SALON** : le jeu
+affiche un lien d'invitation (copié dans le presse-papiers) et un code de
+6 lettres. L'adversaire ouvre le lien, ou choisit **EN LIGNE — REJOINDRE** et
+tape le code. Chacun choisit son combattant, l'hôte choisit l'arène, puis
+combat, revanche ou retour au menu.
+
+Les deux navigateurs se parlent directement (WebRTC). La mise en relation passe
+par le service public PeerJS, sans serveur à héberger. Le netcode est à
+rollback (délai d'entrée de 2 frames, retour arrière jusqu'à 8 frames), comme
+les jeux de combat actuels. Sur les réseaux très fermés (certains réseaux
+d'entreprise ou partages 4G), la connexion directe peut échouer : il faut alors
+un relais TURN, à déclarer dans `VITE_ICE_SERVERS`.
+
+Variables Vercel facultatives, pour un serveur de mise en relation à soi
+(`npx peerjs --port $PORT --path /salon --proxied true`) : `VITE_PEER_HOST`,
+`VITE_PEER_PORT`, `VITE_PEER_PATH`, `VITE_PEER_SECURE`, `VITE_ICE_SERVERS`
+(JSON). En local : `npm run peer:local -w apps/web`, puis `?peer=127.0.0.1:9000`
+dans l'URL ; `npm run e2e:online -w apps/web` joue un match complet entre deux
+navigateurs avec latence et pertes simulées.
+
 ## Développement
 
 | Commande | Effet |

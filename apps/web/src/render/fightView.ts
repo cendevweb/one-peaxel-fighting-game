@@ -65,7 +65,11 @@ export class FightView {
     private koFlash = 0;
     private lastAttacker = 0;
 
-    constructor(readonly state: MatchState, stageDef: StageDef, readonly options: ViewOptions = {}) {
+    /** Swapped by the online fight when a rollback replaces the state. */
+    state: MatchState;
+
+    constructor(state: MatchState, stageDef: StageDef, readonly options: ViewOptions = {}) {
+        this.state = state;
         this.stage = new StageRenderer(stageDef, state.stageWidth / PX);
         const mk = (): FighterFx => ({ flash: 0, flashTint: 'white', ghosts: [], comboHits: 0, comboDamage: 0, comboT: 0, lastHealth: 0, lastMode: '' });
         this.fx = [mk(), mk()];

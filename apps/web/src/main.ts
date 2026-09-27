@@ -1,5 +1,6 @@
 import { ROSTER } from './characters';
 import { App } from './game/app';
+import { initialScene } from './game/online';
 import { TitleScene } from './game/scenes';
 import { drawText } from './render/font';
 import { loadAtlas, loadCommon } from './render/sprites';
@@ -37,7 +38,7 @@ async function boot(): Promise<void> {
     progress();
     await Promise.all(jobs.map((j) => j.then(() => { done++; progress(); })));
     const app = new App(ctx);
-    app.go(new TitleScene(app), true);
+    app.go(initialScene(app, new TitleScene(app)), true);
     app.start();
 }
 
