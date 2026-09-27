@@ -2,7 +2,7 @@ import { play } from '../audio/sound';
 import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { PX, type FighterState, type GameEvent, type MatchState, type Rect } from '../engine/types';
-import { drawText } from './font';
+import { drawText, textWidth } from './font';
 import { artOf, drawFrame, frameOf, hasAnim, animAlpha, type Tint } from './sprites';
 import { GROUND_Y, StageRenderer, type StageDef } from './stage';
 import { Vfx } from './vfx';
@@ -429,8 +429,10 @@ export class FightView {
         }
         const move = def.moves[c.slot as 'ultimate' | 'ultimate2'] ?? def.moves.ultimate;
         const tx = c.side === 0 ? 600 : 40;
-        drawText(ctx, move.name.toUpperCase(), tx, y + bandH / 2 - 6, {
-            color: '#ffffff', gradient: '#ffd23f', outline: '#1a0b12', scale: 2, align: c.side === 0 ? 'right' : 'left'
+        // Long names shrink rather than run into the art on the other side.
+        const title = move.name.toUpperCase();
+        drawText(ctx, title, tx, y + bandH / 2 - 6, {
+            color: '#ffffff', gradient: '#ffd23f', outline: '#1a0b12', scale: Math.min(2, 330 / textWidth(title)), align: c.side === 0 ? 'right' : 'left'
         });
         if (max) drawText(ctx, 'ULTIME MAX', tx, y + bandH / 2 - 20, { color: t % 8 < 4 ? '#ff7a4a' : '#ffe95e', outline: '#1a0b12', align: c.side === 0 ? 'right' : 'left' });
         drawText(ctx, def.name.toUpperCase(), tx, y + bandH / 2 + 18, { color: def.color, outline: '#000', scale: 1, align: c.side === 0 ? 'right' : 'left' });
