@@ -151,7 +151,7 @@ Santé autour de 1000 ; un combo moyen fait 200–300, l'ultime 300–400.
 
 ## 4. Menus, arcade, ordinateur
 
-- La grille de sélection range 7 portraits par rangée : rien à faire, mais
+- La grille de sélection range 11 portraits par rangée : rien à faire, mais
   `portrait` doit montrer le visage dans le haut de l'image (la case le
   recadre en « couverture », en gardant le haut).
 - Ajouter l'`id` à `ORDER` (`characters/index.ts`) et à `ARCADE_RANK`
