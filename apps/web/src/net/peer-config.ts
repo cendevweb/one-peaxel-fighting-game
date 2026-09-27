@@ -116,9 +116,16 @@ export function peerIdFor(code: string): string {
     return PEER_PREFIX + code.toLowerCase();
 }
 
-/** The link to send to the other player: this page with `?salon=CODE`. */
-export function inviteUrl(code: string, loc: { origin: string; pathname: string }, debugPeer?: string): string {
+/**
+ * The link to send to the other player: `?salon=CODE` on the game's public
+ * address when one is known, on this page otherwise. The page's own URL
+ * may be a private deployment URL the other player cannot open. A local
+ * debug broker (`debugPeer`) keeps the link on this page, the only one that
+ * honours `?peer=`.
+ */
+export function inviteUrl(code: string, loc: { origin: string; pathname: string }, debugPeer?: string, publicUrl?: string): string {
+    const base = !debugPeer && publicUrl ? new URL(publicUrl) : loc;
     // host:port is URL-safe as is; left unencoded so the link stays readable.
     const peer = debugPeer ? `peer=${debugPeer}&` : '';
-    return `${loc.origin}${loc.pathname}?${peer}salon=${code}`;
+    return `${base.origin}${base.pathname}?${peer}salon=${code}`;
 }
