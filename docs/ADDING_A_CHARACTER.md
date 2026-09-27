@@ -131,13 +131,30 @@ Copier `luffy.ts` et l'adapter. Les règles :
   quelle image la victime est lâchée, avec dégâts et projection.
 - `fx: [[image, 'fx_nom', x, y]]` joue un effet visuel du personnage.
 - `sfx` : `swing`, `swingHeavy`, `stretch`, `gatling`, `bazooka`, `fire`,
-  `electric`, `sand`, `magma`, `slash`, `grab`, `gigant`, `beam`.
+  `electric`, `sand`, `magma`, `slash`, `slashHeavy` (grand coup de sabre),
+  `thread` (fil tendu), `room` (ouverture de la Room), `grab`, `gigant`,
+  `beam`. Un nom inconnu fait échouer `data.test.ts`.
 - `spark` : `light`, `heavy`, `big`, `fire`, `electric`, `sand`, `magma`,
-  `cut`.
+  `cut` (entaille légère), `blade` (croissant de sabre bleuté), `room` (arc
+  cyan), `thread` (faisceau de fils). Un nouvel effet s'ajoute à l'union
+  `Spark` de `engine/types.ts` et au `switch` de `render/vfx.ts`.
 
 Santé autour de 1000 ; un combo moyen fait 200–300, l'ultime 300–400.
 
-## 4. Vérifier
+## 4. Menus, arcade, ordinateur
+
+- La grille de sélection range 5 portraits par rangée : rien à faire, mais
+  `portrait` doit montrer le visage dans le haut de l'image (la case le
+  recadre en « couverture », en gardant le haut).
+- Ajouter l'`id` à `ORDER` (`characters/index.ts`) et à `ARCADE_RANK`
+  (`game/scenes.ts`, du plus faible au boss) ; absent, il se place au milieu.
+- L'ordinateur (`game/ai.ts`) lit la fiche : il lance `specialN` de loin s'il
+  a un `projectile`, s'en sert à bout portant sinon, contre les sauts avec
+  `specialU` (qui doit donc avoir un `invuln`), plonge avec `airSpecial`.
+  `cpu.test.ts` vérifie qu'il finit ses matchs sans se figer et utilise ses
+  spéciaux.
+
+## 5. Vérifier
 
 ```sh
 cd apps/web && npx vitest run && npx tsc --noEmit

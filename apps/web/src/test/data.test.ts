@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { hasSound } from '../audio/sound';
 import { ROSTER } from '../characters';
 
 /**
@@ -37,6 +38,14 @@ describe.each(ROSTER.map((c) => [c.id, c] as const))('%s', (_id, def) => {
             }
             if (move.landFrame !== undefined) expect(move.landFrame).toBeLessThan(anim.frames.length);
             if (move.throwRelease) expect(move.throwRelease.frame).toBeLessThan(anim.frames.length);
+        }
+    });
+
+    it('only names sounds and effects that exist', () => {
+        for (const [slot, move] of Object.entries(def.moves)) {
+            const sounds = [move.sfx, move.projectile?.hit.sfx, ...move.hits.map((h) => h.sfx)];
+            for (const sfx of sounds) if (sfx) expect(hasSound(sfx), `${slot} sfx ${sfx}`).toBe(true);
+            for (const [, fx] of move.fx ?? []) expect(def.manifest.anims[fx], `${slot} fx ${fx}`).toBeDefined();
         }
     });
 

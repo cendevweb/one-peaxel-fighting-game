@@ -173,7 +173,7 @@ def build(cid: str, src: dict, contact_dir: str | None) -> None:
             dx, dy = a["nudges"].get(str(i), [0, 0])
             frames.append([c["x"], c["y"], w, h, c["ax"] - dx, c["ay"] - dy, reach(c["img"], c["ax"] - dx, c["ay"] - dy, front)])
         entry = {"frames": frames}
-        for k in ("fps", "loop", "fx"):
+        for k in ("fps", "loop", "fx", "alpha"):
             if k in a["anim"]:
                 entry[k] = a["anim"][k]
         manifest["anims"][name] = entry

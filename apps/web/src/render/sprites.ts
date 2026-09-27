@@ -79,6 +79,11 @@ export function animLength(id: string, anim: string): number {
     return atlases.get(id)?.manifest.anims[anim]?.frames.length ?? 0;
 }
 
+/** Opacity declared by an effect animation in its manifest (1 when absent). */
+export function animAlpha(id: string, anim: string): number {
+    return atlases.get(id)?.manifest.anims[anim]?.alpha ?? 1;
+}
+
 export function hasAnim(id: string, anim: string): boolean {
     return !!atlases.get(id)?.manifest.anims[anim];
 }
