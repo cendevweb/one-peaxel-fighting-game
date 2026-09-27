@@ -7,7 +7,7 @@
  */
 
 /** Bump whenever a message or the simulation changes incompatibly. */
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 export type NetMsg =
     /**
@@ -36,6 +36,12 @@ export type NetMsg =
     /** Checksum of the confirmed state after simulating `frame` frames. */
     | { type: 'checksum'; frame: number; sum: number; m?: number }
     | { type: 'rematch'; want: boolean }
+    /**
+     * After a match: back to the character select, both players, same room.
+     * `m` names the match just played (its `start` seed), so a request that
+     * crossed a rematch never pulls the next match's results screen back.
+     */
+    | { type: 'reselect'; m: number }
     /** Goodbye; `closed`: the page was closed (shown as a disconnection, not a choice). */
     | { type: 'leave'; closed?: boolean }
     | { type: 'ping'; t: number }
@@ -121,6 +127,9 @@ export function decode(data: unknown): NetMsg | null {
         case 'rematch':
             if (typeof m.want !== 'boolean') return null;
             return { type: 'rematch', want: m.want };
+        case 'reselect':
+            if (!int(m.m, 0, 0x7fffffff)) return null;
+            return { type: 'reselect', m: m.m };
         case 'leave':
             if (m.closed !== undefined && typeof m.closed !== 'boolean') return null;
             return m.closed === undefined ? { type: 'leave' } : { type: 'leave', closed: m.closed as boolean };

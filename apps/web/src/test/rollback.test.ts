@@ -164,6 +164,7 @@ describe('protocol', () => {
             { type: 'input', start: 12, bits: [0, 16, 48], ack: 9, f: 10, adv: 1 },
             { type: 'checksum', frame: 60, sum: 0xdeadbeef },
             { type: 'ping', t: 1234.5 },
+            { type: 'reselect', m: 123456 },
             { type: 'leave' }
         ];
         for (const m of msgs) expect(decode(encode(m))).toEqual(m);
@@ -179,6 +180,8 @@ describe('protocol', () => {
         expect(decode('{"type":"start","p1":{"x":1},"p2":"zoro","stage":"marineford"}')).toBeNull();
         expect(decode('{"type":"select","char":"<img>","ready":true}')).toBeNull();
         expect(decode('{"type":"rematch","want":1}')).toBeNull();
+        expect(decode('{"type":"reselect"}')).toBeNull();
+        expect(decode('{"type":"reselect","m":-1}')).toBeNull();
         expect(decode('{"type":"leave","extra":"x"}')).toEqual({ type: 'leave' });
         expect(decode('{"type":"hello","v":1,"name":"' + 'x'.repeat(5000) + '"}')).toBeNull();
         expect(decode('[1,2]')).toBeNull();
