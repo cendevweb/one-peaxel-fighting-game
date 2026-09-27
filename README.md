@@ -5,7 +5,7 @@ construit comme un Street Fighter : combos, gardes haute et basse, coups
 directionnels, spéciaux à manipulation, projections, jauge de garde et
 ultimes avec arrêt sur image.
 
-Vingt et un combattants (voir le tableau plus bas), six arènes, un mode arcade avec fin, un versus à deux sur le même
+Trente-trois combattants (voir le tableau plus bas), six arènes, un mode arcade avec fin, un versus à deux sur le même
 clavier (ou deux manettes), un versus contre l'ordinateur (5 niveaux) et un
 mode entraînement (mannequin configurable, affichage des boîtes de coup,
 liste des coups dans le menu pause).
@@ -55,24 +55,36 @@ Chaque coup reprend l'animation et les effets de la planche du jeu DS.
 
 | Combattant | [C] | → [C] | ↑ [C] | ↓ [C] | Ultime | Ultime max |
 | --- | --- | --- | --- | --- | --- | --- |
-| Luffy | Gomu Gomu no Pistol | Gatling | Rocket Uppercut | Bazooka | Gear Third — Gigant Rifle | Gear Third — Gigant Axe |
-| Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Rokudō no Tsuji | Sanbyakurokujū Pound Hō |
-| Sanji | Diable Jambe — Premier Hachis | Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre | Diable Jambe — Hell Memories |
+| Luffy | Gomu Gomu no Pistol | Gomu Gomu no Gatling | Gomu Gomu no Rocket Uppercut | Gomu Gomu no Bazooka | Gear Third — Gigant Rifle | Gear Third — Gigant Axe |
+| Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Santōryū Ōgi — Rokudō no Tsuji | Sanbyakurokujū Pound Hō |
+| Nami | Thunderbolt Tempo | Mirage Tempo | Swing Arm | Cyclone Tempo | Mirage Tempo — Fata Morgana | Thunder Lance Tempo |
+| Usopp | Hissatsu Namari Boshi | Hissatsu Kaen Boshi | Kabuto — Usopp Rolling | Hissatsu Tabasco Boshi | Usopp Hammer « 10 t » | Sogeking — Hi no Tori Boshi |
+| Sanji | Diable Jambe — Premier Hachis | Diable Jambe — Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre | Diable Jambe — Hell Memories |
+| Chopper | Arm Point — Kokutei | Heavy Gong | Heavy Point — uppercut | Heavy Point — martèlement | Kokutei Roseo | Monster Point |
 | Robin | Seis Fleurs | Cien Fleurs — arbre de bras | Cien Fleurs Wing | Gigante Fleur | Mil Fleurs — Gigantesco Mano | Cien Fleurs — Delphinium |
+| Franky | Strong Right | Coup de Boo | Weapons Left | Fresh Fire | Franky Rocket Launcher | Coup de Vent |
+| Vivi | Karoo, fonce ! | Karoo — Peacock Slasher roulant | Peacock Slasher — tourbillon | Danse du parfum | Kujaku Slasher Ranbu | Chō Karugamo Butai |
 | Ace | Hiken | Higan | Hibashira | Enjōmō | Dai Enkai — Entei | Jūjika — Cross Fire |
 | Marco | Flamme bleue | Vol du phénix | Envol du phénix | Charge des ailes | Phénix — flammes régénératrices | Hōō-in — piqué du phénix géant |
 | Barbe Blanche | Gura Gura — onde de choc | Gura Gura — poing séisme | Moulinet du bisento | Gura Gura — saisie de l'air | Kaishin | Shima Yurashi |
-| Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate | K-Room — Puncture Wille |
-| Kid | Repel | Attraction | Uppercut de ferraille | Pilier de ferraille | Punk Gibson | Punk Corna Dio |
+| Jinbei | Murasame | Samegawara Seiken | Kairiken | Senmaigawara Shōtei | Gyojin Karate Ōgi — Buraikan | Jinbei-zame Enbu |
+| Buggy | Bara Bara Hō | Bara Bara Senbei | Bara Bara Kinkyū Dasshutsu | Buggy Ball | Bara Bara Festival | Captain Buggy !! Charge des évadés |
+| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Sables — Tempête du désert | Sables Pesado |
 | Hancock | Pistol Kiss | Mero Mero Mellow | Salto de la Gorgone | Slave Arrow | Perfume Femur | Grand Mero Mero Mellow |
-| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert | Sables Pesado |
+| Mihawk | Zangeki — croissant volant | Ruée de Yoru | Taille céleste | Kogatana | Yoru — entaille géante | Kokutō Issen |
 | Doflamingo | Tamaito | Overheat | Fulbright | Parasite | Torikago — Birdcage | Kakusei — Awakening |
 | Kuma | Tsuppari Pad Hō | Téléportation — Pad Hō | Pad Hō ascendant | Onde du tyran | Ursus Shock | Laser du Pacifista |
+| Ivankov | Death Wink | Emporio Drill Kick | Emporio Face-Growth Hormone | Hormone de la tête géante | Hell Wink | Galaxy Wink |
 | Magellan | Hydra | Doku Fugu | Hydra ascendante | Doku Gumo | Venom Demon — Jigoku no Shinpan | Doku Hydra — la Hydre géante |
+| Hody Jones | Uchimizu | Shark Darts | Trident du requin | Ikaku Dōjō | Uchimizu — déluge | Energy Steroid — forme monstrueuse |
+| Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate | K-Room — Puncture Wille |
+| Kid | Repel | Attraction | Uppercut de ferraille | Pilier de ferraille | Punk Gibson | Punk Corna Dio |
+| X Drake | Estocades en rafale | Ruée du Drapeau rouge | Taille ascendante | Croix du Drapeau rouge | Morsure de l'allosaure | Charge de l'Allosaurus |
 | Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan | Amaru — Raijin |
 | Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan | Rokuōgan — pleine puissance |
 | Shanks | Onde tranchante du Haki | Gryphon — ruée | Estoc céleste | Haoshoku Haki | Kamusari | Haoshoku no Kenbu |
 | Barbe Noire | Kurouzu | Gura Gura — poing du séisme | Uppercut des ténèbres | Black Hole | Liberation | Kaishin des ténèbres |
+| Shiki | Kogarashi | Zan Sword | Kogarashi — croissant renversé | Fuwa Fuwa — rocher flottant | Shishi Odoshi | Shishi Odoshi : Chimaki |
 | Aokiji | Ice Block — Partisan | Ice Time | Ice Block — Poing du givre | Ice Age | Ice Block — Pheasant Beak | Ice Time Capsule |
 | Kizaru | Laser du doigt | Ama no Murakumo | Ama no Murakumo — ascension | Yata no Kagami | Yasakani no Magatama | Yata no Kagami — Kōsen |
 | Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan | Inugami Guren |

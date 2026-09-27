@@ -35,8 +35,9 @@ export interface Setup {
  * identical. A fighter missing from the list (a new file) slots in mid-road.
  */
 const ARCADE_RANK = [
-    'luffy', 'zoro', 'sanji', 'robin', 'hancock', 'crocodile', 'lucci', 'enel', 'law', 'kid', 'ace',
-    'marco', 'magellan', 'kuma', 'doflamingo', 'kizaru', 'aokiji', 'shanks', 'blackbeard', 'whitebeard', 'akainu'
+    'buggy', 'vivi', 'usopp', 'nami', 'chopper', 'luffy', 'zoro', 'sanji', 'franky', 'robin', 'hody',
+    'hancock', 'crocodile', 'drake', 'ivankov', 'lucci', 'enel', 'jinbei', 'law', 'kid', 'ace', 'marco',
+    'magellan', 'kuma', 'doflamingo', 'shiki', 'mihawk', 'kizaru', 'aokiji', 'shanks', 'blackbeard', 'whitebeard', 'akainu'
 ];
 /** Fights in one arcade run, bosses included. */
 const ARCADE_LENGTH = 8;
@@ -163,10 +164,10 @@ export class MainMenuScene implements Scene {
 // ——— Character select ———
 
 /**
- * Portrait grid geometry: seven per row, so 21 fighters make a 7×3 block
- * sitting just above the hint bar; a shorter last row is centred.
+ * Portrait grid geometry: eleven per row, so 33 fighters make an 11×3
+ * block sitting just above the hint bar; a shorter last row is centred.
  */
-export const GRID_COLS = 7;
+export const GRID_COLS = 11;
 const CELL_W = 50;
 const CELL_H = 38;
 const CELL_GAP = 3;

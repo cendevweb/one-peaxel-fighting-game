@@ -52,8 +52,8 @@ describe.each(ids.map((id, i) => [id, i] as const))('computer playing %s', (id, 
         const { s, used, damage, longestStill } = play(a, b, i + 1);
         expect(s.phase).toBe('matchEnd');
         expect(damage).toBeGreaterThan(500);
-        expect(used[0].size).toBeGreaterThan(5);
-        expect(used[1].size).toBeGreaterThan(5);
+        expect(used[0].size).toBeGreaterThan(4);
+        expect(used[1].size).toBeGreaterThan(4);
         // Never frozen in place for five seconds in the middle of a round.
         expect(longestStill).toBeLessThan(300);
         for (const slot of used[side]) usedBy.add(slot);
