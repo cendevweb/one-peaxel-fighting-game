@@ -157,6 +157,19 @@ export const kid: CharacterDef = {
             fx: [[5, 'fx_hand', 40, 0], [7, 'fx_gears', 86, 40]],
             sfx: 'gigant'
         },
+        ultimate2: {
+            name: 'Punk Corna Dio', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [4, 3, 3, 3, 8, 8, 6, 4, 4, 5, 5, 6, 8, 22],
+            superFreeze: 70, cost: 200, invuln: [0, 6],
+            motion: [[7, 5.5, 0], [11, 0, 0]],
+            hits: [
+                { frames: [4, 6], box: [-50, 0, 150, 108], damage: 70, guard: 'mid', hitstun: 40, blockstun: 18, push: 2, rehit: 8, hitstop: 6, spark: 'magnet', shake: 4, sfx: 'magnet' },
+                { frames: [9, 10], box: [0, 0, 100, 80], damage: 60, guard: 'mid', hitstun: 40, blockstun: 18, push: 2, rehit: 5, hitstop: 5, spark: 'magnet', shake: 3 },
+                { frames: [11, 12], box: [0, 0, 120, 90], damage: 300, guard: 'mid', hitstun: 50, blockstun: 22, push: 30, launch: [6.0, 6.2], wallBounce: true, hitstop: 26, spark: 'big', shake: 12, sfx: 'gigant' }
+            ],
+            fx: [[4, 'fx_spikes', -40, 0], [4, 'fx_spikes', 60, 0], [11, 'fx_gearfist', 70, 40], [12, 'fx_gears', 100, 44]],
+            sfx: 'gigant'
+        },
         throw: {
             name: 'Répulsion à bout portant', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 5, 4, 4, 5, 6, 8],

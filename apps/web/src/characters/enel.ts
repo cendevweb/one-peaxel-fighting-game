@@ -145,6 +145,20 @@ export const enel: CharacterDef = {
             fx: [[13, 'fx_raigo', 70, 0]],
             sfx: 'beam'
         },
+        ultimate2: {
+            // Amaru: Enel swells into his giant thunder-god body, pounds the
+            // foe with lightning fists and ends on a Raijin sphere that
+            // swallows everything in front of him.
+            name: 'Amaru — Raijin', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 3, 4, 5, 4, 4, 4, 4, 4, 4, 5, 6, 6, 10, 8, 6, 6, 8],
+            superFreeze: 70, cost: 200, invuln: [0, 4],
+            hits: [
+                { frames: [4, 11], box: [0, 0, 80, 100], damage: 56, guard: 'mid', hitstun: 40, blockstun: 20, push: 1, rehit: 12, hitstop: 5, spark: 'electric', shake: 3 },
+                { frames: [12, 14], box: [0, 0, 170, 120], damage: 400, guard: 'mid', hitstun: 40, blockstun: 22, push: 30, launch: [5.8, 6.4], wallBounce: true, knockdown: true, hitstop: 24, spark: 'big', shake: 12 }
+            ],
+            fx: [[3, 'fx_flash', 0, 40], [7, 'fx_zap', 60, 60], [9, 'fx_zap', 64, 50], [12, 'fx_raijin', 118, 56]],
+            sfx: 'beam'
+        },
         throw: {
             name: 'Hōden — décharge', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 5, 5, 4, 6, 6, 8],

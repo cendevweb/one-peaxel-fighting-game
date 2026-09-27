@@ -145,6 +145,52 @@ describe.each(['luffy', 'akainu'])('Crocodile vs %s', (foe) => {
         expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(300);
     });
 
+    it('O with two bars fires Sables Pesado, which hits in full at point-blank', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 200;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        step(s, light | heavy | special, 0, log);
+        step(s, 0, 0, log);
+        expect(s.fighters[0].move).toBe('ultimate2');
+        expect(s.fighters[0].meter).toBe(0);
+        hold(s, 0, 0, 320, log);
+        // Ground Death, three tornado waves and the Pesado blast (the wall
+        // bounce reports one more, harmless, contact).
+        expect(log.hits.filter((m) => m === 'ultimate2').length).toBeGreaterThanOrEqual(5);
+        expect(log.maxCombo).toBe(5);
+        expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        expect(hp - s.fighters[1].health).toBeLessThanOrEqual(480);
+    });
+
+    it('O with a single bar does nothing and keeps the gauge', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 100;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        step(s, light | heavy | special, 0, log);
+        hold(s, 0, 0, 200, log);
+        expect(log.hits).not.toContain('ultimate2');
+        expect(log.hits).not.toContain('ultimate');
+        expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        expect(s.fighters[1].health).toBe(hp);
+    });
+
+    it('heavy → O cancels into Sables Pesado and it all combos', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 200;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        link(s, heavy, [light | heavy | special], log);
+        hold(s, 0, 0, 240, log);
+        expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+        expect(log.maxCombo).toBe(6);
+        expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+    });
+
     it('the Desert Spada (specialN) hits at mid range', () => {
         const s = fight(foe);
         s.fighters[0].x = s.fighters[1].x - 130 * PX;

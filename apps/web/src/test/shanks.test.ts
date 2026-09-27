@@ -97,6 +97,39 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(250);
         });
 
+        it('Haoshoku no Kenbu (O) with two bars connects in full at point-blank', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 260));
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.filter(h => h === 'ultimate2').length).toBeGreaterThanOrEqual(5);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(5);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('O with only one bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into Haoshoku no Kenbu and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 8), ...mash(light | heavy | special, 16), ...holdFor(0, 260)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(6);
+        });
+
         it('the haki crescent (S) flies across mid range', () => {
             const s = fight(foe);
             place(s, 110);

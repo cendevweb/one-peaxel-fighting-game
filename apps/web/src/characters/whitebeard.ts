@@ -11,7 +11,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * quake punch that cracks the air (wall bounce), the spinning bisento above
  * his head as his reversal, and the grab of the air that overturns the
  * ground in front of him. Kaishin, both fists smashing the air, is the
- * ultimate.
+ * ultimate; Shima Yurashi (O, two bars) stomps, cracks the sky and brings
+ * the bisento down to send the quake across the whole screen.
  *
  * Every animation and effect comes from the Gigant Battle sheet
  * (tools/sprites/chars/whitebeard.json): the quake bubble, the yellow
@@ -158,6 +159,30 @@ export const whitebeard: CharacterDef = {
             ],
             fx: [[6, 'fx_kaishin', 72, 52], [9, 'fx_erupt', 70, 48], [12, 'fx_kaishin', 96, 56]],
             sfx: 'quake'
+        },
+        ultimate2: {
+            // The stomp that shakes the island, the fist that cracks the sky,
+            // then the bisento brought down on the ground: the quake runs
+            // across the whole screen in eruptions and a tidal wave of light.
+            name: 'Shima Yurashi', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 2, 2, 8, 5, 5, 6, 5, 8, 6, 8, 5, 5, 4, 4, 4, 4, 4, 5, 14, 8, 8, 10, 16],
+            superFreeze: 70, cost: 200, invuln: [0, 8],
+            hits: [
+                { frames: [4, 4], box: [-30, 0, 180, 100], damage: 110, guard: 'mid', hitstun: 70, blockstun: 22, push: 2, hitstop: 12, spark: 'quake', shake: 9, sfx: 'quake' },
+                { frames: [9, 9], box: [-30, 0, 180, 150], damage: 60, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'quake', shake: 8 },
+                { frames: [11, 11], box: [-30, 0, 180, 150], damage: 60, guard: 'mid', hitstun: 70, blockstun: 16, push: 1, hitstop: 8, spark: 'quake', shake: 8, sfx: 'quake' },
+                { frames: [19, 19], box: [0, 0, 160, 140], damage: 90, guard: 'mid', hitstun: 60, blockstun: 16, push: 1, hitstop: 10, spark: 'big', shake: 6 },
+                { frames: [20, 20], box: [-10, 0, 230, 150], damage: 250, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [5.4, 6.6], hitstop: 26, spark: 'big', shake: 14, sfx: 'quake' }
+            ],
+            fx: [
+                [4, 'fx_erupt', 30, 46], [4, 'fx_quakewave', 90, 18],
+                [9, 'fx_kaishin', 30, 146], [9, 'fx_bubble', 12, 130], [11, 'fx_kaishin', 90, 130], [11, 'fx_bubble', 12, 130],
+                [19, 'fx_bubble', 90, 80],
+                [20, 'fx_erupt', 70, 46], [20, 'fx_quakewave', 120, 18], [20, 'fx_crack', 80, 60],
+                [21, 'fx_erupt', 130, 46], [22, 'fx_erupt', 190, 46], [22, 'fx_quakewave', 220, 18],
+                [23, 'fx_kaishin', 170, 64]
+            ],
+            sfx: 'gigant'
         },
         throw: {
             name: 'Poigne de Newgate', anim: 'throw', kind: 'throw', stance: 'stand',

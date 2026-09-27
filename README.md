@@ -25,6 +25,7 @@ npm run dev        # http://localhost:5173
 | [C] spécial | L | Pavé 3 ou `/` |
 | Projection ([A]+[B]) | U | Pavé 4 |
 | Ultime ([B]+[C]) | I | Pavé 5 |
+| Ultime max ([A]+[B]+[C]) | O | Pavé 6 |
 | Pause | Échap | Retour arrière |
 
 Les manettes (disposition standard) sont reconnues dès qu'on appuie sur un
@@ -45,35 +46,36 @@ disposition marche en AZERTY et en QWERTY.
 | ↓ [C] ou ↓↙← [C] | Spécial bas |
 | [A]+[B] près | Projection (se dégage en appuyant aussi sur [A]+[B]) |
 | [B]+[C] | Ultime, coûte une barre |
+| [A]+[B]+[C] | Ultime max : la technique la plus forte du combattant, coûte les deux barres |
 | →→ / ←← | Ruée / pas arrière |
 
 ### Combattants
 
 Chaque coup reprend l'animation et les effets de la planche du jeu DS.
 
-| Combattant | [C] | → [C] | ↑ [C] | ↓ [C] | Ultime |
-| --- | --- | --- | --- | --- | --- |
-| Luffy | Gomu Gomu no Pistol | Gatling | Rocket Uppercut | Bazooka | Gear Third — Gigant Rifle |
-| Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Rokudō no Tsuji |
-| Sanji | Diable Jambe — Premier Hachis | Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre |
-| Robin | Seis Fleurs | Cien Fleurs — arbre de bras | Cien Fleurs Wing | Gigante Fleur | Mil Fleurs — Gigantesco Mano |
-| Ace | Hiken | Higan | Hibashira | Enjōmō | Dai Enkai — Entei |
-| Marco | Flamme bleue | Vol du phénix | Envol du phénix | Charge des ailes | Phénix — flammes régénératrices |
-| Barbe Blanche | Gura Gura — onde de choc | Gura Gura — poing séisme | Moulinet du bisento | Gura Gura — saisie de l'air | Kaishin |
-| Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate |
-| Kid | Repel | Attraction | Uppercut de ferraille | Pilier de ferraille | Punk Gibson |
-| Hancock | Pistol Kiss | Mero Mero Mellow | Salto de la Gorgone | Slave Arrow | Perfume Femur |
-| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert |
-| Doflamingo | Tamaito | Overheat | Fulbright | Parasite | Torikago — Birdcage |
-| Kuma | Tsuppari Pad Hō | Téléportation — Pad Hō | Pad Hō ascendant | Onde du tyran | Ursus Shock |
-| Magellan | Hydra | Doku Fugu | Hydra ascendante | Doku Gumo | Venom Demon — Jigoku no Shinpan |
-| Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan |
-| Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan |
-| Shanks | Onde tranchante du Haki | Gryphon — ruée | Estoc céleste | Haoshoku Haki | Kamusari |
-| Barbe Noire | Kurouzu | Gura Gura — poing du séisme | Uppercut des ténèbres | Black Hole | Liberation |
-| Aokiji | Ice Block — Partisan | Ice Time | Ice Block — Poing du givre | Ice Age | Ice Block — Pheasant Beak |
-| Kizaru | Laser du doigt | Ama no Murakumo | Ama no Murakumo — ascension | Yata no Kagami | Yasakani no Magatama |
-| Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan |
+| Combattant | [C] | → [C] | ↑ [C] | ↓ [C] | Ultime | Ultime max |
+| --- | --- | --- | --- | --- | --- | --- |
+| Luffy | Gomu Gomu no Pistol | Gatling | Rocket Uppercut | Bazooka | Gear Third — Gigant Rifle | Gear Third — Gigant Axe |
+| Zoro | Sanjūroku Pound Hō | Oni Giri | Ō Tatsumaki | Tatsumaki | Rokudō no Tsuji | Sanbyakurokujū Pound Hō |
+| Sanji | Diable Jambe — Premier Hachis | Flambage Shot | Party Table Kick Course | Concassé | Poêle à Frire : Spectre | Diable Jambe — Hell Memories |
+| Robin | Seis Fleurs | Cien Fleurs — arbre de bras | Cien Fleurs Wing | Gigante Fleur | Mil Fleurs — Gigantesco Mano | Cien Fleurs — Delphinium |
+| Ace | Hiken | Higan | Hibashira | Enjōmō | Dai Enkai — Entei | Jūjika — Cross Fire |
+| Marco | Flamme bleue | Vol du phénix | Envol du phénix | Charge des ailes | Phénix — flammes régénératrices | Hōō-in — piqué du phénix géant |
+| Barbe Blanche | Gura Gura — onde de choc | Gura Gura — poing séisme | Moulinet du bisento | Gura Gura — saisie de l'air | Kaishin | Shima Yurashi |
+| Law | Radio Knife | Injection Shot | Takt | Shambles — Counter Shock | Room — Amputate | K-Room — Puncture Wille |
+| Kid | Repel | Attraction | Uppercut de ferraille | Pilier de ferraille | Punk Gibson | Punk Corna Dio |
+| Hancock | Pistol Kiss | Mero Mero Mellow | Salto de la Gorgone | Slave Arrow | Perfume Femur | Grand Mero Mero Mellow |
+| Crocodile | Desert Spada | Barchan | Desert Grande Espada | Desert Girasole | Tempête du désert | Sables Pesado |
+| Doflamingo | Tamaito | Overheat | Fulbright | Parasite | Torikago — Birdcage | Kakusei — Awakening |
+| Kuma | Tsuppari Pad Hō | Téléportation — Pad Hō | Pad Hō ascendant | Onde du tyran | Ursus Shock | Laser du Pacifista |
+| Magellan | Hydra | Doku Fugu | Hydra ascendante | Doku Gumo | Venom Demon — Jigoku no Shinpan | Doku Hydra — la Hydre géante |
+| Enel | Sango | Trident de Nonosama | Vari — 1 000 000 V | El Thor | Mamaragan | Amaru — Raijin |
+| Rob Lucci | Rankyaku « Hyōbi » | Soru — Shigan | Shigan « Ōren » | Griffes du léopard | Rokuōgan | Rokuōgan — pleine puissance |
+| Shanks | Onde tranchante du Haki | Gryphon — ruée | Estoc céleste | Haoshoku Haki | Kamusari | Haoshoku no Kenbu |
+| Barbe Noire | Kurouzu | Gura Gura — poing du séisme | Uppercut des ténèbres | Black Hole | Liberation | Kaishin des ténèbres |
+| Aokiji | Ice Block — Partisan | Ice Time | Ice Block — Poing du givre | Ice Age | Ice Block — Pheasant Beak | Ice Time Capsule |
+| Kizaru | Laser du doigt | Ama no Murakumo | Ama no Murakumo — ascension | Yata no Kagami | Yasakani no Magatama | Yata no Kagami — Kōsen |
+| Akainu | Dai Funka | Meigo | Colonne éruptive | Éruption | Ryusei Kazan | Inugami Guren |
 
 Sanji n'a pas de projectile : son [C] est une rafale de coups de pied à bout
 portant. Le mode arcade enchaîne huit

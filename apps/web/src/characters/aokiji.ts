@@ -7,7 +7,9 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * Partisan (a volley of ice spears) from afar, the Ice Time charge that
  * crosses the screen, a frost uppercut as his reversal and Ice Age, a wall of
  * ice spikes rising along the ground. Ice Block: Pheasant Beak is the
- * ultimate: a giant ice pheasant that ploughs through the opponent.
+ * ultimate: a giant ice pheasant that ploughs through the opponent. Ice Time
+ * Capsule is the two-bar ultimate: the foe is frozen in a block of ice that
+ * bursts into a star and a pillar of ice.
  *
  * Every animation and effect comes from the Gigant Battle sheet
  * (tools/sprites/chars/aokiji.json): the spears, the ice mountain, the ice
@@ -154,6 +156,28 @@ export const aokiji: CharacterDef = {
                 hit: { damage: 72, guard: 'mid', hitstun: 40, blockstun: 16, push: 2, launch: [2.2, 3.6], hitstop: 3, spark: 'ice', shake: 6, sfx: 'ice' }
             },
             fx: [[4, 'fx_flash', 16, 46]],
+            sfx: 'ice'
+        },
+        ultimate2: {
+            // Ice Time Capsule: Aokiji points at the foe, the air freezes
+            // around it and grows into a block of ice that locks it in, spikes
+            // run along the ground; he clenches his fist, points again and the
+            // capsule bursts into a star of ice and a pillar that throws the
+            // foe into the wall. The lock hits keep a tiny hitstop so the
+            // crystal (a fixed-length effect) ends right on the burst.
+            name: 'Ice Time Capsule', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [4, 4, 4, 4, 5, 6, 40, 6, 6, 8, 6, 16, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 7],
+            hits: [
+                { frames: [5, 5], box: [0, 0, 170, 120], damage: 120, guard: 'mid', hitstun: 90, blockstun: 22, push: 1, hitstop: 2, spark: 'ice', shake: 6, sfx: 'ice' },
+                { frames: [6, 6], box: [0, 0, 170, 120], damage: 60, guard: 'mid', hitstun: 80, blockstun: 16, push: 1, rehit: 20, hitstop: 2, spark: 'ice', shake: 4 },
+                { frames: [10, 10], box: [0, 0, 170, 150], damage: 300, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [4.8, 7.2], wallBounce: true, hitstop: 24, spark: 'big', shake: 14, sfx: 'ice' }
+            ],
+            fx: [
+                [5, 'fx_capsule', 40, 0], [5, 'fx_spikes', 100, 0], [6, 'fx_spikes', 150, 0],
+                [10, 'fx_capshatter', 40, 0], [10, 'fx_burst', 40, 50], [10, 'fx_pillar', 40, 0],
+                [11, 'fx_pillar', 110, 0], [11, 'fx_burst', 110, 60]
+            ],
             sfx: 'ice'
         },
         throw: {

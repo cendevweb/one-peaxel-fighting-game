@@ -124,6 +124,51 @@ for (const foe of ['luffy', 'akainu']) {
             expect(log.hits[0]).toBe('ultimate');
         });
 
+        it('O with two bars fires Punk Corna Dio, which hits in full at point-blank', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 320));
+            expect(log.hits[0]).toBe('ultimate2');
+            // Six blows in one combo (the last hit logged is the wall bounce).
+            expect(log.maxCombo).toBeGreaterThanOrEqual(6);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 200)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy cancels into Punk Corna Dio (O) and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 8), ...mash(light | heavy | special, 16), ...holdFor(0, 320)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(7);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('Punk Corna Dio catches a foe behind Kid in its gear wings', () => {
+            const s = fight(foe);
+            place(s);
+            const [a, b] = s.fighters;
+            a.x = b.x + (getChar(a.char).width + getChar(b.char).width + 4) * PX;
+            a.meter = 200;
+            stepMatch(s, [0, 0]);
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).toContain('ultimate2');
+        });
+
         it('Repel flies across mid range', () => {
             const s = fight(foe);
             place(s, 120);

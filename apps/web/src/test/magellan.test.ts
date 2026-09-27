@@ -97,6 +97,45 @@ for (const foe of ['luffy', 'akainu']) {
             expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(300);
         });
 
+        it('O with two bars unleashes the Doku Hydra and it all lands', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(unique(log.hits)).toEqual(['ultimate2']);
+            expect(log.hits.length).toBeGreaterThanOrEqual(5);
+            expect(s.fighters[0].meter).toBeLessThan(200);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(s.fighters[0].meter).toBe(100);
+        });
+
+        it('the flood of the Doku Hydra reaches across the screen', () => {
+            const s = fight(foe);
+            place(s, 180);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits).toEqual(['ultimate2']);
+        });
+
+        it('heavy cancels into the Doku Hydra and it combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 14), light | heavy | special, ...holdFor(0, 260)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(6);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(400);
+        });
+
         it('Hydra flies across the screen', () => {
             const s = fight(foe);
             place(s, 140);

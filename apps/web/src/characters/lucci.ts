@@ -156,6 +156,21 @@ export const lucci: CharacterDef = {
             fx: [[7, 'fx_rokuogan', 44, 32]],
             sfx: 'beam'
         },
+        ultimate2: {
+            // Full leopard form: Soru rush, the Shigan Madara barrage, the
+            // bristling aura, then the Rokuōgan at full power (B54, B52).
+            name: 'Rokuōgan — pleine puissance', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [6, 6, 4, 4, 4, 4, 4, 4, 4, 8, 8, 6, 8, 8, 8, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 4],
+            motion: [[2, 7.6, 0], [4, 0.4, 0], [9, 0, 0]],
+            hits: [
+                { frames: [2, 3], box: [0, 8, 44, 52], damage: 60, guard: 'mid', hitstun: 40, blockstun: 20, push: 1, hitstop: 8, spark: 'cut', shake: 3 },
+                { frames: [4, 8], box: 'auto', damage: 34, guard: 'mid', hitstun: 40, blockstun: 14, push: 1, rehit: 6, hitstop: 4, spark: 'heavy', shake: 2 },
+                { frames: [11, 12], box: [0, -10, 120, 96], damage: 520, guard: 'mid', hitstun: 60, blockstun: 26, push: 40, knockdown: true, launch: [7.4, 5.6], wallBounce: true, hitstop: 28, spark: 'big', shake: 14 }
+            ],
+            fx: [[11, 'fx_rokuoganMax', 64, 40]],
+            sfx: 'beam'
+        },
         throw: {
             name: 'Saisie du CP9', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 3, 4, 6, 9],

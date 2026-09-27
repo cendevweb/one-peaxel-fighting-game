@@ -5,7 +5,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * Akainu (Sakazuki) — the heavy powerhouse. Slow on his feet, the most
  * health on the roster, and every hit hurts: a magma fist that crosses the
  * screen (Dai Funka), a hellhound rush (Meigo), eruptions from the ground,
- * and a meteor rain for the ultimate (Ryusei Kazan).
+ * a meteor rain for the ultimate (Ryusei Kazan), and for two bars (O) the
+ * magma hounds and a torrent of magma across the screen (Inugami Guren).
  *
  * Every `durations` array has exactly one entry per frame of the animation
  * it plays (see tools/sprites/chars/akainu.json); a test checks it.
@@ -148,6 +149,32 @@ export const akainu: CharacterDef = {
                 [10, 'fx_meteor', 90, 70],
                 [11, 'fx_burst', 90, 24],
                 [11, 'fx_eruption', 120, 0]
+            ],
+            sfx: 'magma'
+        },
+        ultimate2: {
+            // Two bars (O): the fist raised to call the magma hounds out of
+            // the ground, then a lunge that looses a torrent of magma across
+            // the whole screen, which bursts into a chain of explosions.
+            name: 'Inugami Guren', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 4, 4, 4, 3, 2, 8, 8, 8, 16, 12, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 7],
+            hits: [
+                { frames: [7, 9], box: [16, 20, 300, 56], damage: 62, guard: 'mid', hitstun: 40, blockstun: 22, push: 2, rehit: 8, hitstop: 4, spark: 'magma', shake: 4, sfx: 'fire' },
+                { frames: [10, 10], box: [16, 0, 300, 100], damage: 380, guard: 'mid', hitstun: 60, blockstun: 24, push: 34, knockdown: true, launch: [5.6, 5.8], wallBounce: true, hitstop: 24, spark: 'big', shake: 12, sfx: 'quake' }
+            ],
+            fx: [
+                [1, 'fx_hounds', 42, 0],
+                [3, 'fx_hounds', 86, 0],
+                [3, 'fx_hounds', -44, 0],
+                [7, 'fx_torrent', 62, 52],
+                [8, 'fx_torrent', 166, 52],
+                [10, 'fx_torrentend', 62, 52],
+                [10, 'fx_torrentend', 166, 52],
+                [10, 'fx_blast', 80, 0],
+                [10, 'fx_blast', 160, 0],
+                [10, 'fx_blast', 240, 0],
+                [10, 'fx_burst', 120, 52]
             ],
             sfx: 'magma'
         },

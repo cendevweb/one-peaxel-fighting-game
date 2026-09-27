@@ -144,6 +144,51 @@ describe.each(['luffy', 'akainu'])('Enel vs %s', (foe) => {
         expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(300);
     });
 
+    it('Amaru — Raijin (O) with two bars connects point-blank for huge damage', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 200;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        step(s, light | heavy | special, 0, log);
+        step(s, 0, 0, log);
+        expect(s.fighters[0].move).toBe('ultimate2');
+        expect(s.fighters[0].meter).toBeLessThan(100);
+        hold(s, 0, 0, 300, log);
+        expect(log.hits.filter((m) => m === 'ultimate2').length).toBeGreaterThanOrEqual(4);
+        expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+    });
+
+    it('O with a single bar does nothing and keeps the meter', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 100;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        step(s, light | heavy | special, 0, log);
+        step(s, 0, 0, log);
+        expect(s.fighters[0].move).not.toBe('ultimate2');
+        expect(s.fighters[0].move).not.toBe('ultimate');
+        hold(s, 0, 0, 90, log);
+        expect(log.hits).not.toContain('ultimate2');
+        expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        expect(hp - s.fighters[1].health).toBeLessThan(200);
+    });
+
+    it('heavy → O cancels into Amaru — Raijin and combos', () => {
+        const s = fight(foe);
+        pointBlank(s);
+        s.fighters[0].meter = 200;
+        const hp = s.fighters[1].health;
+        const log = newLog();
+        link(s, heavy, [light | heavy | special], log);
+        hold(s, 0, 0, 200, log);
+        expect(log.hits[0]).toBe('heavy');
+        expect(log.hits).toContain('ultimate2');
+        expect(log.maxCombo).toBeGreaterThanOrEqual(5);
+        expect(hp - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+    });
+
     it('the Sango (specialN) hits at mid range', () => {
         const s = fight(foe);
         s.fighters[0].x = s.fighters[1].x - 130 * PX;

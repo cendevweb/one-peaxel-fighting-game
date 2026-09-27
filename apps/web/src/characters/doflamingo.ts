@@ -149,6 +149,28 @@ export const doflamingo: CharacterDef = {
             fx: [[8, 'fx_cage', 64, 0], [11, 'fx_cage', 64, 0], [14, 'fx_itocut', 60, 40]],
             sfx: 'thread'
         },
+        // Awakening: arms spread, laughing, he turns the ground into string.
+        // Eruptions march out to the far side of the screen, then he rushes
+        // in with a burning string slash and the whole floor bursts under
+        // the foe (the Support call and the Dash B rows of the sheet).
+        ultimate2: {
+            name: 'Kakusei — Awakening', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [6, 6, 5, 5, 5, 5, 5, 5, 4, 3, 5, 6, 5, 8, 12, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 3],
+            motion: [[8, 0, 0], [9, 5.5, 0], [10, 2, 0], [11, 0, 0]],
+            hits: [
+                { frames: [3, 7], box: [0, 0, 210, 72], damage: 60, guard: 'mid', hitstun: 32, blockstun: 16, push: 1, rehit: 8, hitstop: 4, spark: 'thread', shake: 4, sfx: 'quake' },
+                { frames: [10, 11], box: [0, 0, 72, 66], damage: 110, guard: 'mid', hitstun: 32, blockstun: 16, push: 2, hitstop: 10, spark: 'fire', shake: 6, sfx: 'fire' },
+                { frames: [13, 13], box: [-10, 0, 140, 110], damage: 350, guard: 'mid', hitstun: 40, blockstun: 22, push: 30, launch: [5.6, 6.2], wallBounce: true, hitstop: 22, spark: 'big', shake: 12, sfx: 'quake' }
+            ],
+            fx: [
+                [2, 'fx_awaken', 30, 0], [3, 'fx_awaken2', 70, 0], [4, 'fx_awaken', 110, 0],
+                [5, 'fx_awaken2', 150, 0], [6, 'fx_awaken', 190, 0], [7, 'fx_awaken2', 50, 0],
+                [10, 'fx_itocut', 50, 40],
+                [13, 'fx_awaken2', 30, 0], [13, 'fx_awaken', 75, 0], [13, 'fx_awaken2', 120, 0], [13, 'fx_itocut', 70, 44]
+            ],
+            sfx: 'quake'
+        },
         throw: {
             name: 'Marionnette', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 4, 4, 4, 5, 6, 8],

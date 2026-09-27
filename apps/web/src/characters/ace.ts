@@ -159,6 +159,28 @@ export const ace: CharacterDef = {
             ],
             sfx: 'fire'
         },
+        // Ace sets himself ablaze, arms raised over a sea of flames, then
+        // crosses his fingers: a cross of fire bursts from them and a beam
+        // crosses the whole screen (Jūjika, the Cross Fire he aimed at
+        // Smoker). It burns four times and blows the foe into the wall.
+        ultimate2: {
+            name: 'Jūjika — Cross Fire', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [4, 5, 5, 5, 5, 6, 4, 4, 4, 4, 11, 3, 3, 24, 10, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 11],
+            hits: [
+                { frames: [11, 12], box: [20, 16, 420, 48], damage: 60, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 3, hitstop: 5, spark: 'fire', shake: 5 },
+                { frames: [13, 13], box: [20, 16, 420, 48], damage: 60, guard: 'mid', hitstun: 40, blockstun: 20, push: 2, rehit: 8, hitstop: 6, spark: 'fire', shake: 6 },
+                { frames: [14, 14], box: [20, 12, 420, 56], damage: 350, guard: 'mid', hitstun: 40, blockstun: 24, push: 30, knockdown: true, launch: [5.6, 5.0], wallBounce: true, hitstop: 24, spark: 'big', shake: 14, sfx: 'fire' }
+            ],
+            fx: [
+                [1, 'fx_groundfire', 0, 0],
+                [9, 'fx_jujika', 30, 42],
+                [11, 'fx_jujikabeam', 114, 42],
+                [12, 'fx_jujikabeam', 242, 42],
+                [13, 'fx_jujikabeam', 370, 42]
+            ],
+            sfx: 'fire'
+        },
         throw: {
             name: 'Prise de feu', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 4, 4, 4, 6, 6, 8],

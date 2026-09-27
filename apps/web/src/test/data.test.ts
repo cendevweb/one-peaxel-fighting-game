@@ -49,6 +49,16 @@ describe.each(ROSTER.map((c) => [c.id, c] as const))('%s', (_id, def) => {
         }
     });
 
+    it('has a two-bar second ultimate, stronger than the first', () => {
+        const [u1, u2] = [def.moves.ultimate, def.moves.ultimate2];
+        expect(u2.kind).toBe('ultimate');
+        expect(u2.cost).toBe(200);
+        expect(u2.superFreeze ?? 0).toBeGreaterThan(0);
+        const total = (m: typeof u1) => m.hits.reduce((n, h) => n + h.damage, 0) + (m.projectile ? m.projectile.hit.damage * (m.projectile.hits ?? 1) : 0);
+        expect(total(u2)).toBeGreaterThan(total(u1));
+        expect(u2.anim).not.toBe(u1.anim);
+    });
+
     it('has portraits for the menus', () => {
         for (const img of ['portrait', 'face', 'art', 'cutin']) expect(def.manifest.images[img], img).toBeDefined();
     });

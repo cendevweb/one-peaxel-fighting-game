@@ -152,6 +152,31 @@ export const shanks: CharacterDef = {
             fx: [[6, 'fx_kamusari', 110, 0], [7, 'fx_ultburst', 70, 0]],
             sfx: 'slashHeavy'
         },
+        // Haoshoku no Kenbu (覇王色の剣舞, the sheet's own super): Conqueror's
+        // haki bursts out of the ground around him, two crimson crescents,
+        // a dash that leaves one long red cut across the screen, then, as he
+        // sheathes, a haki arch and a giant blue wave erupt under the foe.
+        ultimate2: {
+            name: 'Haoshoku no Kenbu', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [5, 4, 4, 4, 5, 6, 4, 6, 5, 8, 10, 8, 8, 8, 16],
+            superFreeze: 70, cost: 200, invuln: [0, 4],
+            motion: [[3, 1.6, 0], [4, 0, 0], [7, 6.6, 0], [9, 0, 0]],
+            hits: [
+                { frames: [4, 4], box: [-6, 6, 78, 76], damage: 60, guard: 'mid', hitstun: 50, blockstun: 18, push: 3, hitstop: 10, spark: 'blade', shake: 3 },
+                { frames: [5, 5], box: [-6, 6, 78, 76], damage: 70, guard: 'mid', hitstun: 50, blockstun: 18, push: 3, hitstop: 10, spark: 'blade', shake: 4 },
+                { frames: [7, 8], box: [-10, 0, 92, 76], damage: 90, guard: 'mid', hitstun: 55, blockstun: 20, push: 4, hitstop: 12, spark: 'blade', shake: 5 },
+                { frames: [10, 10], box: [-20, 0, 130, 110], damage: 110, guard: 'mid', hitstun: 55, blockstun: 20, push: 2, hitstop: 14, spark: 'dark', shake: 7, sfx: 'dark' },
+                { frames: [13, 13], box: [-20, 0, 140, 120], damage: 240, guard: 'mid', hitstun: 60, blockstun: 24, push: 30, knockdown: true, launch: [5.6, 6.2], wallBounce: true, hitstop: 26, spark: 'big', shake: 12, sfx: 'quake' }
+            ],
+            fx: [
+                [0, 'fx_kb_spikes', 0, 0],
+                [4, 'fx_kb_crescB', 40, 40], [5, 'fx_kb_crescA', 42, 32],
+                [7, 'fx_kb_ghost', -24, 24], [7, 'fx_kb_line', 40, 22],
+                [10, 'fx_kb_arch', 36, 0],
+                [13, 'fx_kb_wave', 52, 0], [13, 'fx_kb_spikes', 30, 0], [13, 'fx_ultburst', 30, 0]
+            ],
+            sfx: 'slashHeavy'
+        },
         throw: {
             name: 'Chute du Roux', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 5, 5, 5, 5, 6, 10],

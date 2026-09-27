@@ -151,6 +151,29 @@ export const marco: CharacterDef = {
             fx: [[2, 'fx_burst', 30, 34], [6, 'fx_phoenix', 56, 34]],
             sfx: 'fire'
         },
+        ultimate2: {
+            // Special A+B of the sheet: blue flames gather, the wings open,
+            // Marco leaps and becomes the giant blue phoenix that charges
+            // along the ground, then lands the final kick.
+            name: 'Hōō-in — piqué du phénix géant', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [6, 5, 5, 10, 4, 4, 4, 6, 6, 6, 6, 6, 12, 8, 14],
+            superFreeze: 70, cost: 200, invuln: [0, 11],
+            motion: [[4, 2.0, 0], [7, 6.0, 0], [12, 1.0, 0], [13, 0, 0]],
+            hits: [
+                { frames: [7, 11], box: [-40, 0, 110, 62], damage: 70, guard: 'mid', hitstun: 60, blockstun: 20, push: 1, rehit: 7, hitstop: 5, spark: 'bluefire', shake: 5 },
+                { frames: [12, 12], box: [-6, 0, 72, 64], damage: 320, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [5.8, 6.0], wallBounce: true, hitstop: 26, spark: 'big', shake: 14, sfx: 'fire' }
+            ],
+            fx: [
+                [0, 'fx_gather', 2, 30],
+                [3, 'fx_wings', 0, 34],
+                [7, 'fx_burst', 10, 30],
+                [9, 'fx_puff', -80, 22],
+                [11, 'fx_puff', -80, 22],
+                [12, 'fx_wings', 40, 34],
+                [12, 'fx_burst', 46, 30]
+            ],
+            sfx: 'flutter'
+        },
         throw: {
             name: 'Serres renversées', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 3, 3, 6, 6, 6, 6, 8],

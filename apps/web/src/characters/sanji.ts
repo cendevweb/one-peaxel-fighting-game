@@ -4,7 +4,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
 /**
  * Sanji — never uses his hands. Fast kicks with long legs, the Party Table
  * as an invincible spinning anti-air, and Diable Jambe for the fire moves:
- * Premier Hachis, Flambage Shot and the ultimate, Poêle à Frire : Spectre.
+ * Premier Hachis, Flambage Shot, the ultimate Poêle à Frire : Spectre and the
+ * two-bar Hell Memories (rows 40–41 and the flaming handstand kick of row 7).
  *
  * Rows come from the Gigant Battle 2 sheet (see tools/sprites/chars/sanji.json);
  * the fire moves use the sheet's own flame-leg frames.
@@ -151,6 +152,30 @@ export const sanji: CharacterDef = {
                 { frames: [40, 40], box: [-4, 0, 80, 76], damage: 200, guard: 'mid', hitstun: 70, blockstun: 22, push: 34, launch: [6.4, 5.4], wallBounce: true, hitstop: 24, spark: 'big', shake: 10 }
             ],
             fx: [[3, 'fx_fireBig', 30, 36], [20, 'fx_flame', 28, 50], [40, 'fx_spectre', 44, 36]],
+            sfx: 'fire'
+        },
+        ultimate2: {
+            name: 'Diable Jambe — Hell Memories', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [
+                4, 4, 4, 3, 3, 3, 3, 3, 3, 4,
+                3, 3, 3,
+                5, 5, 5,
+                3, 3,
+                3, 3, 3, 3,
+                4, 4,
+                3, 3, 3, 3,
+                3, 4, 4, 5,
+                6, 10, 14
+            ],
+            superFreeze: 70, cost: 200, invuln: [0, 12],
+            motion: [[6, 2.6, 0], [10, 6.0, 0], [13, 0.8, 0], [16, 0, 0], [18, 1.2, 0], [22, 0, 0], [26, 1.6, 0], [29, 0, 0]],
+            hits: [
+                { frames: [13, 15], box: [-12, 0, 92, 92], damage: 80, guard: 'mid', hitstun: 70, blockstun: 20, push: 1, rehit: 8, hitstop: 10, spark: 'fire', shake: 5 },
+                { frames: [18, 19], box: [-4, 0, 80, 84], damage: 90, guard: 'mid', hitstun: 70, blockstun: 18, push: 1, hitstop: 9, spark: 'fire', shake: 4 },
+                { frames: [20, 21], box: [-20, 0, 96, 70], damage: 90, guard: 'mid', hitstun: 70, blockstun: 18, push: 1, hitstop: 9, spark: 'fire', shake: 4 },
+                { frames: [29, 31], box: [-4, 0, 96, 90], damage: 250, guard: 'mid', hitstun: 60, blockstun: 26, push: 36, launch: [6.8, 6.0], wallBounce: true, hitstop: 26, spark: 'big', shake: 12, sfx: 'fire' }
+            ],
+            fx: [[13, 'fx_fireBig', 40, 40], [29, 'fx_hellMemories', 56, 44]],
             sfx: 'fire'
         },
         throw: {

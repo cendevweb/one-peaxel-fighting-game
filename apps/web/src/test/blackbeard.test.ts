@@ -113,6 +113,46 @@ for (const foe of ['luffy', 'akainu']) {
             expect(log.hits[0]).toBe('ultimate');
         });
 
+        it('Kaishin des ténèbres (O) with two bars hits hard at point-blank', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].move).toBe('ultimate2');
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 300));
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.length).toBeGreaterThanOrEqual(3);
+            expect(getChar(foe).health - s.fighters[1].health).toBeGreaterThanOrEqual(380);
+        });
+
+        it('Kaishin des ténèbres reaches far across the field', () => {
+            const s = fight(foe);
+            place(s, 120);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 300)]);
+            expect(log.hits[0]).toBe('ultimate2');
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+            expect(s.fighters[1].health).toBe(getChar(foe).health);
+        });
+
+        it('heavy cancels into Kaishin des ténèbres and it all combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [...press(heavy, 8), ...mash(light | heavy | special, 16), ...holdFor(0, 300)]);
+            expect(unique(log.hits)).toEqual(['heavy', 'ultimate2']);
+            expect(log.maxCombo).toBeGreaterThanOrEqual(4);
+        });
+
         it('Kurouzu (S) grabs from mid range, through a guard, and pulls the foe in', () => {
             const s = fight(foe);
             place(s, 70);

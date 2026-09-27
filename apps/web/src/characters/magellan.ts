@@ -7,7 +7,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * sends a venom dragon across the screen, Doku Fugu swells him up like a
  * pufferfish and spits a lingering poison bomb, Doku Gumo raises a poison
  * cloud in front of him, the rising Hydra is his reversal, and the Venom
- * Demon (Jigoku no Shinpan) is the ultimate.
+ * Demon (Jigoku no Shinpan) is the ultimate; the giant three-headed Doku
+ * Hydra and its poison flood are the two-bar ultimate (O).
  *
  * Every animation and effect comes from the Gigant Battle sheet
  * (tools/sprites/chars/magellan.json): the blue swipes, the purple dragons,
@@ -156,6 +157,29 @@ export const magellan: CharacterDef = {
                 { frames: [18, 19], box: [0, 0, 100, 100], damage: 250, guard: 'mid', hitstun: 50, blockstun: 22, push: 30, launch: [5.4, 5.6], wallBounce: true, hitstop: 22, spark: 'big', shake: 10, sfx: 'poison' }
             ],
             fx: [[6, 'fx_venom', 40, 0], [18, 'fx_burst', 60, 50]],
+            sfx: 'poison'
+        },
+        ultimate2: {
+            // Doku Hydra: poison boils out of Magellan and a poison swamp
+            // spreads under both fighters, the venom swells into a giant
+            // three-headed hydra that bites again and again around him, then
+            // the heads crash to the ground and a dragon-headed flood of
+            // poison sweeps across the whole screen (sheet rows 25–31).
+            name: 'Doku Hydra — la Hydre géante', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 8, 8, 8, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 8],
+            hits: [
+                { frames: [3, 7], box: [-20, 0, 64, 100], damage: 60, guard: 'mid', hitstun: 40, blockstun: 18, push: 1, hitstop: 8, spark: 'poison', shake: 4, sfx: 'poison' },
+                { frames: [8, 16], box: [-40, 0, 104, 112], damage: 70, guard: 'mid', hitstun: 40, blockstun: 16, push: 1, rehit: 15, hitstop: 9, spark: 'poison', shake: 6, sfx: 'poison' },
+                { frames: [17, 18], box: [0, 0, 280, 80], damage: 330, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, knockdown: true, launch: [5.2, 6.0], wallBounce: true, hitstop: 24, spark: 'big', shake: 14, sfx: 'poison' }
+            ],
+            fx: [
+                [3, 'fx_mire', 36, -8], [3, 'fx_mire', -30, -8],
+                [8, 'fx_splash', 70, 0], [11, 'fx_splash', -50, 0], [14, 'fx_splash', 80, 0],
+                [17, 'fx_flood', 16, 12], [17, 'fx_splash', 40, 0],
+                [18, 'fx_flood', 130, 12], [18, 'fx_burst', 70, 40],
+                [19, 'fx_pillar', 150, 0], [19, 'fx_pillar', 230, 0]
+            ],
             sfx: 'poison'
         },
         throw: {

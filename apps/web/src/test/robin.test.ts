@@ -109,6 +109,47 @@ for (const foe of ['luffy', 'akainu']) {
             expect(log.hits).toContain('ultimate');
         });
 
+        it('O with two bars: Cien Fleurs Delphinium connects point blank and hurts', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            play(s, [light | heavy | special]);
+            expect(s.fighters[0].meter).toBe(0);
+            const log = play(s, holdFor(0, 260));
+            expect(log.hits[0]).toBe('ultimate2');
+            expect(log.hits.length).toBeGreaterThanOrEqual(5);
+            expect(lost(s, foe)).toBeGreaterThanOrEqual(380);
+            expect(lost(s, foe)).toBeLessThanOrEqual(500);
+        });
+
+        it('Delphinium also reaches far across the screen', () => {
+            const s = fight(foe);
+            place(s, 110);
+            s.fighters[0].meter = 200;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 260)]);
+            expect(log.hits).toContain('ultimate2');
+        });
+
+        it('O with a single bar does nothing and keeps the gauge', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 100;
+            const log = play(s, [light | heavy | special, ...holdFor(0, 120)]);
+            expect(log.hits).not.toContain('ultimate2');
+            expect(log.hits).not.toContain('ultimate');
+            expect(s.fighters[0].meter).toBeGreaterThanOrEqual(100);
+        });
+
+        it('heavy (Seis Fleurs Slap) cancels into Delphinium and it combos', () => {
+            const s = fight(foe);
+            place(s);
+            s.fighters[0].meter = 200;
+            const log = play(s, [heavy, ...holdFor(0, 13), ...mash(light | heavy | special, 10), ...holdFor(0, 260)]);
+            expect(log.hits[0]).toBe('heavy');
+            expect(log.hits).toContain('ultimate2');
+            expect(log.maxCombo).toBeGreaterThanOrEqual(5);
+        });
+
         it('Seis Fleurs (S) sprouts at mid range and hits several times', () => {
             const s = fight(foe);
             place(s, 70);

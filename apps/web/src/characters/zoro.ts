@@ -152,6 +152,27 @@ export const zoro: CharacterDef = {
             fx: [[5, 'fx_lineA', -40, 22], [7, 'fx_rokudo', 34, 36]],
             sfx: 'slashHeavy'
         },
+        // Two bars: the Sanzen Sekai spin (the green whirl row) bores in,
+        // the pass-through slash, then the arms wind up and let the giant
+        // blue serpent wave of the 360 Pound Hō fly across the whole stage.
+        ultimate2: {
+            name: 'Sanbyakurokujū Pound Hō', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [5, 5, 3, 4, 4, 4, 4, 3, 5, 6, 6, 5, 4, 4, 4, 5, 6, 6, 8, 10, 12],
+            superFreeze: 70, cost: 200, invuln: [0, 8],
+            motion: [[2, 5.6, 0], [8, 0, 0]],
+            hits: [
+                { frames: [2, 7], box: [-10, 0, 62, 66], damage: 50, guard: 'mid', hitstun: 50, blockstun: 18, push: 1, rehit: 6, hitstop: 5, spark: 'blade', shake: 3 },
+                { frames: [8, 8], box: [-8, 0, 66, 72], damage: 110, guard: 'mid', hitstun: 60, blockstun: 20, push: 2, hitstop: 12, spark: 'big', shake: 5 },
+                { frames: [14, 14], box: [0, 4, 70, 70], damage: 150, guard: 'mid', hitstun: 40, blockstun: 20, push: 1, hitstop: 8, spark: 'blade', shake: 4 }
+            ],
+            projectile: {
+                anim: 'fx_wave', atFrame: 14, offset: [70, 32], speed: 5.2, life: 110,
+                box: [-80, -26, 160, 52], fps: 10, hits: 1,
+                hit: { damage: 360, guard: 'mid', hitstun: 50, blockstun: 24, push: 30, launch: [5.6, 6.0], wallBounce: true, knockdown: true, hitstop: 24, spark: 'big', shake: 10, sfx: 'slashHeavy' }
+            },
+            fx: [[3, 'fx_cut', 20, 34], [8, 'fx_diag', 30, 36], [14, 'fx_waveburst', 34, 34]],
+            sfx: 'slashHeavy'
+        },
         throw: {
             name: 'Shishi Sonson', anim: 'throw', kind: 'throw', stance: 'stand',
             durations: [3, 4, 4, 3, 3, 6, 6, 6, 6, 8],

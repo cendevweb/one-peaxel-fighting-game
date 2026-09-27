@@ -7,7 +7,8 @@ import type { CharacterDef, SpriteManifest } from '../engine/types';
  * Murakumo (the sword of light) as a long lunging thrust and as his rising
  * reversal, Yata no Kagami to cross the screen as a streak of light, and
  * Yasakani no Magatama — a rain of light bullets fired from the air — as the
- * ultimate.
+ * ultimate. Two bars (O): a giant beam of light led by a roaring beast of
+ * light that crosses the whole screen, then bursts.
  *
  * Every animation and effect comes from the Gigant Battle sheet
  * (tools/sprites/chars/kizaru.json). Every `durations` array has one entry
@@ -164,6 +165,30 @@ export const kizaru: CharacterDef = {
                 [4, 'fx_bullets', 50, 50], [5, 'fx_bullets', 80, 30], [6, 'fx_bullets', 60, 60],
                 [7, 'fx_bullets', 90, 40], [8, 'fx_bullets', 70, 24],
                 [9, 'fx_boom', 70, 36]
+            ],
+            sfx: 'beam'
+        },
+        ultimate2: {
+            name: 'Yata no Kagami — Kōsen', anim: 'ultimate2', kind: 'ultimate', stance: 'stand',
+            durations: [7, 7, 5, 5, 6, 6, 6, 6, 6, 24, 8, 8, 16],
+            superFreeze: 70, cost: 200, invuln: [0, 5],
+            hits: [
+                { frames: [5, 9], box: [0, 0, 330, 104], damage: 56, guard: 'mid', hitstun: 40, blockstun: 24, push: 1, rehit: 8, hitstop: 3, spark: 'laser', shake: 3, sfx: 'laser' },
+                { frames: [10, 10], box: [0, 0, 330, 104], damage: 440, guard: 'mid', hitstun: 60, blockstun: 24, push: 34, knockdown: true, launch: [6.0, 5.8], wallBounce: true, hitstop: 26, spark: 'big', shake: 12 }
+            ],
+            fx: [
+                [0, 'fx_star', 0, 50],
+                [4, 'fx_flash', 34, 52],
+                [5, 'fx_pillar', 36, 50], [5, 'fx_beam', 44, 50], [5, 'fx_beam', 76, 50], [5, 'fx_beast', 108, 50],
+                [6, 'fx_beam', 108, 50], [6, 'fx_beam', 140, 50], [6, 'fx_beast', 172, 50],
+                [7, 'fx_beam', 172, 50], [7, 'fx_beam', 204, 50], [7, 'fx_beast', 236, 50],
+                [8, 'fx_beam', 236, 50], [8, 'fx_beam', 268, 50], [8, 'fx_beast', 300, 50],
+                [9, 'fx_pillar', 36, 50],
+                [9, 'fx_beam', 44, 50], [9, 'fx_beam', 76, 50], [9, 'fx_beam', 108, 50], [9, 'fx_beam', 140, 50], [9, 'fx_beam', 172, 50],
+                [9, 'fx_beam', 204, 50], [9, 'fx_beam', 236, 50], [9, 'fx_beam', 268, 50], [9, 'fx_beam', 300, 50], [9, 'fx_beam', 332, 50],
+                [10, 'fx_bigboom', 96, 48],
+                [10, 'fx_beamfade', 44, 50], [10, 'fx_beamfade', 108, 50], [10, 'fx_beamfade', 172, 50], [10, 'fx_beamfade', 236, 50], [10, 'fx_beamfade', 300, 50],
+                [10, 'fx_beamfade', 76, 50], [10, 'fx_beamfade', 140, 50], [10, 'fx_beamfade', 204, 50], [10, 'fx_beamfade', 268, 50], [10, 'fx_beamfade', 332, 50]
             ],
             sfx: 'beam'
         },
