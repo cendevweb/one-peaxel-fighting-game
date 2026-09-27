@@ -20,7 +20,7 @@ import { COLORS, hint, menuBackdrop, menuItems, panel, title } from './ui';
  *   VERSUS J1 CONTRE J2 → MÊME CLAVIER | CRÉER UN SALON | REJOINDRE UN SALON
  *   host: salon (code + link) ─┐
  *   guest: code / ?salon=CODE ─┴→ synced select → stage (host picks) → VS
- *   → fight (OnlineFightScene, rollback) → results (rematch / quit)
+ *   → fight (OnlineFightScene, rollback) → results (rematch / select / quit)
  *
  * The host is always J1 (left), the guest J2. Each player uses the J1 keys
  * or the first gamepad. The host is authoritative for the stage and for the
@@ -103,7 +103,7 @@ export class OnlineSession {
 /** Hand-off to the rollback fight; at the end, the synced results screen. */
 export function startOnlineFight(session: OnlineSession, setup: Setup, seed: number): void {
     session.app.go(new OnlineFightScene(session, setup, seed, (winner) => {
-        if (!session.ended) session.app.go(new OnlineResultsScene(session, setup, winner));
+        if (!session.ended) session.app.go(new OnlineResultsScene(session, setup, winner, seed));
     }));
 }
 
@@ -757,17 +757,23 @@ export class OnlineVersusScene extends VersusScene {
     }
 }
 
-// ——— Results, with a rematch both must accept ———
+// ——— Results: a rematch both must accept, or back to the select ———
 
 export class OnlineResultsScene implements Scene {
     readonly runsHidden = true;
     private t = 0;
-    private list = new OptionList(['REVANCHE', 'QUITTER']);
+    private list = new OptionList(['REVANCHE', 'CHANGER DE PERSONNAGES', 'QUITTER']);
     private want = false;
     private theyWant = false;
     private leaving = false;
 
-    constructor(private session: OnlineSession, private setup: Setup, private winner: number) {}
+    constructor(private session: OnlineSession, private setup: Setup, private winner: number, private seed: number) {}
+
+    /** Both back to the synced select, previous fighters under the cursors. */
+    private toSelect(): void {
+        this.leaving = true;
+        this.session.app.go(new OnlineSelectScene(this.session, this.setup));
+    }
 
     enter(): void { startMusic('results'); }
 
@@ -780,6 +786,12 @@ export class OnlineResultsScene implements Scene {
             if (msg.type === 'rematch') {
                 if (msg.want && !this.theyWant) play('uiSelect');
                 this.theyWant = msg.want;
+            } else if (msg.type === 'reselect' && msg.m === this.seed) {
+                // The other player chose to change fighters: follow.
+                play('uiSelect');
+                this.session.putBack(inbox.slice(n + 1));
+                this.toSelect();
+                return;
             } else if (msg.type === 'start' && !this.session.isHost) {
                 this.leaving = true;
                 this.session.putBack(inbox.slice(n + 1));
@@ -794,7 +806,12 @@ export class OnlineResultsScene implements Scene {
             this.want = false;
             this.session.send({ type: 'rematch', want: false });
         } else if (r === 'confirm') {
-            if (this.list.index === 1) { this.leaving = true; this.session.quit(); return; }
+            if (this.list.index === 2) { this.leaving = true; this.session.quit(); return; }
+            if (this.list.index === 1) {
+                this.session.send({ type: 'reselect', m: this.seed });
+                this.toSelect();
+                return;
+            }
             this.want = !this.want;
             this.session.send({ type: 'rematch', want: this.want });
         }
@@ -823,14 +840,14 @@ export class OnlineResultsScene implements Scene {
             drawText(ctx, c.name.toUpperCase(), 40, 100, { color: c.color, outline: COLORS.ink, scale: 3 });
             drawText(ctx, won ? 'VOUS' : 'VOTRE ADVERSAIRE', 40, 128, { color: '#cfc4dc', outline: COLORS.ink, scale: 2 });
         }
-        panel(ctx, 30, 180, 280, 64);
-        const items = [this.want ? 'REVANCHE (ANNULER)' : 'REVANCHE', 'QUITTER'];
+        const items = [this.want ? 'REVANCHE (ANNULER)' : 'REVANCHE', 'CHANGER DE PERSONNAGES', 'QUITTER'];
+        panel(ctx, 30, 180, 280, items.length * 22 + 20);
         menuItems(ctx, items, this.list.index, 50, 194, this.t);
         const lines: [string, string][] = [
             [this.want ? 'VOUS : REVANCHE DEMANDÉE' : 'VOUS : …', this.want ? '#9dff7a' : COLORS.dim],
             [this.theyWant ? 'ADVERSAIRE : REVANCHE DEMANDÉE' : 'ADVERSAIRE : …', this.theyWant ? '#9dff7a' : COLORS.dim]
         ];
-        lines.forEach(([text, color], i) => drawText(ctx, text, 40, 256 + i * 14, { color, outline: COLORS.ink }));
+        lines.forEach(([text, color], i) => drawText(ctx, text, 40, 278 + i * 14, { color, outline: COLORS.ink }));
         drawPing(ctx, this.session);
     }
 }
