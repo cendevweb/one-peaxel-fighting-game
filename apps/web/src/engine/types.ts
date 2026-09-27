@@ -174,7 +174,8 @@ export interface CharacterDef {
  *   →S               specialF   (or →↓↘ S… see input.ts for the motions)
  *   ↓S               specialD
  *   ↑S               specialU   (or →↓↘ S) — the invincible reversal
- *   H + S, full bar  ultimate   (or ↓↘→↓↘→ S)
+ *   H + S, 1 bar     ultimate   (or ↓↘→↓↘→ S)
+ *   L + H + S, 2 bars ultimate2 — the fighter's strongest technique
  *   L + H, close     throw
  */
 export type MoveSlot =
@@ -183,7 +184,7 @@ export type MoveSlot =
     | 'heavy' | 'heavyFwd' | 'heavyBack'
     | 'airLight' | 'airHeavy' | 'airSpecial'
     | 'specialN' | 'specialF' | 'specialU' | 'specialD'
-    | 'ultimate' | 'throw';
+    | 'ultimate' | 'ultimate2' | 'throw';
 
 // ——— Runtime state ———
 
@@ -296,7 +297,7 @@ export type GameEvent =
     | { type: 'dust'; x: number; y: number; big: boolean }
     | { type: 'jump'; side: number }
     | { type: 'land'; side: number; heavy: boolean }
-    | { type: 'superFreeze'; side: number; char: string }
+    | { type: 'superFreeze'; side: number; char: string; slot: string }
     | { type: 'guardCrush'; side: number }
     | { type: 'throwTech'; x: number; y: number }
     | { type: 'ko'; side: number }

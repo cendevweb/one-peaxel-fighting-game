@@ -61,7 +61,7 @@ export class FightView {
     private t = 0;
     private fx: [FighterFx, FighterFx];
     private banners: Banner[] = [];
-    private cutin: { side: number; char: string; t: number } | null = null;
+    private cutin: { side: number; char: string; slot: string; t: number } | null = null;
     private koFlash = 0;
     private lastAttacker = 0;
 
@@ -124,7 +124,7 @@ export class FightView {
                     this.lastAttacker = e.side;
                     const heavy = /heavy|Heavy|special|ultimate/.test(e.slot);
                     play(e.sfx ?? (heavy ? 'swingHeavy' : 'swing'));
-                    if (e.slot === 'ultimate') this.vfx.ring(this.sx(f), this.sy(f) - 30, '#ffd84a', 4, 20, 2);
+                    if (e.slot.startsWith('ultimate')) this.vfx.ring(this.sx(f), this.sy(f) - 30, '#ffd84a', 4, 20, 2);
                     break;
                 }
                 case 'fx': {
@@ -144,7 +144,7 @@ export class FightView {
                     if (!e.heavy) play('land');
                     break;
                 case 'superFreeze': {
-                    this.cutin = { side: e.side, char: e.char, t: 0 };
+                    this.cutin = { side: e.side, char: e.char, slot: e.slot, t: 0 };
                     play('superFreeze');
                     break;
                 }
@@ -213,7 +213,7 @@ export class FightView {
             const rushing = f.mode === 'move' && (Math.abs(f.vx) >= 2.5 * PX || f.vy >= 3 * PX);
             const trail = f.mode === 'dash' || f.mode === 'backdash' || rushing;
             if (trail && !frozen && f.hitstop === 0 && this.t % 3 === 0) {
-                const tint: Tint = f.move === 'ultimate' ? 'gold' : tintOf(getChar(f.char).color);
+                const tint: Tint = f.move?.startsWith('ultimate') ? 'gold' : tintOf(getChar(f.char).color);
                 fx.ghosts.push({ x: this.sx(f), y: this.sy(f), anim: f.anim, frame: f.frame, facing: f.facing, life: 12, tint });
             }
             if ((f.mode === 'dash' || f.mode === 'backdash') && fx.lastMode !== f.mode) play('dash');
@@ -226,7 +226,7 @@ export class FightView {
             if (f.mode === 'dizzy' && this.t % 10 === 0) {
                 this.vfx.burst(this.sx(f), this.sy(f) - getChar(f.char).height, 1, 'spark', ['#ffe95e', '#fff'], 0.6, { life: 20 });
             }
-            if (f.mode === 'move' && f.move === 'ultimate' && this.t % 2 === 0 && !frozen) {
+            if (f.mode === 'move' && f.move?.startsWith('ultimate') && this.t % 2 === 0 && !frozen) {
                 this.vfx.burst(this.sx(f), this.sy(f) - 20, 2, 'ember', ['#ffd84a', '#fff4b0', getChar(f.char).color], 1.6, { gravity: -0.06, life: 20 });
             }
         }
@@ -317,7 +317,7 @@ export class FightView {
                 tint: g.tint, alpha: (g.life / 12) * 0.45, additive: true
             });
         }
-        if (super_ || (f.mode === 'move' && f.move === 'ultimate')) {
+        if (super_ || (f.mode === 'move' && f.move?.startsWith('ultimate'))) {
             const pulse = 0.35 + 0.25 * Math.sin(this.t / 3);
             for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
                 drawFrame(ctx, f.char, f.anim, f.frame, x + dx, y + dy, f.facing, { tint: 'gold', alpha: pulse, additive: true });
@@ -402,6 +402,15 @@ export class FightView {
         ctx.globalAlpha = (1 - out) * 0.85;
         ctx.fillRect(0, y, 640, bandH);
         ctx.globalAlpha = 1 - out;
+        const max = c.slot === 'ultimate2';
+        if (max) {
+            // The two-bar ultimate: burning edges and a red flash behind.
+            const pulse = t % 6 < 3;
+            ctx.fillStyle = pulse ? '#ffd23f' : '#ff4a2a';
+            ctx.fillRect(0, y - 4, 640, 3);
+            ctx.fillRect(0, y + bandH + 1, 640, 3);
+            if (t < 6) { ctx.fillStyle = `rgba(255,80,40,${0.35 * (1 - t / 6)})`; ctx.fillRect(0, 0, 640, 360); }
+        }
         // Streaks.
         ctx.fillStyle = 'rgba(255,255,255,0.25)';
         for (let i = 0; i < 12; i++) {
@@ -418,11 +427,12 @@ export class FightView {
             const ax = startX + (targetX - startX) * (1 - Math.pow(1 - slide, 3)) + t * 0.3 * dir;
             ctx.drawImage(art, Math.round(ax), Math.round(y + (bandH - h) / 2), Math.round(w), Math.round(h));
         }
-        const move = def.moves.ultimate;
+        const move = def.moves[c.slot as 'ultimate' | 'ultimate2'] ?? def.moves.ultimate;
         const tx = c.side === 0 ? 600 : 40;
         drawText(ctx, move.name.toUpperCase(), tx, y + bandH / 2 - 6, {
             color: '#ffffff', gradient: '#ffd23f', outline: '#1a0b12', scale: 2, align: c.side === 0 ? 'right' : 'left'
         });
+        if (max) drawText(ctx, 'ULTIME MAX', tx, y + bandH / 2 - 20, { color: t % 8 < 4 ? '#ff7a4a' : '#ffe95e', outline: '#1a0b12', align: c.side === 0 ? 'right' : 'left' });
         drawText(ctx, def.name.toUpperCase(), tx, y + bandH / 2 + 18, { color: def.color, outline: '#000', scale: 1, align: c.side === 0 ? 'right' : 'left' });
         ctx.restore();
     }
@@ -558,7 +568,7 @@ export class FightView {
         const lx = side === 0 ? x0 - 18 : x0 + w + 18;
         drawText(ctx, String(stock), lx, y0 - 6, { color: stock ? '#9ff3ff' : '#6a6a8a', outline: '#1a0b12', scale: 2, align: 'center' });
         if (stock > 0) {
-            drawText(ctx, 'ULTIME', side === 0 ? x0 : x0 + w, y0 - 11, { color: this.t % 30 < 20 ? '#ffe95e' : '#ffffff', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
+            drawText(ctx, stock >= 2 ? 'ULTIME MAX' : 'ULTIME', side === 0 ? x0 : x0 + w, y0 - 11, { color: this.t % 30 < 20 ? (stock >= 2 ? '#ff7a4a' : '#ffe95e') : '#ffffff', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
         }
     }
 

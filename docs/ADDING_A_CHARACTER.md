@@ -85,7 +85,7 @@ d'une image de combat, par exemple).
 Par convention les noms reprennent l'emplacement : `lightA`, `lightB`,
 `lightC`, `crouchLight`, `crouchHeavy`, `heavy`, `heavyFwd`, `heavyBack`,
 `airLight`, `airHeavy`, `airSpecial`, `specialN`, `specialF`, `specialU`,
-`specialD`, `ultimate`, `throw`. Les effets (projectiles, explosions) sont
+`specialD`, `ultimate`, `ultimate2`, `throw`. Les effets (projectiles, explosions) sont
 préfixés `fx_` et portent `"fx": true`.
 
 Puis :
@@ -127,6 +127,11 @@ Copier `luffy.ts` et l'adapter. Les règles :
 - `projectile` : l'animation `fx_…` à lancer, à quelle image, vitesse, durée,
   boîte, et les propriétés du coup.
 - `ultimate` : `cost: 100`, `superFreeze: ~55`, `invuln` sur le démarrage.
+- `ultimate2` (touche O, [A]+[B]+[C]) : `cost: 200`, les deux barres. La
+  technique la plus forte et la plus spectaculaire de la planche : `superFreeze`
+  ~70, `invuln` sur le démarrage, 400–480 de dégâts s'il touche en entier
+  (après l'atténuation du combo), et une portée ou une zone qui la distingue
+  nettement de l'ultime à une barre.
 - `throw` : `hits[0]` est la saisie (courte portée), `throwRelease` dit à
   quelle image la victime est lâchée, avec dégâts et projection.
 - `fx: [[image, 'fx_nom', x, y]]` joue un effet visuel du personnage.
