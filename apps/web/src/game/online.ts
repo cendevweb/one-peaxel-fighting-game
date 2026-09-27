@@ -346,6 +346,11 @@ export class HostScene implements Scene {
         drawText(ctx, 'ENVOYEZ-LUI LE LIEN : IL ARRIVERA ICI', 320, 252, { color: '#cfc4dc', align: 'center' });
         drawText(ctx, 'DIRECTEMENT, OU IL PEUT TAPER LE CODE.', 320, 266, { color: '#cfc4dc', align: 'center' });
         if (this.refused && this.t - this.refusedAt < 300) drawText(ctx, this.refused, 320, 304, { color: COLORS.gold, outline: COLORS.ink, align: 'center' });
+        else if (__PREVIEW_BUILD__) {
+            // Preview URLs sit behind Vercel Authentication: the friend would hit a login page.
+            drawText(ctx, 'VERSION D\'APERÇU : CE LIEN DEMANDE UN COMPTE VERCEL.', 320, 300, { color: COLORS.gold, outline: COLORS.ink, align: 'center' });
+            if (__PUBLIC_URL__) drawText(ctx, `POUR JOUER, CRÉEZ LE SALON SUR ${__PUBLIC_URL__.replace(/^https?:\/\//, '')}`, 320, 314, { color: COLORS.gold, outline: COLORS.ink, align: 'center' });
+        }
         hint(ctx, `ENTRÉE / ${keyLabel(KEYS[0].light[0])} : COPIER LE LIEN · ÉCHAP : FERMER LE SALON`);
     }
 }
