@@ -22,6 +22,9 @@ export const ULTIMATE_COST = 100;
 /** The second ultimate spends both bars. */
 export const ULTIMATE2_COST = 200;
 export const GUARD_MAX = 100;
+/** Meter gains are scaled by 4/5 so the bars fill about 20% slower. */
+const METER_GAIN_NUM = 4;
+const METER_GAIN_DEN = 5;
 const PREJUMP = 4;
 const LAND_LAG = 3;
 const DASH_TICKS = 16;
@@ -508,8 +511,8 @@ function connect(
         setAnim(d, d.crouching ? 'guardLow' : 'guard');
         d.guard -= Math.floor(hit.damage / 3) + 4;
         d.guardRest = 0;
-        d.meter = Math.min(METER_MAX, d.meter + 3);
-        attacker.meter = Math.min(METER_MAX, attacker.meter + 2);
+        gainMeter(d, 3);
+        gainMeter(attacker, 2);
         applyPush(state, fromProjectile ? d : attacker, d, Math.floor((hit.push * 2) / 3) + 4);
         if (fromProjectile) d.vx = (d.x >= src.x ? 1 : -1) * pushVelocity(Math.floor((hit.push * 2) / 3) + 4);
         d.hitstop = stop - 2;
@@ -541,8 +544,8 @@ function connect(
     d.comboDamage += dmg;
     d.counterHit = counter;
     d.guardRest = 0;
-    attacker.meter = Math.min(METER_MAX, attacker.meter + Math.ceil(dmg / 4) + (src.kind === 'ultimate' ? 0 : 2));
-    d.meter = Math.min(METER_MAX, d.meter + Math.ceil(dmg / 6));
+    gainMeter(attacker, Math.ceil(dmg / 4) + (src.kind === 'ultimate' ? 0 : 2));
+    gainMeter(d, Math.ceil(dmg / 6));
     d.crouching = d.crouching && d.y === 0 && !hit.launch;
     d.projectileOut = d.projectileOut && fromProjectile;
 
@@ -1233,4 +1236,10 @@ export function stepMatch(state: MatchState, inputs: [number, number]): GameEven
 
 export function isMatchOver(state: MatchState): boolean {
     return state.phase === 'matchEnd';
+}
+
+/** Adds `raw` meter scaled by METER_GAIN_NUM/DEN, rounded to nearest, in integers. */
+function gainMeter(f: FighterState, raw: number): void {
+    const gain = Math.floor((raw * METER_GAIN_NUM * 2 + METER_GAIN_DEN) / (METER_GAIN_DEN * 2));
+    f.meter = Math.min(METER_MAX, f.meter + gain);
 }
