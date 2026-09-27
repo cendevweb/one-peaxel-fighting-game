@@ -133,10 +133,13 @@ Copier `luffy.ts` et l'adapter. Les règles :
 - `sfx` : `swing`, `swingHeavy`, `stretch`, `gatling`, `bazooka`, `fire`,
   `electric`, `sand`, `magma`, `slash`, `slashHeavy` (grand coup de sabre),
   `thread` (fil tendu), `room` (ouverture de la Room), `grab`, `gigant`,
-  `beam`. Un nom inconnu fait échouer `data.test.ts`.
+  `beam`, `ice`, `laser`, `quake` (séisme), `magnet`, `dark` (ténèbres),
+  `poison`, `paw` (onde de patte), `love` (charme), `flutter` (pétales, plumes). Un nom inconnu fait échouer `data.test.ts`.
 - `spark` : `light`, `heavy`, `big`, `fire`, `electric`, `sand`, `magma`,
   `cut` (entaille légère), `blade` (croissant de sabre bleuté), `room` (arc
-  cyan), `thread` (faisceau de fils). Un nouvel effet s'ajoute à l'union
+  cyan), `thread` (faisceau de fils), `ice`, `laser` (éclat de lumière),
+  `quake` (air qui se fend), `petal`, `magnet` (ferraille), `dark`, `poison`,
+  `paw` (onde de choc), `bluefire` (flammes du phénix), `love` (cœurs). Un nouvel effet s'ajoute à l'union
   `Spark` de `engine/types.ts` et au `switch` de `render/vfx.ts`.
 
 Santé autour de 1000 ; un combo moyen fait 200–300, l'ultime 300–400.

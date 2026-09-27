@@ -182,6 +182,74 @@ export class Vfx {
                 this.sprite('common', 'spark', x, y, dir, { per: 2 });
                 break;
             }
+            case 'ice':
+                // Aokiji: frost shards and a pale ring.
+                this.sprite('common', heavy ? 'sparkHeavy' : 'spark', x, y, dir, { per: 2 });
+                this.burst(x, y, heavy ? 16 : 10, 'shard', ['#ffffff', '#bfefff', '#7fd4ff'], 3.4, { gravity: 0.12, life: 24, size: 1.3 });
+                this.burst(x, y, 8, 'spark', ['#e8fbff', '#9fe6ff'], 2, { life: 16 });
+                this.ring(x, y, '#bfefff', 3.2, 12, 1.5);
+                break;
+            case 'laser':
+                // Kizaru: a white-gold flash and fast light needles.
+                this.sprite('common', 'burst', x, y, dir, { per: 2, additive: true });
+                this.burst(x, y, heavy ? 14 : 9, 'streak', ['#ffffff', '#fff6b0', '#ffe45e'], 6.5, { dir: dir === 1 ? 0 : Math.PI, spread: 1.4, life: 8 });
+                this.burst(x, y, 8, 'spark', ['#fffbe0', '#ffe45e'], 2.5, { life: 14 });
+                this.ring(x, y, '#fff6b0', 4, 9, 1.5);
+                if (heavy) this.kick(0, 0.12, '#fffbe0');
+                break;
+            case 'quake':
+                // Whitebeard: the air cracks, glass shards and a double shockwave.
+                this.sprite('common', 'sparkBig', x, y, dir, { per: 3 });
+                this.burst(x, y, heavy ? 18 : 10, 'shard', ['#ffffff', '#dfefff', '#a8c8e8'], 4, { gravity: 0.18, life: 26 });
+                this.ring(x, y, '#ffffff', 5, 14, 2);
+                this.ring(x, y, '#9fc8ff', 3, 20, 1);
+                this.kick(heavy ? 6 : 3);
+                break;
+            case 'petal':
+                // Robin (hands in bloom) and Hancock's kicks: petals scatter.
+                this.sprite('common', 'spark', x, y, dir, { per: 2 });
+                this.burst(x, y, heavy ? 16 : 10, 'shard', ['#ff9ad0', '#ffd0ea', '#c070ff', '#ffffff'], 2.6, { gravity: 0.05, life: 30, drag: 0.93 });
+                break;
+            case 'magnet':
+                // Kid: scrap metal and a violet pull.
+                this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2 });
+                this.burst(x, y, heavy ? 14 : 9, 'shard', ['#9aa4ad', '#6c747c', '#d0d6dc'], 3.6, { gravity: 0.2, life: 24, size: 1.4 });
+                this.burst(x, y, 8, 'bolt', ['#d08cff', '#ffffff'], 3.5, { life: 8 });
+                this.ring(x, y, '#b070ff', 3, 12, 1.5);
+                break;
+            case 'dark':
+                // Blackbeard: black matter swallowing the light.
+                this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2 });
+                this.burst(x, y, heavy ? 14 : 8, 'smoke', ['#140818', '#2a1030', '#3c1a48'], 1.6, { gravity: -0.02, life: 30, size: 4 });
+                this.burst(x, y, 10, 'streak', ['#7a3a9a', '#ffffff'], 3.5, { life: 10 });
+                this.ring(x, y, '#5a2070', 2.4, 16, 2);
+                break;
+            case 'poison':
+                // Magellan: purple venom splashes and bubbles up.
+                this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2 });
+                this.burst(x, y, heavy ? 16 : 10, 'ember', ['#9a3ad0', '#c070ff', '#5a1a80', '#e0a0ff'], 2.8, { gravity: 0.08, life: 26, size: 1.5 });
+                this.burst(x, y, 4, 'smoke', ['#40184f', '#5a2a6a'], 0.7, { gravity: -0.05, life: 32, size: 4 });
+                break;
+            case 'paw':
+                // Kuma: a paw-shaped pressure wave, the air pushed out.
+                this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2, additive: true });
+                this.ring(x, y, '#ffffff', 4.2, 12, 2);
+                this.ring(x + dir * 4, y, '#cfe6ff', 3, 16, 1);
+                this.burst(x, y, heavy ? 14 : 8, 'streak', ['#ffffff', '#dfefff'], 5.5, { dir: dir === 1 ? 0 : Math.PI, spread: 0.9, life: 10 });
+                break;
+            case 'bluefire':
+                // Marco's phoenix flames, blue and gold.
+                this.sprite('common', 'sparkHeavy', x, y, dir, { per: 2, additive: true });
+                this.burst(x, y, 16, 'ember', ['#3fb4ff', '#8fe0ff', '#ffe45e', '#ffffff'], 3.4, { gravity: -0.06, life: 26, size: 1.4 });
+                this.ring(x, y, '#3fb4ff', 3, 12, 1.5);
+                break;
+            case 'love':
+                // Hancock's Mero Mero: pink hearts and a stone-grey chip.
+                this.sprite('common', 'spark', x, y, dir, { per: 2, additive: true });
+                this.burst(x, y, heavy ? 14 : 9, 'spark', ['#ff5aa8', '#ff9ad0', '#ffffff'], 3, { gravity: -0.03, life: 22, size: 1.6 });
+                this.burst(x, y, 6, 'shard', ['#a8a098', '#d0c8c0'], 2.4, { gravity: 0.15, life: 22 });
+                this.ring(x, y, '#ff7ac8', 3.4, 12, 1.5);
+                break;
         }
         if (counter) {
             this.popup('CONTRE !', x, y - 22, '#ff5a3c');

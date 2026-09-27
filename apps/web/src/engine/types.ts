@@ -52,7 +52,8 @@ export type Guard = 'mid' | 'low' | 'high' | 'unblockable';
  * `blade` a heavy sword crescent (Zoro), `room` Law's cyan Kikoku arc,
  * `thread` Doflamingo's crossing strings.
  */
-export type Spark = 'light' | 'heavy' | 'big' | 'fire' | 'electric' | 'sand' | 'magma' | 'cut' | 'blade' | 'room' | 'thread';
+export type Spark = 'light' | 'heavy' | 'big' | 'fire' | 'electric' | 'sand' | 'magma' | 'cut' | 'blade' | 'room' | 'thread'
+    | 'ice' | 'laser' | 'quake' | 'petal' | 'magnet' | 'dark' | 'poison' | 'paw' | 'bluefire' | 'love';
 
 /** Box relative to the fighter's feet, facing right: x forward, y up. */
 export type Rect = [x: number, y: number, w: number, h: number];
