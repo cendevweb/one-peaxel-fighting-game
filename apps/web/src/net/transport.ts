@@ -337,7 +337,7 @@ export async function hostRoom(): Promise<Room> {
     const cfg = currentPeerConfig();
     return {
         code,
-        url: inviteUrl(code, location, cfg.debugPeer),
+        url: inviteUrl(code, location, cfg.debugPeer, __PREVIEW_BUILD__ ? undefined : __PUBLIC_URL__),
         waitForGuest: () => guest,
         onGuest: (cb) => { guestCbs.push(cb); if (link) cb(link); },
         onRefused: (cb) => { refusedCbs.push(cb); },

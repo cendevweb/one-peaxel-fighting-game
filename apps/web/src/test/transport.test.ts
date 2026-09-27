@@ -30,6 +30,15 @@ describe('room codes', () => {
         expect(codeFromText(debug)).toBe('K7P2QM');
         expect(new URL(debug).searchParams.get('peer')).toBe('127.0.0.1:9000');
     });
+
+    it('point at the public address, not a private deployment URL', () => {
+        const loc = { origin: 'https://web-abc123-team.vercel.app', pathname: '/' };
+        expect(inviteUrl('K7P2QM', loc, undefined, 'https://web-kappa-blush-23.vercel.app')).toBe('https://web-kappa-blush-23.vercel.app/?salon=K7P2QM');
+        expect(inviteUrl('K7P2QM', loc, undefined, '')).toBe('https://web-abc123-team.vercel.app/?salon=K7P2QM');
+        // A local broker only works on the page that set it.
+        const local = { origin: 'http://127.0.0.1:5173', pathname: '/' };
+        expect(inviteUrl('K7P2QM', local, '127.0.0.1:9000', 'https://web-kappa-blush-23.vercel.app')).toBe('http://127.0.0.1:5173/?peer=127.0.0.1:9000&salon=K7P2QM');
+    });
 });
 
 describe('peer config', () => {
