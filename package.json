@@ -1,5 +1,5 @@
 {
-  "name": "one-peaxel-fighting-game",
+  "name": "one-piexel-fighting-game",
   "private": true,
   "workspaces": ["apps/web"],
   "scripts": {

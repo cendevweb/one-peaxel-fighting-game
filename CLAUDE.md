@@ -1,4 +1,4 @@
-# ONE PEAXEL FIGHTING GAME — notes de travail
+# ONE PIEXEL FIGHTING GAME — notes de travail
 
 Jeu de combat 2D local dans le navigateur (Vite + TypeScript + Canvas 2D,
 aucune bibliothèque de jeu). Tout vit dans `apps/web`.

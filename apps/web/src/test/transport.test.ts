@@ -64,10 +64,10 @@ describe('peer config', () => {
     });
 
     it('ignores ?peer= on the public site (production build)', () => {
-        const c = peerConfig({}, '?peer=evil.example:443&salon=ABCDEF', 'one-peaxel.vercel.app');
+        const c = peerConfig({}, '?peer=evil.example:443&salon=ABCDEF', 'one-piexel.vercel.app');
         expect(c.host).toBeUndefined();
         expect(c.debugPeer).toBeUndefined();
         expect(c.iceServers.length).toBeGreaterThan(0);
-        expect(peerConfig({ DEV: true }, '?peer=127.0.0.1:9000', 'one-peaxel.vercel.app').host).toBe('127.0.0.1');
+        expect(peerConfig({ DEV: true }, '?peer=127.0.0.1:9000', 'one-piexel.vercel.app').host).toBe('127.0.0.1');
     });
 });

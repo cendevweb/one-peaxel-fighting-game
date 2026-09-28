@@ -1,4 +1,4 @@
-# One Peaxel Fighting Game
+# One Piexel Fighting Game
 
 Jeu de combat 2D en pixel art dans le navigateur, dans l'univers de *One Piece*,
 construit comme un Street Fighter : combos, gardes haute et basse, coups

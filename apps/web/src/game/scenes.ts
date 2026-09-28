@@ -110,7 +110,7 @@ export class TitleScene implements Scene {
             ctx.restore();
         }
         const bob = Math.sin(this.t / 30) * 2;
-        drawText(ctx, 'ONE PEAXEL', 320, 44 + bob, { color: '#ffffff', gradient: '#ffd23f', outline: COLORS.ink, shadow: '#7a1a10', scale: 7, align: 'center' });
+        drawText(ctx, 'ONE PIEXEL', 320, 44 + bob, { color: '#ffffff', gradient: '#ffd23f', outline: COLORS.ink, shadow: '#7a1a10', scale: 7, align: 'center' });
         drawText(ctx, 'FIGHTING GAME', 320, 110 + bob, { color: '#ff8a5c', gradient: '#e8412c', outline: COLORS.ink, scale: 3, align: 'center' });
         if (this.t % 60 < 40) drawText(ctx, 'APPUYEZ SUR ENTRÉE', 320, 320, { color: '#ffffff', outline: COLORS.ink, scale: 2, align: 'center' });
         drawText(ctx, 'PROJET DE FAN NON OFFICIEL · SPRITES ONE PIECE GIGANT BATTLE 2 (BANDAI NAMCO / GANBARION)', 320, 348, { color: '#9a8fb0', align: 'center' });
@@ -145,7 +145,7 @@ export class MainMenuScene implements Scene {
 
     draw(ctx: CanvasRenderingContext2D): void {
         menuBackdrop(ctx, this.t, 'arlong-park');
-        drawText(ctx, 'ONE PEAXEL', 44, 34, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink, scale: 4 });
+        drawText(ctx, 'ONE PIEXEL', 44, 34, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink, scale: 4 });
         panel(ctx, 30, 96, 330, 150);
         menuItems(ctx, this.list.items, this.list.index, 52, 114, this.t);
         panel(ctx, 30, 256, 580, 34, COLORS.dim);
