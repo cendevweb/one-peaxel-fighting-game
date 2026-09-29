@@ -20,13 +20,17 @@ npm run dev        # http://localhost:5173
 | | Joueur 1 | Joueur 2 |
 | --- | --- | --- |
 | Se déplacer / sauter / s'accroupir | Z Q S D (W A S D en QWERTY) | Flèches |
-| [A] coup léger | J | Pavé 1 ou `,` |
-| [B] coup fort | K | Pavé 2 ou `.` |
-| [C] spécial | L | Pavé 3 ou `/` |
-| Projection ([A]+[B]) | U | Pavé 4 |
-| Ultime ([B]+[C]) | I | Pavé 5 |
-| Ultime max ([A]+[B]+[C]) | O | Pavé 6 |
+| [A] coup léger | C | J (ou Pavé 1) |
+| [B] coup fort | V | K (ou Pavé 2) |
+| [C] spécial | B | L (ou Pavé 3) |
+| Projection ([A]+[B]) | F | U (ou Pavé 4) |
+| Ultime ([B]+[C]) | G | I (ou Pavé 5) |
+| Ultime max ([A]+[B]+[C]) | H | O (ou Pavé 6) |
 | Pause | Échap | Retour arrière |
+
+Seul devant l'écran (arcade, contre l'ordinateur, entraînement, en ligne),
+les deux jeux de touches pilotent le même combattant : Z Q S D + J K L
+marche comme avant.
 
 Les manettes (disposition standard) sont reconnues dès qu'on appuie sur un
 bouton. Les touches sont lues par leur position physique : la même
