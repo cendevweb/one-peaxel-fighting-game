@@ -4,7 +4,8 @@ import { ROSTER } from '../characters';
 import { createMatch, stepMatch } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, type CharacterDef, type MatchState, type MoveSlot } from '../engine/types';
-import { KEYS, endInputTick, keyLabel, readSide, readSolo, type MenuInput } from '../input/devices';
+import { KEYS, endInputTick, keyLabel, padFamily, readSide, readSolo, rumbleOn, type MenuInput } from '../input/devices';
+import { PAD_LABELS } from '../input/gamepad';
 import { drawText, textWidth } from '../render/font';
 import { FightView } from '../render/fightView';
 import { artOf, drawFrame } from '../render/sprites';
@@ -576,6 +577,8 @@ export class FightScene implements Scene {
         if (import.meta.env.DEV) (window as unknown as { __opfgFight?: unknown }).__opfgFight = { inputs, state: this.state };
         const events = stepMatch(this.state, inputs);
         this.view.handle(events);
+        if (this.setup.mode === 'versus') { rumbleOn(events, 0, [0]); rumbleOn(events, 1, [1]); }
+        else rumbleOn(events, 0, [0, 1]);
         this.view.update();
         if (events.some((e) => e.type === 'matchEnd')) {
             const w = this.state.winner;
@@ -776,11 +779,16 @@ export class ControlsScene implements Scene {
             });
         }
         panel(ctx, 30, 236, 580, 96, COLORS.dim);
-        drawText(ctx, 'MANETTE', 44, 246, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink });
+        // Button names of the pad plugged in; none yet: Xbox names, PlayStation in brackets.
+        const fam = padFamily(0) ?? padFamily(1);
+        const xb = PAD_LABELS.xbox, ps = PAD_LABELS.playstation;
+        const name = (k: Exclude<keyof typeof xb, 'name'>) => fam ? PAD_LABELS[fam][k] : `${xb[k]} (${ps[k]})`;
+        drawText(ctx, fam ? `MANETTE · ${PAD_LABELS[fam].name}` : 'MANETTE · XBOX, PLAYSTATION, SWITCH PRO', 44, 246, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink });
         const lines = [
-            'CROIX / STICK : DÉPLACEMENT    A OU X : [A] LÉGER    Y : [B] FORT    B : [C] SPÉCIAL',
-            'LB : CHOPE    RB : ULTIME    LT / RT : ULTIME MAX    START : PAUSE',
-            'LA PREMIÈRE MANETTE BRANCHÉE JOUE J1, LA SECONDE J2.'
+            `FLÈCHES OU STICK GAUCHE : DÉPLACEMENT    ${name('start')} : PAUSE`,
+            `${name('west')} OU ${name('south')} : [A] LÉGER    ${name('north')} : [B] FORT    ${name('east')} : [C] SPÉCIAL`,
+            `${name('l1')} : CHOPE    ${name('r1')} : ULTIME    ${name('l2')} / ${name('r2')} : ULTIME MAX`,
+            'LA PREMIÈRE MANETTE BRANCHÉE JOUE J1, LA SECONDE J2 (APPUYER SUR UN BOUTON).'
         ];
         lines.forEach((l, i) => notation(ctx, l, 44, 266 + i * 18, '#cfc4dc'));
     }

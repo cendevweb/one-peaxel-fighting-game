@@ -1,4 +1,5 @@
-import { BTN } from '../engine/types';
+import { BTN, type GameEvent } from '../engine/types';
+import { PAD_LABELS, assignSlots, familyOf, padToBits, readPad, type PadFamily } from './gamepad';
 
 /**
  * Keyboard and gamepads, turned into the engine's button bits once per tick.
@@ -92,38 +93,52 @@ export function keyLabel(code: string): string {
 export const padOf: [number, number] = [-1, -1];
 
 function pads(): (Gamepad | null)[] {
-    return navigator.getGamepads ? [...navigator.getGamepads()] : [];
+    try {
+        return navigator.getGamepads ? [...navigator.getGamepads()] : [];
+    } catch {
+        return []; // blocked by a permissions policy
+    }
+}
+
+function padAt(index: number): Gamepad | null {
+    return index >= 0 ? pads()[index] ?? null : null;
 }
 
 function padBits(index: number): number {
-    const p = pads()[index];
-    if (!p) return 0;
-    const b = (i: number) => !!p.buttons[i]?.pressed;
-    const ax = p.axes[0] ?? 0;
-    const ay = p.axes[1] ?? 0;
-    let bits = 0;
-    if (b(12) || ay < -0.5) bits |= BTN.up;
-    if (b(13) || ay > 0.5) bits |= BTN.down;
-    if (b(14) || ax < -0.5) bits |= BTN.left;
-    if (b(15) || ax > 0.5) bits |= BTN.right;
-    if (b(2) || b(0)) bits |= BTN.light;
-    if (b(3)) bits |= BTN.heavy;
-    if (b(1)) bits |= BTN.special;
-    if (b(4)) bits |= BTN.light | BTN.heavy;
-    if (b(5)) bits |= BTN.heavy | BTN.special;
-    if (b(6) || b(7)) bits |= BTN.light | BTN.heavy | BTN.special;
-    if (b(9)) bits |= BTN.start;
-    return bits;
+    const p = padAt(index);
+    return p ? padToBits(readPad(p)) : 0;
 }
 
-/** Assign connected pads to sides in order of connection. */
-function assignPads(): void {
-    const connected = pads().map((p, i) => (p ? i : -1)).filter((i) => i >= 0);
-    padOf[0] = connected[0] ?? -1;
-    padOf[1] = connected[1] ?? -1;
+/** The pad family on a side, or null when that side has no pad. */
+export function padFamily(side: 0 | 1): PadFamily | null {
+    const p = padAt(padOf[side]);
+    return p ? familyOf(p.id) : null;
 }
-window.addEventListener('gamepadconnected', assignPads);
-window.addEventListener('gamepaddisconnected', assignPads);
+
+/** Last pad plugged or unplugged, shown briefly on screen by the app. */
+export const padNotice = { text: '', at: 0 };
+
+/** Re-read which pads are plugged in; called once per tick by pollMenu.
+ *  Browsers only list a pad once one of its buttons has been pressed. */
+function refreshPads(): void {
+    const list = pads();
+    const next = assignSlots(padOf, list);
+    for (const side of [0, 1] as const) {
+        if (next[side] === padOf[side]) continue;
+        const p = list[next[side]];
+        if (p) padNotice.text = `MANETTE ${PAD_LABELS[familyOf(p.id)].name} : J${side + 1}`;
+        else padNotice.text = `MANETTE J${side + 1} DÉBRANCHÉE`;
+        padNotice.at = performance.now();
+        padFresh[side] = true;
+        padOf[side] = next[side];
+    }
+}
+
+/** A short rumble on a side's pad, where the browser supports it. */
+export function rumble(side: 0 | 1, strong: number, ms: number): void {
+    const act = (padAt(padOf[side]) as (Gamepad & { vibrationActuator?: { playEffect?(t: string, o: object): Promise<unknown> } }) | null)?.vibrationActuator;
+    act?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: strong, weakMagnitude: Math.min(1, strong + 0.2) })?.catch(() => { /* unsupported */ });
+}
 
 /** The engine bits held right now by a side. */
 export function readSide(side: 0 | 1): number {
@@ -150,6 +165,16 @@ export function readSolo(): number {
     return readSide(0) | readSide(1);
 }
 
+/** Rumble the pads in `slots` when fighter `side` gets hit or knocked out. */
+export function rumbleOn(events: readonly GameEvent[], side: number, slots: readonly (0 | 1)[]): void {
+    for (const e of events) {
+        let strong = 0, ms = 0;
+        if (e.type === 'hit' && e.attacker !== side) { strong = e.heavy ? 0.6 : 0.3; ms = e.heavy ? 160 : 90; }
+        if (e.type === 'ko' && e.side === side) { strong = 1; ms = 450; }
+        if (ms) for (const slot of slots) rumble(slot, strong, ms);
+    }
+}
+
 // ——— Menus ———
 
 export type MenuAction = 'up' | 'down' | 'left' | 'right' | 'confirm' | 'back' | 'start';
@@ -160,6 +185,10 @@ export interface MenuInput {
 }
 
 const prevPad: [number, number] = [0, 0];
+/** The press that makes a browser reveal a pad must not also act in a menu. */
+const padFresh: [boolean, boolean] = [false, false];
+const padIgnore: [number, number] = [0, 0];
+const PAD_UP = 1, PAD_DOWN = 2, PAD_LEFT = 4, PAD_RIGHT = 8, PAD_OK = 16, PAD_BACK = 32, PAD_START = 64;
 const repeat: Record<string, number> = {};
 
 /**
@@ -167,6 +196,7 @@ const repeat: Record<string, number> = {};
  * directions. Enter confirms and Escape backs out for either side.
  */
 export function pollMenu(): MenuInput[] {
+    refreshPads();
     const out: MenuInput[] = [];
     const push = (side: 0 | 1, action: MenuAction) => out.push({ side, action });
     for (const side of [0, 1] as const) {
@@ -183,24 +213,28 @@ export function pollMenu(): MenuInput[] {
                 if (repeat[key] > 22 && repeat[key] % 5 === 0) push(side, action);
             } else if (['up', 'down', 'left', 'right'].includes(action)) repeat[key] = 0;
         }
-        if (padOf[side] >= 0) {
-            const bits = padBits(padOf[side]);
-            const edge = bits & ~prevPad[side];
-            prevPad[side] = bits;
-            if (edge & BTN.up) push(side, 'up');
-            if (edge & BTN.down) push(side, 'down');
-            if (edge & BTN.left) push(side, 'left');
-            if (edge & BTN.right) push(side, 'right');
-            const p = pads()[padOf[side]];
-            if (p) {
-                const was = (repeat[`pad${side}`] ?? 0);
-                const now = (p.buttons[0]?.pressed ? 1 : 0) | (p.buttons[1]?.pressed ? 2 : 0) | (p.buttons[9]?.pressed ? 4 : 0);
-                const e = now & ~was;
-                repeat[`pad${side}`] = now;
-                if (e & 1) push(side, 'confirm');
-                if (e & 2) push(side, 'back');
-                if (e & 4) push(side, 'start');
+        const p = padAt(padOf[side]);
+        if (p) {
+            const st = readPad(p);
+            const now = (st.up ? PAD_UP : 0) | (st.down ? PAD_DOWN : 0) | (st.left ? PAD_LEFT : 0) | (st.right ? PAD_RIGHT : 0)
+                | (st.south ? PAD_OK : 0) | (st.east ? PAD_BACK : 0) | (st.start ? PAD_START : 0);
+            // Buttons held when the pad appeared stay ignored until released.
+            if (padFresh[side]) { padIgnore[side] = now; padFresh[side] = false; }
+            padIgnore[side] &= now;
+            const edge = now & ~prevPad[side] & ~padIgnore[side];
+            prevPad[side] = now;
+            const dirs: [number, MenuAction][] = [[PAD_UP, 'up'], [PAD_DOWN, 'down'], [PAD_LEFT, 'left'], [PAD_RIGHT, 'right']];
+            for (const [bit, action] of dirs) {
+                const key = `pad${side}${action}`;
+                if (edge & bit) push(side, action);
+                if (now & bit) {
+                    repeat[key] = (repeat[key] ?? 0) + 1;
+                    if (repeat[key] > 22 && repeat[key] % 5 === 0) push(side, action);
+                } else repeat[key] = 0;
             }
+            if (edge & PAD_OK) push(side, 'confirm');
+            if (edge & PAD_BACK) push(side, 'back');
+            if (edge & PAD_START) push(side, 'start');
         }
     }
     if (tapped.has('Enter') || tapped.has('Space')) push(0, 'confirm');

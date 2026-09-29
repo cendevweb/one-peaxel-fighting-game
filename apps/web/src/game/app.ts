@@ -1,4 +1,5 @@
-import { clearTaps, pollMenu, type MenuInput } from '../input/devices';
+import { clearTaps, padNotice, pollMenu, type MenuInput } from '../input/devices';
+import { drawText } from '../render/font';
 import { play, unlockAudio } from '../audio/sound';
 
 /**
@@ -123,6 +124,16 @@ export class App {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.fillStyle = `rgba(0,0,0,${this.fade})`;
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        }
+        // A pad plugged in or out: say which side it drives, for a moment.
+        const age = performance.now() - padNotice.at;
+        if (padNotice.text && age < 2500) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalAlpha = Math.min(1, (2500 - age) / 400);
+            ctx.fillStyle = 'rgba(8,2,16,0.85)';
+            ctx.fillRect(WIDTH / 2 - 120, 318, 240, 16);
+            drawText(ctx, padNotice.text, WIDTH / 2, 322, { color: '#fff', align: 'center' });
+            ctx.globalAlpha = 1;
         }
     }
 }
