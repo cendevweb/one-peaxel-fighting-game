@@ -4,7 +4,7 @@ import { ROSTER } from '../characters';
 import { createMatch, stepMatch } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, type CharacterDef, type MatchState, type MoveSlot } from '../engine/types';
-import { KEYS, endInputTick, keyLabel, readSide, type MenuInput } from '../input/devices';
+import { KEYS, endInputTick, keyLabel, readSide, readSolo, type MenuInput } from '../input/devices';
 import { drawText, textWidth } from '../render/font';
 import { FightView } from '../render/fightView';
 import { artOf, drawFrame } from '../render/sprites';
@@ -221,8 +221,8 @@ export class SelectScene implements Scene {
     tick(menu: MenuInput[]): void {
         this.t++;
         for (const m of menu) {
+            // Alone, both key sets drive the cursor being picked.
             const side = this.twoPlayers ? m.side : this.picking;
-            if (!this.twoPlayers && m.side !== 0) continue;
             const c = this.cursors[side];
             if (this.levelStep) {
                 if (m.action === 'left' || m.action === 'down') { this.level = Math.max(0, this.level - 1); play('uiMove'); }
@@ -568,9 +568,12 @@ export class FightScene implements Scene {
             const cpu = this.cpu[side];
             if (cpu) inputs[side] = cpu.next(this.state, side);
             else if (this.setup.mode === 'training' && side === 1) inputs[side] = dummyBits(this.dummy, this.state.fighters[1], this.t);
-            else if (this.setup.mode === 'versus' || side === 0) inputs[side] = readSide(side) & ~BTN.start;
+            else if (this.setup.mode === 'versus') inputs[side] = readSide(side) & ~BTN.start;
+            else if (side === 0) inputs[side] = readSolo() & ~BTN.start;
         }
         endInputTick();
+        // Dev only: the inputs and state, for the end-to-end input checks.
+        if (import.meta.env.DEV) (window as unknown as { __opfgFight?: unknown }).__opfgFight = { inputs, state: this.state };
         const events = stepMatch(this.state, inputs);
         this.view.handle(events);
         this.view.update();
@@ -671,7 +674,7 @@ export class ResultsScene implements Scene {
 
     tick(menu: MenuInput[]): void {
         this.t++;
-        const r = this.list.handle(menu, [0]);
+        const r = this.list.handle(menu, this.setup.mode === 'versus' ? [0] : [0, 1]);
         if (r !== 'confirm') return;
         const item = this.list.items[this.list.index];
         const s = this.setup;
@@ -748,7 +751,7 @@ export class ControlsScene implements Scene {
         title(ctx, this.page === 0 ? 'COMMANDES' : 'MÉCANIQUES', 14);
         if (this.page === 0) this.drawKeys(ctx);
         else this.drawSystems(ctx);
-        hint(ctx, '← → : PAGE SUIVANTE · K / ÉCHAP : RETOUR');
+        hint(ctx, `← → : PAGE SUIVANTE · ${keyLabel(KEYS[0].heavy[0])} / ÉCHAP : RETOUR`);
     }
 
     private drawKeys(ctx: CanvasRenderingContext2D): void {

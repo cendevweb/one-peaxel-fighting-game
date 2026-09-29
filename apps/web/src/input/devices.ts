@@ -23,16 +23,21 @@ export interface KeyBinding {
     start: string[];
 }
 
+/**
+ * Two players share one keyboard: J1 on the left half (WASD/ZQSD, attacks on
+ * C V B under F G H), J2 on the right half (arrows, attacks on J K L under
+ * U I O, or the numpad). When only one person plays, both halves drive them.
+ */
 export const KEYS: [KeyBinding, KeyBinding] = [
     {
         up: ['KeyW'], down: ['KeyS'], left: ['KeyA'], right: ['KeyD'],
-        light: ['KeyJ'], heavy: ['KeyK'], special: ['KeyL'],
-        throwKey: ['KeyU'], ultimate: ['KeyI'], ultimate2: ['KeyO'], start: ['Escape']
+        light: ['KeyC'], heavy: ['KeyV'], special: ['KeyB'],
+        throwKey: ['KeyF'], ultimate: ['KeyG'], ultimate2: ['KeyH'], start: ['Escape']
     },
     {
         up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'],
-        light: ['Numpad1', 'Comma'], heavy: ['Numpad2', 'Period'], special: ['Numpad3', 'Slash'],
-        throwKey: ['Numpad4'], ultimate: ['Numpad5'], ultimate2: ['Numpad6'], start: ['Backspace']
+        light: ['KeyJ', 'Numpad1'], heavy: ['KeyK', 'Numpad2'], special: ['KeyL', 'Numpad3'],
+        throwKey: ['KeyU', 'Numpad4'], ultimate: ['KeyI', 'Numpad5'], ultimate2: ['KeyO', 'Numpad6'], start: ['Backspace']
     }
 ];
 
@@ -137,6 +142,12 @@ export function readSide(side: 0 | 1): number {
     if (anyGame(k.start)) bits |= BTN.start;
     if (padOf[side] >= 0) bits |= padBits(padOf[side]);
     return bits;
+}
+
+/** One person at the controls (arcade, versus CPU, training, online): every
+ *  key set and the first pad all drive them. */
+export function readSolo(): number {
+    return readSide(0) | readSide(1);
 }
 
 // ——— Menus ———

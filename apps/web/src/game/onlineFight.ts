@@ -2,7 +2,7 @@ import { play } from '../audio/sound';
 import { startMusic } from '../audio/music';
 import { createMatch, stepMatch } from '../engine/match';
 import { BTN, type GameEvent, type MatchState } from '../engine/types';
-import { endInputTick, readSide, type MenuInput } from '../input/devices';
+import { endInputTick, readSolo, type MenuInput } from '../input/devices';
 import { checksum } from '../net/checksum';
 import type { NetMsg } from '../net/protocol';
 import { RollbackSession } from '../net/rollback';
@@ -127,7 +127,7 @@ export class OnlineFightScene implements Scene {
             this.quitList.index = 0;
             play('uiConfirm');
         } else {
-            bits = this.bot ? this.bot.next(this.rb.state, this.session.side) : readSide(0) & ~BTN.start;
+            bits = this.bot ? this.bot.next(this.rb.state, this.session.side) : readSolo() & ~BTN.start;
         }
         const r = this.rb.tick(bits);
         // A stalled tick drops our input: keep a short tap for the next one.
