@@ -2,7 +2,7 @@ import { play } from '../audio/sound';
 import { startMusic } from '../audio/music';
 import { createMatch, stepMatch } from '../engine/match';
 import { BTN, type GameEvent, type MatchState } from '../engine/types';
-import { endInputTick, readSolo, type MenuInput } from '../input/devices';
+import { endInputTick, readSolo, rumbleOn, type MenuInput } from '../input/devices';
 import { checksum } from '../net/checksum';
 import type { NetMsg } from '../net/protocol';
 import { RollbackSession } from '../net/rollback';
@@ -191,7 +191,10 @@ export class OnlineFightScene implements Scene {
         this.fresh = [];
         const oldest = this.rb.confirmedFrame - 2;
         for (const f of this.shown.keys()) if (f < oldest) this.shown.delete(f);
-        if (out.length) this.view.handle(out);
+        if (out.length) {
+            this.view.handle(out);
+            rumbleOn(out, this.session.side, [0, 1]);
+        }
     }
 
     draw(ctx: CanvasRenderingContext2D): void {

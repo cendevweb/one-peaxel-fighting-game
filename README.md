@@ -32,8 +32,25 @@ Seul devant l'écran (arcade, contre l'ordinateur, entraînement, en ligne),
 les deux jeux de touches pilotent le même combattant : Z Q S D + J K L
 marche comme avant.
 
-Les manettes (disposition standard) sont reconnues dès qu'on appuie sur un
-bouton. Les touches sont lues par leur position physique : la même
+Manettes PS4, PS5, Xbox et Switch Pro (USB ou Bluetooth) : elles
+apparaissent dès qu'on appuie sur un de leurs boutons. La première branchée
+joue J1, la seconde J2 ; une manette garde son côté si l'autre est
+débranchée. Les boutons sont les mêmes par position sur toutes :
+
+| | PlayStation | Xbox | Switch Pro |
+| --- | --- | --- | --- |
+| Se déplacer | Croix ou stick gauche | Croix ou stick gauche | Croix ou stick gauche |
+| [A] coup léger | Carré ou Croix | X ou A | Y ou B |
+| [B] coup fort | Triangle | Y | X |
+| [C] spécial | Rond | B | A |
+| Projection ([A]+[B]) | L1 | LB | L |
+| Ultime ([B]+[C]) | R1 | RB | R |
+| Ultime max ([A]+[B]+[C]) | L2 ou R2 | LT ou RT | ZL ou ZR |
+| Pause | Options | Menu | + |
+
+Dans les menus, le bouton du bas valide et celui de droite revient en
+arrière. La manette vibre quand son combattant est touché, là où le
+navigateur le permet (Chrome, Edge). Les touches sont lues par leur position physique : la même
 disposition marche en AZERTY et en QWERTY.
 
 ### Palette de coups (commune à tous)
