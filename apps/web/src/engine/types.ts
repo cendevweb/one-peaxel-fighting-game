@@ -229,6 +229,11 @@ export interface FighterState {
     guardRest: number;
     combo: number;
     comboDamage: number;
+    /** `combo` when the current run of ultimate hits began: an ultimate's
+     *  scaling only counts its own hits. */
+    superFrom: number;
+    /** The last hit taken in this combo came from an ultimate. */
+    superRun: boolean;
     /** Scaling applied to the next hit of the combo this fighter is taking. */
     juggle: number;
     hitstop: number;
