@@ -10,6 +10,7 @@
  */
 import { ROSTER } from '../characters';
 import { createMatch, stepMatch } from '../engine/match';
+import { BTN } from '../engine/types';
 import { checksum } from './checksum';
 
 let cached: number | null = null;
@@ -23,11 +24,13 @@ export function buildFingerprint(): number {
     if (cached !== null) return cached;
     let h = 0x811c9dc5;
     for (const def of ROSTER) h = hashString(h, JSON.stringify(def));
-    // Scripted fights: fixed pseudo-random inputs (bits 0..6, no start).
+    // Scripted fights: fixed pseudo-random inputs (bits 0..6 and the
+    // ultimate key, no start).
     let seed = 12345;
     const next = () => {
         seed = (Math.imul(seed, 1103515245) + 12345) >>> 0;
-        return (seed >>> 16) & 0x7f;
+        const r = (seed >>> 16) & 0xff;
+        return (r & 0x7f) | (r & 0x80 ? BTN.ultimate : 0);
     };
     for (let i = 0; i < ROSTER.length; i++) {
         const st = createMatch(ROSTER[i].id, ROSTER[(i + 1) % ROSTER.length].id);

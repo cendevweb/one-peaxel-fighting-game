@@ -7,7 +7,7 @@
  */
 
 /** Bump whenever a message or the simulation changes incompatibly. */
-export const PROTOCOL_VERSION = 2;
+export const PROTOCOL_VERSION = 3;
 
 export type NetMsg =
     /**
@@ -110,7 +110,7 @@ export function decode(data: unknown): NetMsg | null {
                 : { type: 'start', p1: m.p1, p2: m.p2, stage: m.stage, seed: m.seed as number };
         case 'input': {
             if (!int(m.start, 0, MAX_FRAME) || !int(m.ack, -1, MAX_FRAME) || !Array.isArray(m.bits)) return null;
-            if (m.bits.length > MAX_PACKET_FRAMES || !m.bits.every((b) => int(b, 0, 0xff))) return null;
+            if (m.bits.length > MAX_PACKET_FRAMES || !m.bits.every((b) => int(b, 0, 0x1ff))) return null;
             if (!optInt(m.f, 0, MAX_FRAME) || !optInt(m.adv, -MAX_FRAME, MAX_FRAME) || !optInt(m.m, 0, 0x7fffffff)) return null;
             const r: InputMsg = { type: 'input', start: m.start, bits: m.bits as number[], ack: m.ack };
             if (m.f !== undefined) r.f = m.f as number;

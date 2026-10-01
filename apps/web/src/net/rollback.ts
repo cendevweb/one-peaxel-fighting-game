@@ -66,7 +66,7 @@ export interface DesyncInfo {
  * local and has no meaning online). Applied to both sides' inputs, so a
  * stray bit from the network cannot make the two simulations differ.
  */
-export const INPUT_MASK = BTN.up | BTN.down | BTN.left | BTN.right | BTN.light | BTN.heavy | BTN.special;
+export const INPUT_MASK = BTN.up | BTN.down | BTN.left | BTN.right | BTN.light | BTN.heavy | BTN.special | BTN.ultimate;
 /** Remote inputs further than this ahead of us are nonsense and dropped. */
 const MAX_AHEAD = 1024;
 

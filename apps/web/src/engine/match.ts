@@ -301,9 +301,12 @@ const isLightSlot = (slot: string) => slot === 'lightA' || slot === 'crouchLight
  */
 function intentOf(state: MatchState, f: FighterState): string | null {
     const h = f.history;
-    if (!pressed(h, BTN.light) && !pressed(h, BTN.heavy) && !pressed(h, BTN.special)) return null;
+    if (!pressed(h, BTN.light) && !pressed(h, BTN.heavy) && !pressed(h, BTN.special) && !pressed(h, BTN.ultimate)) return null;
     const def = getChar(f.char);
     const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
+    // The ultimate key only ever asks for the ultimate: when it cannot be
+    // used (meter, one per round) it does nothing, never a special.
+    if (pressed(h, BTN.ultimate)) return ultimateUsable(state, f, 'ultimate') && has('ultimate') ? 'ultimate' : null;
     // Three buttons ask for the second ultimate only: short of two bars
     // they do nothing, rather than spend one bar on the first.
     if (wantsUltimate2(f)) return ultimateUsable(state, f, 'ultimate2') && has('ultimate2') ? 'ultimate2' : null;

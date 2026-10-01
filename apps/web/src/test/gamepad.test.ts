@@ -37,7 +37,7 @@ describe('gamepads', () => {
         expect(bits(pad({ pressed: [3] }))).toBe(BTN.heavy); // Triangle / Y / X
         expect(bits(pad({ pressed: [1] }))).toBe(BTN.special); // Circle / B / A
         expect(bits(pad({ pressed: [4] }))).toBe(BTN.light | BTN.heavy);
-        expect(bits(pad({ pressed: [5] }))).toBe(BTN.heavy | BTN.special);
+        expect(bits(pad({ pressed: [5] }))).toBe(BTN.ultimate); // R1 / RB / R: the ultimate key
         expect(bits(pad({ pressed: [7] }))).toBe(BTN.light | BTN.heavy | BTN.special);
         expect(bits(pad({ pressed: [9] }))).toBe(BTN.start);
         expect(bits(pad({ pressed: [12, 15] }))).toBe(BTN.up | BTN.right);
