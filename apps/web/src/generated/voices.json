@@ -1,0 +1,474 @@
+{
+  "ace": {
+    "select": [
+      "ace/select-1",
+      "ace/select-2"
+    ],
+    "ultimate": [
+      "ace/ultimate-1",
+      "ace/ultimate-2"
+    ],
+    "ultimateMax": [
+      "ace/ultimateMax-1"
+    ],
+    "win": [
+      "ace/win-1"
+    ]
+  },
+  "akainu": {
+    "select": [
+      "akainu/select-1"
+    ],
+    "ultimate": [
+      "akainu/ultimate-1"
+    ],
+    "ultimateMax": [
+      "akainu/ultimateMax-1"
+    ],
+    "win": [
+      "akainu/win-1"
+    ]
+  },
+  "aokiji": {
+    "select": [
+      "aokiji/select-1"
+    ],
+    "ultimate": [
+      "aokiji/ultimate-1",
+      "aokiji/ultimate-2"
+    ],
+    "ultimateMax": [
+      "aokiji/ultimateMax-1",
+      "aokiji/ultimateMax-2"
+    ],
+    "win": [
+      "aokiji/win-1"
+    ]
+  },
+  "blackbeard": {
+    "select": [
+      "blackbeard/select-1",
+      "blackbeard/select-2"
+    ],
+    "ultimate": [
+      "blackbeard/ultimate-1",
+      "blackbeard/ultimate-2"
+    ],
+    "ultimateMax": [
+      "blackbeard/ultimateMax-1"
+    ],
+    "win": [
+      "blackbeard/win-1"
+    ]
+  },
+  "buggy": {
+    "select": [
+      "buggy/select-1"
+    ],
+    "ultimate": [
+      "buggy/ultimate-1",
+      "buggy/ultimate-2"
+    ],
+    "ultimateMax": [
+      "buggy/ultimateMax-1"
+    ],
+    "win": [
+      "buggy/win-1"
+    ]
+  },
+  "chopper": {
+    "select": [
+      "chopper/select-1"
+    ],
+    "ultimate": [
+      "chopper/ultimate-1",
+      "chopper/ultimate-2"
+    ],
+    "ultimateMax": [
+      "chopper/ultimateMax-1",
+      "chopper/ultimateMax-2",
+      "chopper/ultimateMax-3"
+    ],
+    "win": [
+      "chopper/win-1"
+    ]
+  },
+  "doflamingo": {
+    "select": [
+      "doflamingo/select-1"
+    ],
+    "ultimate": [
+      "doflamingo/ultimate-1",
+      "doflamingo/ultimate-2",
+      "doflamingo/ultimate-3"
+    ],
+    "ultimateMax": [
+      "doflamingo/ultimateMax-1",
+      "doflamingo/ultimateMax-2"
+    ],
+    "win": [
+      "doflamingo/win-1",
+      "doflamingo/win-2"
+    ]
+  },
+  "drake": {
+    "select": [
+      "drake/select-1"
+    ],
+    "ultimate": [
+      "drake/ultimate-1"
+    ],
+    "ultimateMax": [
+      "drake/ultimateMax-1"
+    ],
+    "win": [
+      "drake/win-1"
+    ]
+  },
+  "enel": {
+    "select": [
+      "enel/select-1"
+    ],
+    "ultimate": [
+      "enel/ultimate-1",
+      "enel/ultimate-2"
+    ],
+    "ultimateMax": [
+      "enel/ultimateMax-1",
+      "enel/ultimateMax-2"
+    ],
+    "win": [
+      "enel/win-1"
+    ]
+  },
+  "franky": {
+    "select": [
+      "franky/select-1"
+    ],
+    "ultimate": [
+      "franky/ultimate-1"
+    ],
+    "ultimateMax": [
+      "franky/ultimateMax-1"
+    ],
+    "win": [
+      "franky/win-1"
+    ]
+  },
+  "hancock": {
+    "select": [
+      "hancock/select-1"
+    ],
+    "ultimate": [
+      "hancock/ultimate-1"
+    ],
+    "ultimateMax": [
+      "hancock/ultimateMax-1",
+      "hancock/ultimateMax-2"
+    ],
+    "win": [
+      "hancock/win-1",
+      "hancock/win-2"
+    ]
+  },
+  "hody": {
+    "select": [
+      "hody/select-1"
+    ],
+    "ultimate": [
+      "hody/ultimate-1"
+    ],
+    "ultimateMax": [
+      "hody/ultimateMax-1"
+    ],
+    "win": [
+      "hody/win-1"
+    ]
+  },
+  "ivankov": {
+    "select": [
+      "ivankov/select-1"
+    ],
+    "ultimate": [
+      "ivankov/ultimate-1"
+    ],
+    "ultimateMax": [
+      "ivankov/ultimateMax-1"
+    ],
+    "win": [
+      "ivankov/win-1"
+    ]
+  },
+  "jinbei": {
+    "select": [
+      "jinbei/select-1"
+    ],
+    "ultimate": [
+      "jinbei/ultimate-1"
+    ],
+    "ultimateMax": [
+      "jinbei/ultimateMax-1"
+    ],
+    "win": [
+      "jinbei/win-1"
+    ]
+  },
+  "kid": {
+    "select": [
+      "kid/select-1"
+    ],
+    "ultimate": [
+      "kid/ultimate-1"
+    ],
+    "ultimateMax": [
+      "kid/ultimateMax-1"
+    ],
+    "win": [
+      "kid/win-1"
+    ]
+  },
+  "kizaru": {
+    "select": [
+      "kizaru/select-1"
+    ],
+    "ultimate": [
+      "kizaru/ultimate-1"
+    ],
+    "ultimateMax": [
+      "kizaru/ultimateMax-1"
+    ],
+    "win": [
+      "kizaru/win-1"
+    ]
+  },
+  "kuma": {
+    "select": [
+      "kuma/select-1"
+    ],
+    "ultimate": [
+      "kuma/ultimate-1"
+    ],
+    "ultimateMax": [
+      "kuma/ultimateMax-1"
+    ],
+    "win": [
+      "kuma/win-1"
+    ]
+  },
+  "law": {
+    "select": [
+      "law/select-1"
+    ],
+    "ultimate": [
+      "law/ultimate-1"
+    ],
+    "ultimateMax": [
+      "law/ultimateMax-1"
+    ],
+    "win": [
+      "law/win-1"
+    ]
+  },
+  "lucci": {
+    "select": [
+      "lucci/select-1"
+    ],
+    "ultimate": [
+      "lucci/ultimate-1"
+    ],
+    "ultimateMax": [
+      "lucci/ultimateMax-1",
+      "lucci/ultimateMax-2"
+    ],
+    "win": [
+      "lucci/win-1"
+    ]
+  },
+  "luffy": {
+    "select": [
+      "luffy/select-1"
+    ],
+    "ultimate": [
+      "luffy/ultimate-1",
+      "luffy/ultimate-2"
+    ],
+    "ultimateMax": [
+      "luffy/ultimateMax-1",
+      "luffy/ultimateMax-2",
+      "luffy/ultimateMax-3"
+    ],
+    "win": [
+      "luffy/win-1"
+    ]
+  },
+  "magellan": {
+    "select": [
+      "magellan/select-1"
+    ],
+    "ultimate": [
+      "magellan/ultimate-1",
+      "magellan/ultimate-2"
+    ],
+    "ultimateMax": [
+      "magellan/ultimateMax-1",
+      "magellan/ultimateMax-2"
+    ],
+    "win": [
+      "magellan/win-1"
+    ]
+  },
+  "marco": {
+    "select": [
+      "marco/select-1"
+    ],
+    "ultimate": [
+      "marco/ultimate-1"
+    ],
+    "ultimateMax": [
+      "marco/ultimateMax-1"
+    ],
+    "win": [
+      "marco/win-1"
+    ]
+  },
+  "mihawk": {
+    "select": [
+      "mihawk/select-1"
+    ],
+    "ultimate": [
+      "mihawk/ultimate-1",
+      "mihawk/ultimate-2"
+    ],
+    "ultimateMax": [
+      "mihawk/ultimateMax-1"
+    ],
+    "win": [
+      "mihawk/win-1"
+    ]
+  },
+  "nami": {
+    "select": [
+      "nami/select-1"
+    ],
+    "ultimate": [
+      "nami/ultimate-1"
+    ],
+    "ultimateMax": [
+      "nami/ultimateMax-1"
+    ],
+    "win": [
+      "nami/win-1"
+    ]
+  },
+  "robin": {
+    "select": [
+      "robin/select-1"
+    ],
+    "ultimate": [
+      "robin/ultimate-1",
+      "robin/ultimate-2"
+    ],
+    "ultimateMax": [
+      "robin/ultimateMax-1",
+      "robin/ultimateMax-2"
+    ],
+    "win": [
+      "robin/win-1"
+    ]
+  },
+  "sanji": {
+    "select": [
+      "sanji/select-1"
+    ],
+    "ultimate": [
+      "sanji/ultimate-1",
+      "sanji/ultimate-2",
+      "sanji/ultimate-3"
+    ],
+    "ultimateMax": [
+      "sanji/ultimateMax-1",
+      "sanji/ultimateMax-2"
+    ],
+    "win": [
+      "sanji/win-1"
+    ]
+  },
+  "shanks": {
+    "select": [
+      "shanks/select-1"
+    ],
+    "ultimate": [
+      "shanks/ultimate-1",
+      "shanks/ultimate-2"
+    ],
+    "ultimateMax": [
+      "shanks/ultimateMax-1",
+      "shanks/ultimateMax-2"
+    ],
+    "win": [
+      "shanks/win-1"
+    ]
+  },
+  "shiki": {
+    "select": [
+      "shiki/select-1"
+    ],
+    "ultimate": [
+      "shiki/ultimate-1"
+    ],
+    "ultimateMax": [
+      "shiki/ultimateMax-1",
+      "shiki/ultimateMax-2"
+    ],
+    "win": [
+      "shiki/win-1"
+    ]
+  },
+  "usopp": {
+    "select": [
+      "usopp/select-1"
+    ],
+    "ultimate": [
+      "usopp/ultimate-1",
+      "usopp/ultimate-2",
+      "usopp/ultimate-3"
+    ],
+    "ultimateMax": [
+      "usopp/ultimateMax-1",
+      "usopp/ultimateMax-2"
+    ],
+    "win": [
+      "usopp/win-1"
+    ]
+  },
+  "vivi": {
+    "select": [
+      "vivi/select-1"
+    ],
+    "ultimate": [
+      "vivi/ultimate-1",
+      "vivi/ultimate-2",
+      "vivi/ultimate-3"
+    ],
+    "ultimateMax": [
+      "vivi/ultimateMax-1"
+    ],
+    "win": [
+      "vivi/win-1"
+    ]
+  },
+  "whitebeard": {
+    "select": [
+      "whitebeard/select-1"
+    ],
+    "ultimate": [
+      "whitebeard/ultimate-1"
+    ],
+    "ultimateMax": [
+      "whitebeard/ultimateMax-1"
+    ],
+    "win": [
+      "whitebeard/win-1"
+    ]
+  }
+}

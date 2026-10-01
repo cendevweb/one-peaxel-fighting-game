@@ -1,4 +1,5 @@
 import { play } from '../audio/sound';
+import { playVoice } from '../audio/voices';
 import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes, ultimateUsable } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { PX, type FighterState, type GameEvent, type MatchState, type Rect } from '../engine/types';
@@ -12,6 +13,9 @@ import { Vfx } from './vfx';
  * never writes it. The canvas is 640×360; the world is drawn at ×2 (a 320×180
  * view), the HUD at ×1 for finer text.
  */
+
+/** One voice channel per side: a fighter's new line cuts off its previous one. */
+export const voiceChannel = (side: number): string => `fighter${side}`;
 
 interface Ghost { x: number; y: number; anim: string; frame: number; facing: 1 | -1; life: number; tint: Tint }
 
@@ -125,6 +129,8 @@ export class FightView {
                     const heavy = /heavy|Heavy|special|ultimate/.test(e.slot);
                     play(e.sfx ?? (heavy ? 'swingHeavy' : 'swing'));
                     if (e.slot.startsWith('ultimate')) this.vfx.ring(this.sx(f), this.sy(f) - 30, '#ffd84a', 4, 20, 2);
+                    // The line starts on the move's first frame, freeze or not.
+                    if (e.slot === 'ultimate' || e.slot === 'ultimate2') playVoice(f.char, e.slot === 'ultimate2' ? 'ultimateMax' : 'ultimate', voiceChannel(e.side));
                     break;
                 }
                 case 'fx': {

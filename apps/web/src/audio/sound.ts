@@ -1,6 +1,6 @@
 /**
- * Every sound is synthesised with WebAudio: no audio file ships with the
- * game. Short envelopes over noise and simple oscillators give the crunchy,
+ * Every sound effect is synthesised with WebAudio; only the character
+ * voices are recorded clips (`voices.ts`). Short envelopes over noise and simple oscillators give the crunchy,
  * handheld-era feel of the source game.
  */
 
@@ -13,12 +13,19 @@ let noiseBuffer: AudioBuffer | null = null;
 export const volume = { sfx: 0.8, music: 0.45 };
 
 export function unlockAudio(): void {
-    if (ctx) {
-        if (ctx.state === 'suspended') void ctx.resume();
-        return;
-    }
+    const ac = ensureAudio();
+    if (ac?.state === 'suspended') void ac.resume();
+}
+
+/**
+ * Builds the audio graph if needed. A context made before any key press
+ * stays suspended, but it can already decode the voice clips while the game
+ * loads; the first key press or click resumes it (`unlockAudio`).
+ */
+export function ensureAudio(): AudioContext | null {
+    if (ctx) return ctx;
     const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
+    if (!AC) return null;
     ctx = new AC();
     master = ctx.createGain();
     master.gain.value = 0.7;
@@ -35,7 +42,12 @@ export function unlockAudio(): void {
     noiseBuffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    return ctx;
 }
+
+/** The context, only while it actually plays: sounds asked for while it is
+ *  suspended would otherwise all burst out at once when it resumes. */
+export const runningContext = (): AudioContext | null => (ctx?.state === 'running' ? ctx : null);
 
 export function setVolumes(sfx: number, music: number): void {
     volume.sfx = sfx;
@@ -46,6 +58,7 @@ export function setVolumes(sfx: number, music: number): void {
 
 export const audioContext = () => ctx;
 export const musicOut = () => musicBus;
+export const sfxOut = () => sfxBus;
 
 interface Env { a?: number; d: number; peak?: number }
 
@@ -190,7 +203,8 @@ const SOUNDS: Record<string, (t: number) => void> = {
 export const hasSound = (name: string): boolean => name in SOUNDS;
 
 export function play(name: string | undefined, delay = 0): void {
-    if (!name || !ctx) return;
+    const ac = runningContext();
+    if (!name || !ac) return;
     const fn = SOUNDS[name];
-    if (fn) fn(ctx.currentTime + delay);
+    if (fn) fn(ac.currentTime + delay);
 }

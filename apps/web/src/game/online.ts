@@ -1,5 +1,6 @@
 import { play } from '../audio/sound';
 import { startMusic } from '../audio/music';
+import { playVoice } from '../audio/voices';
 import { ROSTER } from '../characters';
 import { getChar } from '../engine/registry';
 import { KEYS, keyLabel, type MenuInput } from '../input/devices';
@@ -538,7 +539,7 @@ export class OnlineSelectScene extends SelectScene {
                 const i = ROSTER.findIndex((c) => c.id === msg.char);
                 if (i >= 0) {
                     if (i !== this.theirs.index) play('uiMove');
-                    if (msg.ready && !this.theirs.locked) play('uiSelect');
+                    if (msg.ready && !this.theirs.locked) { play('uiSelect'); playVoice(msg.char, 'select', 'select'); }
                     this.theirs.index = i;
                     this.theirs.locked = msg.ready;
                 }
@@ -580,7 +581,7 @@ export class OnlineSelectScene extends SelectScene {
             if (m.action === 'right') c.index = (c.index + 1) % n;
             if (m.action === 'up' || m.action === 'down') c.index = gridStep(c.index, m.action === 'up' ? -1 : 1);
             if (c.index !== before) { play('uiMove'); changed = true; }
-            if (m.action === 'confirm') { c.locked = true; changed = true; play('uiSelect'); }
+            if (m.action === 'confirm') { c.locked = true; changed = true; play('uiSelect'); playVoice(ROSTER[c.index].id, 'select', 'select'); }
         }
         if (changed) this.announce();
 

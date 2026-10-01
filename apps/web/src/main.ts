@@ -1,4 +1,5 @@
 import { inject } from '@vercel/analytics';
+import { voiceJobs } from './audio/voices';
 import { ROSTER } from './characters';
 import { App } from './game/app';
 import { initialScene } from './game/online';
@@ -28,7 +29,9 @@ window.addEventListener('resize', fit);
 fit();
 
 async function boot(): Promise<void> {
-    const jobs: Promise<void>[] = [loadCommon(), ...ROSTER.map((c) => loadAtlas(c.manifest)), ...STAGES.map((s) => loadStage(s.id))];
+    const jobs: Promise<void>[] = [
+        loadCommon(), ...ROSTER.map((c) => loadAtlas(c.manifest)), ...STAGES.map((s) => loadStage(s.id)), ...voiceJobs()
+    ];
     let done = 0;
     const progress = () => {
         ctx.fillStyle = '#07040c';
