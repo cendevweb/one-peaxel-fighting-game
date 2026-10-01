@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CODE_ALPHABET, CODE_LENGTH, DEFAULT_ICE, codeFromText, inviteUrl, makeRoomCode, peerConfig, peerIdFor } from '../net/peer-config';
+import { OFFICIAL_URL, publicUrlFrom } from '../net/public-url';
 
 describe('room codes', () => {
     it('are six unambiguous characters', () => {
@@ -33,11 +34,11 @@ describe('room codes', () => {
 
     it('point at the public address, not a private deployment URL', () => {
         const loc = { origin: 'https://web-abc123-team.vercel.app', pathname: '/' };
-        expect(inviteUrl('K7P2QM', loc, undefined, 'https://web-kappa-blush-23.vercel.app')).toBe('https://web-kappa-blush-23.vercel.app/?salon=K7P2QM');
+        expect(inviteUrl('K7P2QM', loc, undefined, OFFICIAL_URL)).toBe('https://www.one-piexel.gg/?salon=K7P2QM');
         expect(inviteUrl('K7P2QM', loc, undefined, '')).toBe('https://web-abc123-team.vercel.app/?salon=K7P2QM');
         // A local broker only works on the page that set it.
         const local = { origin: 'http://127.0.0.1:5173', pathname: '/' };
-        expect(inviteUrl('K7P2QM', local, '127.0.0.1:9000', 'https://web-kappa-blush-23.vercel.app')).toBe('http://127.0.0.1:5173/?peer=127.0.0.1:9000&salon=K7P2QM');
+        expect(inviteUrl('K7P2QM', local, '127.0.0.1:9000', OFFICIAL_URL)).toBe('http://127.0.0.1:5173/?peer=127.0.0.1:9000&salon=K7P2QM');
     });
 });
 
@@ -69,5 +70,12 @@ describe('peer config', () => {
         expect(c.debugPeer).toBeUndefined();
         expect(c.iceServers.length).toBeGreaterThan(0);
         expect(peerConfig({ DEV: true }, '?peer=127.0.0.1:9000', 'one-piexel.vercel.app').host).toBe('127.0.0.1');
+    });
+
+    it('use the official domain on every Vercel build', () => {
+        expect(OFFICIAL_URL).toBe('https://www.one-piexel.gg');
+        expect(publicUrlFrom({ VERCEL: '1', VERCEL_PROJECT_PRODUCTION_URL: 'web-kappa-blush-23.vercel.app' })).toBe(OFFICIAL_URL);
+        expect(publicUrlFrom({ VERCEL: '1', VITE_PUBLIC_URL: ' https://autre.example ' })).toBe('https://autre.example');
+        expect(publicUrlFrom({})).toBe('');
     });
 });
