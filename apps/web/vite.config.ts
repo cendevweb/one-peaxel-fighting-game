@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from 'vite';
+import { publicUrlFrom } from './src/net/public-url';
 
 /**
  * The public address of the game, baked into the bundle so invite links
@@ -7,13 +8,12 @@ import { defineConfig, loadEnv } from 'vite';
  * behind Vercel Authentication: a friend following a link built from it
  * gets a Vercel login page instead of the game.
  *
- * VITE_PUBLIC_URL wins when set (a custom domain); otherwise Vercel's own
- * system variable VERCEL_PROJECT_PRODUCTION_URL gives the production domain.
+ * VITE_PUBLIC_URL wins when set; on Vercel it is the official domain
+ * (src/net/public-url.ts).
  */
 export default defineConfig(({ mode }) => {
     const env = { ...loadEnv(mode, process.cwd(), 'VITE_'), ...process.env };
-    const prodHost = env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-    const publicUrl = env.VITE_PUBLIC_URL?.trim() || (prodHost ? `https://${prodHost}` : '');
+    const publicUrl = publicUrlFrom(env);
     return {
         define: {
             __PUBLIC_URL__: JSON.stringify(publicUrl),
