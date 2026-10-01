@@ -288,6 +288,11 @@ export interface MatchState {
     roundWinner: -1 | 0 | 1 | 2;
     roundsToWin: number;
     training: boolean;
+    /**
+     * Training only (absent otherwise, so the online fingerprint is
+     * untouched): false when the meter charges as in a real fight.
+     */
+    fullMeter?: boolean;
     /** Frames skipped by slow motion: sub-tick counter. */
     slowAcc: number;
     timeOver: boolean;

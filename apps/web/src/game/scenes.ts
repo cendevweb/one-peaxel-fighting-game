@@ -1,7 +1,7 @@
 import { play } from '../audio/sound';
 import { startMusic, stopMusic } from '../audio/music';
 import { ROSTER } from '../characters';
-import { createMatch, stepMatch } from '../engine/match';
+import { createMatch, METER_MAX, stepMatch } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, type CharacterDef, type MatchState, type MoveSlot } from '../engine/types';
 import { KEYS, endInputTick, keyLabel, padFamily, readSide, readSolo, rumbleOn, type MenuInput } from '../input/devices';
@@ -539,7 +539,7 @@ export class FightScene implements Scene {
     private pauseItems(): string[] {
         if (this.setup.mode === 'training') {
             const names: Record<DummyMode, string> = { stand: 'DEBOUT', crouch: 'ACCROUPI', guard: 'GARDE', jump: 'SAUTE', cpu: 'ORDINATEUR' };
-            return ['REPRENDRE', 'LISTE DES COUPS', `MANNEQUIN : ${names[this.dummy]}`, `BOÎTES : ${this.boxes ? 'OUI' : 'NON'}`, 'CHANGER DE PERSONNAGES', 'MENU PRINCIPAL'];
+            return ['REPRENDRE', 'LISTE DES COUPS', `MANNEQUIN : ${names[this.dummy]}`, `BOÎTES : ${this.boxes ? 'OUI' : 'NON'}`, `JAUGE D'ULTIME : ${this.state.fullMeter !== false ? 'PLEINE' : 'NORMALE'}`, 'CHANGER DE PERSONNAGES', 'MENU PRINCIPAL'];
         }
         return ['REPRENDRE', 'LISTE DES COUPS', 'RECOMMENCER', 'MENU PRINCIPAL'];
     }
@@ -604,6 +604,10 @@ export class FightScene implements Scene {
         } else if (item.startsWith('BOÎTES')) {
             this.boxes = !this.boxes;
             this.view.options.showBoxes = this.boxes;
+        } else if (item.startsWith('JAUGE')) {
+            // Normal: both meters start empty and fill as in a real fight.
+            this.state.fullMeter = this.state.fullMeter === false;
+            for (const f of this.state.fighters) f.meter = this.state.fullMeter ? METER_MAX : 0;
         }
         const i = this.pauseList.index;
         this.pauseList.items = this.pauseItems();

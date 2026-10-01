@@ -51,6 +51,8 @@ const px = (v: number) => Math.round(v * PX);
 export interface MatchOptions {
     roundsToWin?: number;
     training?: boolean;
+    /** Training only: meter always full (default) or earned as in a real fight. */
+    fullMeter?: boolean;
 }
 
 function createFighter(side: 0 | 1, char: string, x: number): FighterState {
@@ -81,7 +83,8 @@ export function createMatch(p1: string, p2: string, options: MatchOptions = {}):
         timeOver: false, perfect: false
     };
     if (state.training) {
-        for (const f of state.fighters) f.meter = METER_MAX;
+        state.fullMeter = options.fullMeter ?? true;
+        if (state.fullMeter) for (const f of state.fighters) f.meter = METER_MAX;
     }
     return state;
 }
@@ -175,9 +178,9 @@ function startMove(state: MatchState, f: FighterState, slot: string, events: Gam
     const move = def.moves[slot as keyof CharacterDef['moves']];
     if (!move) return;
     if (move.cost) {
-        if (f.meter < move.cost && !state.training) return;
+        if (f.meter < move.cost && !freeMeter(state)) return;
         f.meter = Math.max(0, f.meter - move.cost);
-        if (state.training) f.meter = METER_MAX;
+        if (freeMeter(state)) f.meter = METER_MAX;
         if (move.kind === 'ultimate' && !state.training) f.ultUsed = true;
     }
     setMode(f, 'move');
@@ -211,10 +214,12 @@ const lastActive = (move: MoveDef) => (move.hits.length ? Math.max(...move.hits.
 
 /**
  * One ultimate per player per round, either one; the two-bar ultimate only
- * from round 2. Training has no limit.
+ * from round 2. Training has no limit; with the normal meter it still needs
+ * the bars.
  */
 export function ultimateUsable(state: MatchState, f: FighterState, slot: 'ultimate' | 'ultimate2'): boolean {
-    if (state.training) return true;
+    if (freeMeter(state)) return true;
+    if (state.training) return f.meter >= (slot === 'ultimate2' ? ULTIMATE2_COST : ULTIMATE_COST);
     if (f.ultUsed) return false;
     if (slot === 'ultimate2') return state.round >= 2 && f.meter >= ULTIMATE2_COST;
     return f.meter >= ULTIMATE_COST;
@@ -322,7 +327,7 @@ function canStart(state: MatchState, f: FighterState, slot: string): boolean {
     const move = getChar(f.char).moves[slot as keyof CharacterDef['moves']];
     if (!move) return false;
     if (slot === 'ultimate' || slot === 'ultimate2') return ultimateUsable(state, f, slot);
-    return !move.cost || state.training || f.meter >= move.cost;
+    return !move.cost || freeMeter(state) || f.meter >= move.cost;
 }
 
 /** Starts the buffered move if `ok` accepts it. */
@@ -1187,11 +1192,14 @@ function stepPhase(state: MatchState, events: GameEvent[]): void {
 
 // ——— Training niceties ———
 
+/** Training with the always-full meter: every cost is free. */
+export const freeMeter = (state: MatchState) => state.training && state.fullMeter !== false;
+
 function trainingRefill(state: MatchState): void {
     if (!state.training) return;
     for (const f of state.fighters) {
         const def = getChar(f.char);
-        f.meter = METER_MAX;
+        if (state.fullMeter !== false) f.meter = METER_MAX;
         const idle = f.mode === 'idle' || f.mode === 'walk' || f.mode === 'crouch';
         if (idle && f.t > 50 && f.health < def.health) {
             f.health = def.health;
