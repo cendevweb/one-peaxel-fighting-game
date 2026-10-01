@@ -64,7 +64,7 @@ function createFighter(side: 0 | 1, char: string, x: number): FighterState {
         crouching: false,
         health: def.health, redHealth: def.health,
         meter: 0, guard: GUARD_MAX, guardRest: 0,
-        combo: 0, comboDamage: 0, juggle: 0,
+        combo: 0, comboDamage: 0, superFrom: 0, superRun: false, juggle: 0,
         hitstop: 0, invuln: 0, thrownBy: -1, airActions: 0, wins: 0,
         buffer: null, counterHit: false, history: []
     };
@@ -447,8 +447,15 @@ export function activeHitBoxes(f: FighterState): Rect[] {
 
 // ——— Hitting ———
 
+/**
+ * Combo scaling: each hit after the second deals 12% less, down to 30%.
+ * An ultimate only counts its own hits, not the ones that led into it, so a
+ * combo ending in a full ultimate always deals the ultimate's full damage on
+ * top of the rest instead of less than the ultimate on its own.
+ */
 function scaledDamage(d: FighterState, base: number, counter: boolean): number {
-    const scale = Math.max(30, 100 - 12 * Math.max(0, d.combo - 1));
+    const taken = d.superRun ? d.combo - d.superFrom : d.combo;
+    const scale = Math.max(30, 100 - 12 * Math.max(0, taken - 1));
     let dmg = Math.floor((base * scale) / 100);
     if (counter) dmg = Math.floor((dmg * 120) / 100);
     return Math.max(1, dmg);
@@ -533,7 +540,12 @@ function connect(
         d.combo = 0;
         d.comboDamage = 0;
         d.juggle = 0;
+        d.superRun = false;
     }
+    // A run of ultimate hits restarts the scaling count where it began.
+    const ultimate = src.kind === 'ultimate';
+    if (ultimate && !d.superRun) d.superFrom = d.combo;
+    d.superRun = ultimate;
     const counter = d.mode === 'move' && (() => {
         const m = moveOf(d);
         return !!m && d.frame <= lastActive(m);
@@ -659,7 +671,8 @@ function stepProjectiles(state: MatchState, events: GameEvent[]): void {
         p.hitsLeft--;
         if (p.hitsLeft <= 0) p.dead = true;
         const owner = state.fighters[p.owner];
-        connect(state, owner, { x: p.x - p.vx * 4, facing: p.facing, side: p.owner, kind: 'special' }, d, def.hit, centre(box, hurt), events, true);
+        const kind = getChar(p.char).moves[p.def as keyof CharacterDef['moves']]!.kind === 'ultimate' ? 'ultimate' : 'special';
+        connect(state, owner, { x: p.x - p.vx * 4, facing: p.facing, side: p.owner, kind }, d, def.hit, centre(box, hurt), events, true);
     }
     const alive = state.projectiles.filter((p) => !p.dead);
     for (const f of state.fighters) {
