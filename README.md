@@ -70,6 +70,10 @@ disposition marche en AZERTY et en QWERTY.
 | [A]+[B]+[C] | Ultime max : la technique la plus forte du combattant, coûte les deux barres |
 | →→ / ←← | Ruée / pas arrière |
 
+Un seul ultime par round et par joueur (l'un ou l'autre) ; l'ultime max se
+débloque au round 2. La jauge se garde d'un round à l'autre. L'entraînement
+n'a pas de limite.
+
 ### Combattants
 
 Chaque coup reprend l'animation et les effets de la planche du jeu DS.

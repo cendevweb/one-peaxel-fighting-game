@@ -1,4 +1,4 @@
-import { ULTIMATE2_COST, ULTIMATE_COST } from '../engine/match';
+import { ultimateUsable } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, PX, type FighterState, type MatchState } from '../engine/types';
 
@@ -39,6 +39,9 @@ export class Cpu {
     /** What the CPU saw `reaction` ticks ago: it acts on the past. */
     private memory: { oppMode: string; oppMove: string | null; oppY: number; oppFrame: number; dist: number }[] = [];
     private blocking = 0;
+    /** Which ultimates the rules allow right now (one per round, the max from round 2). */
+    private ult = false;
+    private ult2 = false;
 
     constructor(readonly level: CpuLevel, seed = 1) {
         this.seed = seed * 7919 + 13;
@@ -74,6 +77,8 @@ export class Cpu {
     next(state: MatchState, side: 0 | 1): number {
         const me = state.fighters[side];
         const opp = state.fighters[1 - side];
+        this.ult = ultimateUsable(state, me, 'ultimate');
+        this.ult2 = ultimateUsable(state, me, 'ultimate2');
         const dist = Math.abs(opp.x - me.x) / PX;
         this.memory.push({ oppMode: opp.mode, oppMove: opp.move, oppY: opp.y, oppFrame: opp.frame, dist });
         if (this.memory.length > 40) this.memory.shift();
@@ -127,8 +132,8 @@ export class Cpu {
         }
 
         // Ultimate when it will connect; with both bars, the strongest one.
-        if (me.meter >= ULTIMATE_COST && dist < 70 && (opp.mode === 'move' || opp.mode === 'land') && this.rand() < 0.6) {
-            this.push([this.superBits(me.meter), 2], [0, 20]);
+        if (this.ult && dist < 70 && (opp.mode === 'move' || opp.mode === 'land') && this.rand() < 0.6) {
+            this.push([this.superBits(), 2], [0, 20]);
             return 0;
         }
 
@@ -211,13 +216,13 @@ export class Cpu {
                 break;
             }
             default:
-                if (me.meter >= ULTIMATE_COST && this.rand() < 0.5) this.push([this.superBits(me.meter), 2], [0, 30]);
+                if (this.ult && this.rand() < 0.5) this.push([this.superBits(), 2], [0, 30]);
         }
     }
 
     /** H + S for the ultimate, L + H + S for the second one once two bars are full. */
-    private superBits(meter: number): number {
-        return meter >= ULTIMATE2_COST && this.rand() < 0.7 ? BTN.light | BTN.heavy | BTN.special : BTN.heavy | BTN.special;
+    private superBits(): number {
+        return this.ult2 && this.rand() < 0.7 ? BTN.light | BTN.heavy | BTN.special : BTN.heavy | BTN.special;
     }
 }
 

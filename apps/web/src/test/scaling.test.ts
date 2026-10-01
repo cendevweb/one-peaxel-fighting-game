@@ -22,6 +22,8 @@ interface Result { total: number; ult: number[]; before: number }
 function run(char: string, inputs: number[]): Result {
     const s = createMatch(char, 'luffy');
     while (s.phase !== 'fight') stepMatch(s, [0, 0]);
+    // Round 2: the two-bar ultimate is locked in round 1.
+    s.round = 2;
     const [a, b] = s.fighters;
     a.x = b.x - (getChar(a.char).width + getChar(b.char).width + 4) * PX;
     a.meter = 200;

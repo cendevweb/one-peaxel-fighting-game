@@ -22,9 +22,9 @@ export const ULTIMATE_COST = 100;
 /** The second ultimate spends both bars. */
 export const ULTIMATE2_COST = 200;
 export const GUARD_MAX = 100;
-/** Meter gains are scaled by 4/5 so the bars fill about 20% slower. */
-const METER_GAIN_NUM = 4;
-const METER_GAIN_DEN = 5;
+/** Meter gains are scaled by 1/3: a little over one bar per player per round. */
+const METER_GAIN_NUM = 1;
+const METER_GAIN_DEN = 3;
 const PREJUMP = 4;
 const LAND_LAG = 3;
 const DASH_TICKS = 16;
@@ -64,7 +64,7 @@ function createFighter(side: 0 | 1, char: string, x: number): FighterState {
         crouching: false,
         health: def.health, redHealth: def.health,
         meter: 0, guard: GUARD_MAX, guardRest: 0,
-        combo: 0, comboDamage: 0, superFrom: 0, superRun: false, juggle: 0,
+        combo: 0, comboDamage: 0, superFrom: 0, superRun: false, ultUsed: false, juggle: 0,
         hitstop: 0, invuln: 0, thrownBy: -1, airActions: 0, wins: 0,
         buffer: null, counterHit: false, history: []
     };
@@ -178,6 +178,7 @@ function startMove(state: MatchState, f: FighterState, slot: string, events: Gam
         if (f.meter < move.cost && !state.training) return;
         f.meter = Math.max(0, f.meter - move.cost);
         if (state.training) f.meter = METER_MAX;
+        if (move.kind === 'ultimate' && !state.training) f.ultUsed = true;
     }
     setMode(f, 'move');
     f.move = slot;
@@ -208,8 +209,19 @@ const lastActive = (move: MoveDef) => (move.hits.length ? Math.max(...move.hits.
 
 // ——— Reading intent from inputs ———
 
+/**
+ * One ultimate per player per round, either one; the two-bar ultimate only
+ * from round 2. Training has no limit.
+ */
+export function ultimateUsable(state: MatchState, f: FighterState, slot: 'ultimate' | 'ultimate2'): boolean {
+    if (state.training) return true;
+    if (f.ultUsed) return false;
+    if (slot === 'ultimate2') return state.round >= 2 && f.meter >= ULTIMATE2_COST;
+    return f.meter >= ULTIMATE_COST;
+}
+
 function wantsUltimate(f: FighterState, state: MatchState): boolean {
-    if (f.meter < ULTIMATE_COST && !state.training) return false;
+    if (!ultimateUsable(state, f, 'ultimate')) return false;
     const h = f.history;
     const hs = (pressedWithin(h, BTN.heavy, 3) && pressedWithin(h, BTN.special, 3) &&
         (pressed(h, BTN.heavy) || pressed(h, BTN.special)));
@@ -294,7 +306,7 @@ function intentOf(state: MatchState, f: FighterState): string | null {
     const has = (slot: string) => !!def.moves[slot as keyof CharacterDef['moves']];
     // Three buttons ask for the second ultimate only: short of two bars
     // they do nothing, rather than spend one bar on the first.
-    if (wantsUltimate2(f)) return (f.meter >= ULTIMATE2_COST || state.training) && has('ultimate2') ? 'ultimate2' : null;
+    if (wantsUltimate2(f)) return ultimateUsable(state, f, 'ultimate2') && has('ultimate2') ? 'ultimate2' : null;
     if (wantsUltimate(f, state)) return 'ultimate';
     if (f.y > 0 || f.mode === 'air' || f.mode === 'prejump') {
         if (pressed(h, BTN.special)) return f.mode === 'prejump' ? 'specialU' : has('airSpecial') ? 'airSpecial' : null;
@@ -309,6 +321,7 @@ function intentOf(state: MatchState, f: FighterState): string | null {
 function canStart(state: MatchState, f: FighterState, slot: string): boolean {
     const move = getChar(f.char).moves[slot as keyof CharacterDef['moves']];
     if (!move) return false;
+    if (slot === 'ultimate' || slot === 'ultimate2') return ultimateUsable(state, f, slot);
     return !move.cost || state.training || f.meter >= move.cost;
 }
 
@@ -475,6 +488,10 @@ function applyPush(state: MatchState, a: FighterState, d: FighterState, pushPx: 
     const v = pushVelocity(pushPx);
     if (atWall(state, d, dir) && a.y === 0) {
         // Cornered: the attacker bounces off instead, as in every Street Fighter.
+        // Not during a rushing move: its motion has no friction, so the bounce
+        // would carry the attacker backwards until the move ends and the
+        // following hits would whiff. It keeps pressing against the body.
+        if (a.mode === 'move' && moveOf(a)?.motion?.length) return;
         a.vx = -dir * v;
     } else {
         d.vx = dir * v;
@@ -672,7 +689,10 @@ function stepProjectiles(state: MatchState, events: GameEvent[]): void {
         if (p.hitsLeft <= 0) p.dead = true;
         const owner = state.fighters[p.owner];
         const kind = getChar(p.char).moves[p.def as keyof CharacterDef['moves']]!.kind === 'ultimate' ? 'ultimate' : 'special';
-        connect(state, owner, { x: p.x - p.vx * 4, facing: p.facing, side: p.owner, kind }, d, def.hit, centre(box, hurt), events, true);
+        // The projectile comes from behind its direction of travel: guarding
+        // means holding away from that side, wherever its centre has got to
+        // (point-blank, a wide projectile spawns past the target's centre).
+        connect(state, owner, { x: d.x - p.facing * PX, facing: p.facing, side: p.owner, kind }, d, def.hit, centre(box, hurt), events, true);
     }
     const alive = state.projectiles.filter((p) => !p.dead);
     for (const f of state.fighters) {
