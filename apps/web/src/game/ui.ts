@@ -61,13 +61,13 @@ export function hint(ctx: CanvasRenderingContext2D, text: string): void {
     drawText(ctx, text, 320, 348, { color: '#cfc4dc', align: 'center' });
 }
 
-export function menuItems(ctx: CanvasRenderingContext2D, items: string[], index: number, x: number, y: number, t: number, gap = 22, scale = 2): void {
+export function menuItems(ctx: CanvasRenderingContext2D, items: string[], index: number, x: number, y: number, t: number, gap = 22, scale = 2, width = 280): void {
     items.forEach((item, i) => {
         const sel = i === index;
         const dx = sel ? Math.round(Math.sin(t / 8) * 2) + 6 : 0;
         if (sel) {
             ctx.fillStyle = 'rgba(255,210,63,0.16)';
-            ctx.fillRect(x - 14, y + i * gap - 5, 280, gap - 2);
+            ctx.fillRect(x - 14, y + i * gap - 5, width, gap - 2);
             drawText(ctx, '»', x - 10 + dx / 2, y + i * gap, { color: COLORS.gold, outline: COLORS.ink, scale });
         }
         drawText(ctx, item, x + 8 + dx, y + i * gap, {

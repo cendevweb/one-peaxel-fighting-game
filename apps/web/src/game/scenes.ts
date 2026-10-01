@@ -621,8 +621,12 @@ export class FightScene implements Scene {
             ctx.fillStyle = 'rgba(8,4,16,0.7)';
             ctx.fillRect(0, 0, 640, 360);
             title(ctx, 'PAUSE', 70);
-            panel(ctx, 180, 110, 280, this.pauseList.items.length * 22 + 20);
-            menuItems(ctx, this.pauseList.items, this.pauseList.index, 200, 124, this.t);
+            // Wide enough for the longest line, its selection shift included.
+            const items = this.pauseList.items;
+            const w = Math.max(280, Math.max(...items.map((it) => textWidth(it, 2))) + 64);
+            const x = 320 - (w >> 1);
+            panel(ctx, x, 110, w, items.length * 22 + 20);
+            menuItems(ctx, items, this.pauseList.index, x + 20, 124, this.t, 22, 2, w - 12);
         }
         if (this.showMoves) this.drawMoveList(ctx, getChar(this.setup.p1));
     }
