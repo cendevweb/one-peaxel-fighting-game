@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ROSTER } from '../characters';
-import { createMatch, stepMatch, ULTIMATE2_COST } from '../engine/match';
+import { createMatch, METER_MAX, stepMatch, ULTIMATE2_COST } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, PX, type MatchState } from '../engine/types';
 import { Cpu, LEVELS } from '../game/ai';
@@ -101,6 +101,26 @@ describe('ultimate rules', () => {
         expect(tryMove(s, ULT)).toBe('ultimate');
         expect(tryMove(s, ULT)).toBe('ultimate');
         expect(tryMove(s, ULT2)).toBe('ultimate2');
+        expect(s.fighters[0].meter).toBe(METER_MAX);
+    });
+
+    it('training with the normal meter: starts empty, fills by hitting, costs bars', () => {
+        const s = createMatch('vivi', 'luffy', { training: true, fullMeter: false });
+        while (s.phase !== 'fight') stepMatch(s, [0, 0]);
+        expect(s.fighters[0].meter).toBe(0);
+        place(s, 120);
+        expect(tryMove(s, ULT)).not.toBe('ultimate');
+        place(s);
+        tryMove(s, heavy);
+        expect(s.fighters[0].meter).toBeGreaterThan(0);
+        expect(s.fighters[0].meter).toBeLessThan(METER_MAX);
+        s.fighters[0].meter = ULTIMATE2_COST;
+        place(s, 120);
+        expect(tryMove(s, ULT)).toBe('ultimate');
+        expect(s.fighters[0].meter).toBeLessThan(ULTIMATE2_COST);
+        s.fighters[0].meter = ULTIMATE2_COST;
+        expect(tryMove(s, ULT2)).toBe('ultimate2');
+        expect(s.fighters[0].meter).toBeLessThan(ULTIMATE2_COST / 2);
     });
 
     it('the meter fills at about one bar per player per round', () => {
