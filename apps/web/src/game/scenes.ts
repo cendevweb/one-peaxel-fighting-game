@@ -504,7 +504,7 @@ const SLOT_NOTATION: [MoveSlot, string][] = [
     ['crouchLight', '↓ [A]'], ['crouchHeavy', '↓ [B]'],
     ['airLight', 'SAUT [A]'], ['airHeavy', 'SAUT [B]'], ['airSpecial', 'SAUT [C]'],
     ['specialN', '[C]  OU  ↓↘→ [C]'], ['specialF', '→ [C]'], ['specialU', '↑ [C]  OU  →↓↘ [C]'],
-    ['specialD', '↓ [C]  OU  ↓↙← [C]'], ['throw', '[A]+[B] (PRÈS)'], ['ultimate', '[B]+[C] (1 BARRE)'], ['ultimate2', '[A]+[B]+[C] (2 BARRES)']
+    ['specialD', '↓ [C]  OU  ↓↙← [C]'], ['throw', '[A]+[B] (PRÈS)'], ['ultimate', 'ULTIME  OU  [B]+[C] (1 BARRE)'], ['ultimate2', '[A]+[B]+[C] (2 BARRES)']
 ];
 
 export class FightScene implements Scene {
@@ -769,7 +769,7 @@ export class ControlsScene implements Scene {
                 ['[B] FORT', keyLabel(k.heavy[0])],
                 ['[C] SPÉCIAL', keyLabel(k.special[0])],
                 ['CHOPE [A]+[B]', keyLabel(k.throwKey[0])],
-                ['ULTIME [B]+[C]', keyLabel(k.ultimate[0])],
+                ['ULTIME', keyLabel(k.ultimate[0])],
                 ['ULTIME MAX [A]+[B]+[C]', keyLabel(k.ultimate2[0])],
                 ['PAUSE', keyLabel(k.start[0])]
             ];
@@ -801,7 +801,7 @@ export class ControlsScene implements Scene {
             ['COUPS DIRECTIONNELS', '→ [B] passe la garde basse, ← [B] projette en l\'air, ↓ [B] fauche.'],
             ['JONGLAGES', 'Un adversaire projeté peut être frappé en l\'air, dans une certaine limite.'],
             ['CHOPE', '[A]+[B] près de l\'adversaire. Se dégage en appuyant [A]+[B] à temps.'],
-            ['ULTIME', 'La jauge se remplit en frappant et en encaissant. [B]+[C] avec une barre pleine.'],
+            ['ULTIME', 'La jauge se remplit en frappant et en encaissant. Touche ultime (ou [B]+[C]) avec une barre pleine.'],
             ['DÉPLACEMENTS', 'Double tap avant : ruée. Double tap arrière : esquive (brièvement invulnérable).']
         ];
         items.forEach(([h, text], i) => {

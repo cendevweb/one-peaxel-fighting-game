@@ -220,9 +220,9 @@ export class Cpu {
         }
     }
 
-    /** H + S for the ultimate, L + H + S for the second one once two bars are full. */
+    /** The ultimate key, or L + H + S for the second one once two bars are full. */
     private superBits(): number {
-        return this.ult2 && this.rand() < 0.7 ? BTN.light | BTN.heavy | BTN.special : BTN.heavy | BTN.special;
+        return this.ult2 && this.rand() < 0.7 ? BTN.light | BTN.heavy | BTN.special : BTN.ultimate;
     }
 }
 

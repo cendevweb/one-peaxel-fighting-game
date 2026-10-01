@@ -19,7 +19,9 @@ export const BTN = {
     light: 1 << 4,
     heavy: 1 << 5,
     special: 1 << 6,
-    start: 1 << 7
+    start: 1 << 7,
+    /** The dedicated ultimate key (I, R1): the ultimate and nothing else. */
+    ultimate: 1 << 8
 } as const;
 
 // ——— Sprite manifest, as written by tools/sprites/build_atlas.py ———
@@ -174,7 +176,7 @@ export interface CharacterDef {
  *   →S               specialF   (or →↓↘ S… see input.ts for the motions)
  *   ↓S               specialD
  *   ↑S               specialU   (or →↓↘ S) — the invincible reversal
- *   H + S, 1 bar     ultimate   (or ↓↘→↓↘→ S)
+ *   H + S, 1 bar     ultimate   (or ↓↘→↓↘→ S, or the ultimate key)
  *   L + H + S, 2 bars ultimate2 — the fighter's strongest technique
  *   L + H, close     throw
  */

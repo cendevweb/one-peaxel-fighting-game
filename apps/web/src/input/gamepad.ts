@@ -138,7 +138,7 @@ export function readPad(p: PadLike): PadState {
 /**
  * The fighting layout, the same on every pad by position:
  * left face = [A], top = [B], right = [C], bottom = [A] too (it is also
- * "confirm" in menus); L1 = throw [A]+[B], R1 = ultimate [B]+[C],
+ * "confirm" in menus); L1 = throw [A]+[B], R1 = the ultimate key,
  * L2 / R2 = max ultimate [A]+[B]+[C].
  */
 export function padToBits(s: PadState): number {
@@ -151,7 +151,7 @@ export function padToBits(s: PadState): number {
     if (s.north) bits |= BTN.heavy;
     if (s.east) bits |= BTN.special;
     if (s.l1) bits |= BTN.light | BTN.heavy;
-    if (s.r1) bits |= BTN.heavy | BTN.special;
+    if (s.r1) bits |= BTN.ultimate;
     if (s.l2 || s.r2) bits |= BTN.light | BTN.heavy | BTN.special;
     if (s.start) bits |= BTN.start;
     return bits;

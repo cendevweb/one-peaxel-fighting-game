@@ -152,7 +152,7 @@ export function readSide(side: 0 | 1): number {
     if (anyGame(k.heavy)) bits |= BTN.heavy;
     if (anyGame(k.special)) bits |= BTN.special;
     if (anyGame(k.throwKey)) bits |= BTN.light | BTN.heavy;
-    if (anyGame(k.ultimate)) bits |= BTN.heavy | BTN.special;
+    if (anyGame(k.ultimate)) bits |= BTN.ultimate;
     if (anyGame(k.ultimate2)) bits |= BTN.light | BTN.heavy | BTN.special;
     if (anyGame(k.start)) bits |= BTN.start;
     if (padOf[side] >= 0) bits |= padBits(padOf[side]);

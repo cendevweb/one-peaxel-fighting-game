@@ -67,6 +67,34 @@ describe('ultimate rules', () => {
         expect(tryMove(s, ULT2)).toBe('ultimate2');
     });
 
+    it('the ultimate key only ever gives the ultimate, never a special', () => {
+        const KEY = BTN.ultimate;
+        for (const def of ROSTER) {
+            const s = fight(def.id);
+            s.round = 2;
+            place(s, 120);
+            // Empty meter: nothing comes out, with or without a direction.
+            s.fighters[0].meter = 0;
+            expect(tryMove(s, KEY), def.id).toBeNull();
+            expect(tryMove(s, KEY | right), def.id).toBeNull();
+            expect(tryMove(s, KEY | down), def.id).toBeNull();
+            // One bar: the ultimate.
+            s.fighters[0].meter = 100;
+            expect(tryMove(s, KEY), def.id).toBe('ultimate');
+            // Already used this round: nothing again, even with the meter.
+            s.fighters[0].meter = 200;
+            expect(tryMove(s, KEY), def.id).toBeNull();
+            expect(s.fighters[0].meter, def.id).toBe(200);
+        }
+    });
+
+    it('the ultimate key has no limit in training', () => {
+        const s = fight('vivi', 'luffy', true);
+        place(s, 120);
+        expect(tryMove(s, BTN.ultimate)).toBe('ultimate');
+        expect(tryMove(s, BTN.ultimate)).toBe('ultimate');
+    });
+
     it('training has no limit', () => {
         const s = fight('vivi', 'luffy', true);
         place(s, 120);
