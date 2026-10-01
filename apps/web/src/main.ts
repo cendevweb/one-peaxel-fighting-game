@@ -1,3 +1,4 @@
+import { inject } from '@vercel/analytics';
 import { ROSTER } from './characters';
 import { App } from './game/app';
 import { initialScene } from './game/online';
@@ -5,6 +6,9 @@ import { TitleScene } from './game/scenes';
 import { drawText } from './render/font';
 import { loadAtlas, loadCommon } from './render/sprites';
 import { STAGES, loadStage } from './render/stage';
+
+// Vercel Web Analytics: page views only, never touches the game state.
+inject();
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
