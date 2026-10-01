@@ -234,6 +234,8 @@ export interface FighterState {
     superFrom: number;
     /** The last hit taken in this combo came from an ultimate. */
     superRun: boolean;
+    /** An ultimate was used this round: one per round. */
+    ultUsed: boolean;
     /** Scaling applied to the next hit of the combo this fighter is taking. */
     juggle: number;
     hitstop: number;

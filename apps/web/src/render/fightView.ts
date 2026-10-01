@@ -1,5 +1,5 @@
 import { play } from '../audio/sound';
-import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes } from '../engine/match';
+import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes, ultimateUsable } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { PX, type FighterState, type GameEvent, type MatchState, type Rect } from '../engine/types';
 import { drawText, textWidth } from './font';
@@ -323,7 +323,7 @@ export class FightView {
                 drawFrame(ctx, f.char, f.anim, f.frame, x + dx, y + dy, f.facing, { tint: 'gold', alpha: pulse, additive: true });
             }
         }
-        const meterReady = f.meter >= ULTIMATE_COST && f.mode !== 'ko';
+        const meterReady = f.meter >= ULTIMATE_COST && !f.ultUsed && f.mode !== 'ko';
         if (meterReady && this.t % 60 < 6) {
             drawFrame(ctx, f.char, f.anim, f.frame, x, y, f.facing, { tint: 'gold', alpha: 0.3, additive: true });
         }
@@ -477,7 +477,7 @@ export class FightView {
         } else {
             drawText(ctx, 'ENTRAÎNEMENT', 320, 40, { color: '#9fd4ff', outline: '#000', align: 'center' });
         }
-        for (const side of [0, 1] as const) this.drawMeter(ctx, s.fighters[side], side);
+        for (const side of [0, 1] as const) this.drawMeter(ctx, s, s.fighters[side], side);
         for (const side of [0, 1] as const) this.drawCombo(ctx, side);
     }
 
@@ -547,7 +547,7 @@ export class FightView {
         }
     }
 
-    private drawMeter(ctx: CanvasRenderingContext2D, f: FighterState, side: 0 | 1): void {
+    private drawMeter(ctx: CanvasRenderingContext2D, s: MatchState, f: FighterState, side: 0 | 1): void {
         const w = 150;
         const x0 = side === 0 ? 40 : 640 - 40 - w;
         const y0 = 340;
@@ -569,8 +569,11 @@ export class FightView {
         const stock = Math.floor(f.meter / ULTIMATE_COST);
         const lx = side === 0 ? x0 - 18 : x0 + w + 18;
         drawText(ctx, String(stock), lx, y0 - 6, { color: stock ? '#9ff3ff' : '#6a6a8a', outline: '#1a0b12', scale: 2, align: 'center' });
-        if (stock > 0) {
-            drawText(ctx, stock >= 2 ? 'ULTIME MAX' : 'ULTIME', side === 0 ? x0 : x0 + w, y0 - 11, { color: this.t % 30 < 20 ? (stock >= 2 ? '#ff7a4a' : '#ffe95e') : '#ffffff', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
+        const max = ultimateUsable(s, f, 'ultimate2');
+        if (f.ultUsed && stock > 0) {
+            drawText(ctx, 'ULTIME UTILISÉE', side === 0 ? x0 : x0 + w, y0 - 11, { color: '#6a6a8a', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
+        } else if (stock > 0) {
+            drawText(ctx, max ? 'ULTIME MAX' : 'ULTIME', side === 0 ? x0 : x0 + w, y0 - 11, { color: this.t % 30 < 20 ? (max ? '#ff7a4a' : '#ffe95e') : '#ffffff', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
         }
     }
 
