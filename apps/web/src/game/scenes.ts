@@ -1,5 +1,6 @@
 import { play } from '../audio/sound';
 import { startMusic, stopMusic } from '../audio/music';
+import { playVoice } from '../audio/voices';
 import { ROSTER } from '../characters';
 import { createMatch, METER_MAX, stepMatch } from '../engine/match';
 import { getChar } from '../engine/registry';
@@ -7,7 +8,7 @@ import { BTN, type CharacterDef, type MatchState, type MoveSlot } from '../engin
 import { KEYS, endInputTick, keyLabel, padFamily, readSide, readSolo, rumbleOn, type MenuInput } from '../input/devices';
 import { PAD_LABELS } from '../input/gamepad';
 import { drawText, textWidth } from '../render/font';
-import { FightView } from '../render/fightView';
+import { FightView, voiceChannel } from '../render/fightView';
 import { artOf, drawFrame } from '../render/sprites';
 import { STAGES, stageImage } from '../render/stage';
 import { Cpu, LEVELS, dummyBits, type DummyMode } from './ai';
@@ -250,6 +251,7 @@ export class SelectScene implements Scene {
             if (m.action === 'confirm') {
                 c.locked = true;
                 play('uiSelect');
+                playVoice(ROSTER[c.index].id, 'select', 'select');
                 if (!this.twoPlayers) {
                     if (this.mode === 'arcade') { this.finish(); return; }
                     if (this.picking === 0) this.picking = 1;
@@ -577,6 +579,12 @@ export class FightScene implements Scene {
         if (import.meta.env.DEV) (window as unknown as { __opfgFight?: unknown }).__opfgFight = { inputs, state: this.state };
         const events = stepMatch(this.state, inputs);
         this.view.handle(events);
+        // A round won by a human player: their fighter's victory line (in
+        // versus, both players are human).
+        for (const e of events) {
+            if (e.type !== 'roundEnd' || e.winner > 1) continue;
+            if (this.setup.mode === 'versus' || e.winner === 0) playVoice(this.state.fighters[e.winner].char, 'win', voiceChannel(e.winner));
+        }
         if (this.setup.mode === 'versus') { rumbleOn(events, 0, [0]); rumbleOn(events, 1, [1]); }
         else rumbleOn(events, 0, [0, 1]);
         this.view.update();
