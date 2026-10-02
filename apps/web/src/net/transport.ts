@@ -101,20 +101,27 @@ export function currentPeerConfig(): PeerConfig {
 
 /** Waiting longer than this for the TURN credentials: go on without them. */
 const ICE_FETCH_TIMEOUT = 3_000;
+/** The TURN login lasts 4 h (`api/ice.js`): fetch a fresh one after 1 h. */
+const ICE_REFRESH = 3_600_000;
 let relayIce: Promise<RTCIceServer[]> | null = null;
+let relayIceAt = 0;
 
 /**
  * The TURN relay from the site's `/api/ice` function (`api/ice.js`), fetched
- * once per page: without it, players on two different networks often cannot
- * connect. Empty when the function is missing or not configured.
+ * at most once an hour: without it, players on two different networks often
+ * cannot connect. Empty when the function is missing or not configured.
+ * WebRTC tries the direct routes first; the relay only carries the match
+ * when none of them works.
  */
 function fetchRelayIce(): Promise<RTCIceServer[]> {
+    if (relayIce && Date.now() - relayIceAt > ICE_REFRESH) relayIce = null;
+    relayIceAt = relayIce ? relayIceAt : Date.now();
     relayIce ??= (async () => {
         if (typeof fetch === 'undefined') return [];
         const ctl = new AbortController();
         const timer = setTimeout(() => ctl.abort(), ICE_FETCH_TIMEOUT);
         try {
-            const res = await fetch('/api/ice', { signal: ctl.signal });
+            const res = await fetch('/api/ice', { signal: ctl.signal, cache: 'no-store', credentials: 'omit' });
             if (!res.ok) return [];
             const data = (await res.json()) as { iceServers?: unknown };
             return Array.isArray(data.iceServers) ? (data.iceServers as RTCIceServer[]) : [];
