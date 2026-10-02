@@ -53,9 +53,10 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
 });
 
 export async function GET(request) {
-    // Only the game's own pages: a script on another site gets nothing.
+    // Only the game's own pages, or the address typed in the address bar
+    // ("none"): a script on another site gets nothing.
     const site = request.headers.get('sec-fetch-site');
-    if (site && site !== 'same-origin') return json({ iceServers: [] }, 403);
+    if (site && site !== 'same-origin' && site !== 'none') return json({ iceServers: [] }, 403);
     const env = process.env;
     let iceServers = [];
     try {
