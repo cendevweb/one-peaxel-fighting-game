@@ -148,6 +148,13 @@ Variables Vercel facultatives, pour un serveur de mise en relation à soi
 dans l'URL ; `npm run e2e:online -w apps/web` joue un match complet entre deux
 navigateurs avec latence et pertes simulées.
 
+Relais TURN (indispensable entre deux réseaux différents : 4G, box, réseau
+d'entreprise) : la fonction Vercel `apps/web/api/ice.js` fournit des
+identifiants temporaires. Renseigner sur Vercel soit
+`CLOUDFLARE_TURN_KEY_ID` + `CLOUDFLARE_TURN_API_TOKEN` (Cloudflare Realtime,
+TURN), soit `METERED_TURN_DOMAIN` + `METERED_TURN_API_KEY` (Metered), puis
+redéployer.
+
 ## Développement
 
 | Commande | Effet |
