@@ -371,9 +371,10 @@ export class SelectScene implements Scene {
 
     private drawSide(ctx: CanvasRenderingContext2D, c: CharacterDef, side: 0 | 1, locked: boolean): void {
         const art = artOf(c.id, 'art');
-        const x = side === 0 ? 20 : 620;
+        // Art sits beside the stat panel (partly under it), never fully behind.
+        const x = side === 0 ? 140 : 500;
         if (art) {
-            const s = Math.min(1.4, 150 / art.height, 220 / art.width);
+            const s = Math.min(1.4, 150 / art.height, 180 / art.width);
             const w = art.width * s;
             const h = art.height * s;
             ctx.save();
