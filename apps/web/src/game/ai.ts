@@ -32,6 +32,9 @@ export const LEVELS: CpuLevel[] = [
     { reaction: 5, block: 0.92, antiAir: 0.88, combo: 0.98, aggression: 0.78 }
 ];
 
+/** The levels as the menus name them. */
+export const LEVEL_NAMES = ['FACILE', 'NORMAL', 'DIFFICILE', 'EXPERT', 'AMIRAL'];
+
 export class Cpu {
     private plan: Step[] = [];
     private wait = 0;

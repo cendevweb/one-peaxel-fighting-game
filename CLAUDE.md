@@ -18,6 +18,7 @@ apps/web/src/audio       Effets et musique synthétisés en WebAudio.
 apps/web/src/input       Clavier (codes physiques) et manettes → bits de boutons.
 apps/web/src/game        Scènes (menus, sélection, combat, résultats), IA, salon et combat en ligne.
 apps/web/src/net         En ligne : protocole, rollback, transport WebRTC (peerjs).
+apps/web/src/settings.ts Réglages joueur (volumes, règles hors ligne, affichage), localStorage.
 tools/sprites            Extraction des planches → atlas + manifestes JSON.
 tools/stages             Découpe des décors.
 ```
@@ -46,6 +47,9 @@ renvoyer des bits de boutons, comme un clavier.
 - Nouveau combattant : l'ajouter à `ORDER` (`characters/index.ts`) et à
   `ARCADE_RANK` (`game/scenes.ts`). La sélection est une grille de 11 par
   rangée (`GRID_COLS`, `game/scenes.ts`).
+- Les réglages (`settings.ts`, écran `game/settingsScene.ts`) ne touchent
+  jamais l'état du moteur : `rounds` ne s'applique qu'aux combats hors ligne,
+  le combat en ligne garde ses règles fixes.
 - La police bitmap n'a que les glyphes déclarés dans `render/font.ts` ; un
   caractère inconnu s'affiche `?`.
 - Le site spritedatabase.net est bloqué depuis les sessions cloud : les
