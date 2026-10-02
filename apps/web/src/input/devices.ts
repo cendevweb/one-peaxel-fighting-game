@@ -1,4 +1,5 @@
 import { BTN, type GameEvent } from '../engine/types';
+import { settings } from '../settings';
 import { PAD_LABELS, assignSlots, familyOf, padToBits, readPad, type PadFamily } from './gamepad';
 
 /**
@@ -136,6 +137,7 @@ function refreshPads(): void {
 
 /** A short rumble on a side's pad, where the browser supports it. */
 export function rumble(side: 0 | 1, strong: number, ms: number): void {
+    if (!settings.rumble) return;
     const act = (padAt(padOf[side]) as (Gamepad & { vibrationActuator?: { playEffect?(t: string, o: object): Promise<unknown> } }) | null)?.vibrationActuator;
     act?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: strong, weakMagnitude: Math.min(1, strong + 0.2) })?.catch(() => { /* unsupported */ });
 }

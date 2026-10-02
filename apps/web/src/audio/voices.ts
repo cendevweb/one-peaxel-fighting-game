@@ -1,5 +1,5 @@
 import manifest from '../generated/voices.json';
-import { ensureAudio, runningContext, sfxOut } from './sound';
+import { ensureAudio, runningContext, voiceOut } from './sound';
 
 /**
  * Recorded character voices (`public/audio/voices`, imported by
@@ -18,7 +18,7 @@ export type VoiceCategory = 'select' | 'win' | 'ultimate' | 'ultimateMax' | 'rou
 type Manifest = Record<string, Partial<Record<VoiceCategory, string[]>>>;
 const CLIPS = manifest as Manifest;
 
-/** Voices are a little louder than the synthesised effects they share the bus with. */
+/** Voices are a little louder than the synthesised effects. */
 const VOICE_GAIN = 1.4;
 
 const buffers = new Map<string, AudioBuffer>();
@@ -84,7 +84,7 @@ export function stopVoice(channel: string): void {
  */
 export function playVoice(char: string, category: VoiceCategory, channel = char): boolean {
     const ac = runningContext();
-    const out = sfxOut();
+    const out = voiceOut();
     const list = CLIPS[char]?.[category];
     if (!ac || !out || !list?.length) return false;
     if (!voiceBus) {

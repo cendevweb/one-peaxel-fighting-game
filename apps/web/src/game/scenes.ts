@@ -11,8 +11,10 @@ import { drawText, textWidth } from '../render/font';
 import { FightView, voiceChannel } from '../render/fightView';
 import { artOf, drawFrame } from '../render/sprites';
 import { STAGES, stageImage } from '../render/stage';
-import { Cpu, LEVELS, dummyBits, type DummyMode } from './ai';
+import { settings } from '../settings';
+import { Cpu, LEVELS, LEVEL_NAMES, dummyBits, type DummyMode } from './ai';
 import { OptionList, type App, type Scene } from './app';
+import { SettingsScene } from './settingsScene';
 import { COLORS, hint, menuBackdrop, menuItems, notation, panel, title } from './ui';
 
 // ——— Session setup ———
@@ -123,13 +125,14 @@ export class TitleScene implements Scene {
 
 export class MainMenuScene implements Scene {
     private t = 0;
-    private list = new OptionList(['ARCADE', 'VERSUS J1 CONTRE J2', 'VERSUS ORDINATEUR', 'ENTRAÎNEMENT', 'COMMANDES']);
+    private list = new OptionList(['ARCADE', 'VERSUS J1 CONTRE J2', 'VERSUS ORDINATEUR', 'ENTRAÎNEMENT', 'COMMANDES', 'OPTIONS']);
     private blurbs = [
         'Affrontez tout le roster, l\'un après l\'autre.',
         'Deux joueurs sur le même clavier, ou en ligne par un lien.',
         'Choisissez votre adversaire et sa difficulté.',
         'Adversaire immobile, vie et jauge infinies, boîtes visibles.',
-        'Touches, manettes et toutes les mécaniques du jeu.'
+        'Touches, manettes et toutes les mécaniques du jeu.',
+        'Volume, musique, voix, règles des combats et affichage.'
     ];
     constructor(private app: App) {}
 
@@ -138,9 +141,10 @@ export class MainMenuScene implements Scene {
         const r = this.list.handle(menu);
         if (r === 'back') this.app.go(new TitleScene(this.app));
         if (r !== 'confirm') return;
-        const modes: (Mode | 'controls')[] = ['arcade', 'versus', 'versusCpu', 'training', 'controls'];
+        const modes: (Mode | 'controls' | 'options')[] = ['arcade', 'versus', 'versusCpu', 'training', 'controls', 'options'];
         const m = modes[this.list.index];
         if (m === 'controls') this.app.go(new ControlsScene(this.app, this));
+        else if (m === 'options') this.app.go(new SettingsScene(this.app, this));
         else if (m === 'versus' && sceneHooks.versusMenu) this.app.go(sceneHooks.versusMenu(this.app, this));
         else this.app.go(new SelectScene(this.app, m));
     }
@@ -206,7 +210,7 @@ export class SelectScene implements Scene {
     protected cursors: Cursor[];
     /** In one-player modes, player 1 picks both, one after the other. */
     private picking: 0 | 1 = 0;
-    private level = 2;
+    private level = settings.cpuLevel;
     private levelStep = false;
 
     constructor(private app: App, private mode: Mode, private prev?: Setup) {
@@ -340,8 +344,7 @@ export class SelectScene implements Scene {
         if (this.levelStep) {
             panel(ctx, 220, 150, 200, 60, COLORS.blue);
             drawText(ctx, 'DIFFICULTÉ', 320, 160, { color: '#fff', outline: COLORS.ink, align: 'center' });
-            const names = ['FACILE', 'NORMAL', 'DIFFICILE', 'EXPERT', 'AMIRAL'];
-            drawText(ctx, `← ${names[this.level]} →`, 320, 182, { color: COLORS.gold, outline: COLORS.ink, scale: 2, align: 'center' });
+            drawText(ctx, `← ${LEVEL_NAMES[this.level]} →`, 320, 182, { color: COLORS.gold, outline: COLORS.ink, scale: 2, align: 'center' });
         }
         hint(ctx, this.hintText());
     }
@@ -524,7 +527,8 @@ export class FightScene implements Scene {
 
     constructor(private app: App, private setup: Setup) {
         const training = setup.mode === 'training';
-        this.state = createMatch(setup.p1, setup.p2, { training });
+        // OPTIONS · MANCHES: offline only, the online fight keeps the default.
+        this.state = createMatch(setup.p1, setup.p2, { training, roundsToWin: settings.rounds });
         const stage = STAGES.find((s) => s.id === setup.stage) ?? STAGES[0];
         const names: [string, string] = setup.mode === 'versus' ? ['J1', 'J2'] : ['J1', training ? 'MANNEQUIN' : 'CPU'];
         this.view = new FightView(this.state, stage, { names, training });
@@ -542,9 +546,9 @@ export class FightScene implements Scene {
     private pauseItems(): string[] {
         if (this.setup.mode === 'training') {
             const names: Record<DummyMode, string> = { stand: 'DEBOUT', crouch: 'ACCROUPI', guard: 'GARDE', jump: 'SAUTE', cpu: 'ORDINATEUR' };
-            return ['REPRENDRE', 'LISTE DES COUPS', `MANNEQUIN : ${names[this.dummy]}`, `BOÎTES : ${this.boxes ? 'OUI' : 'NON'}`, `JAUGE D'ULTIME : ${this.state.fullMeter !== false ? 'PLEINE' : 'NORMALE'}`, 'CHANGER DE PERSONNAGES', 'MENU PRINCIPAL'];
+            return ['REPRENDRE', 'LISTE DES COUPS', `MANNEQUIN : ${names[this.dummy]}`, `BOÎTES : ${this.boxes ? 'OUI' : 'NON'}`, `JAUGE D'ULTIME : ${this.state.fullMeter !== false ? 'PLEINE' : 'NORMALE'}`, 'OPTIONS', 'CHANGER DE PERSONNAGES', 'MENU PRINCIPAL'];
         }
-        return ['REPRENDRE', 'LISTE DES COUPS', 'RECOMMENCER', 'MENU PRINCIPAL'];
+        return ['REPRENDRE', 'LISTE DES COUPS', 'RECOMMENCER', 'OPTIONS', 'MENU PRINCIPAL'];
     }
 
     tick(menu: MenuInput[]): void {
@@ -604,6 +608,8 @@ export class FightScene implements Scene {
         if (item === 'REPRENDRE') this.paused = false;
         else if (item === 'LISTE DES COUPS') this.showMoves = true;
         else if (item === 'RECOMMENCER') this.app.go(new FightScene(this.app, this.setup));
+        // The fight waits, paused, and picks up where it was on the way back.
+        else if (item === 'OPTIONS') this.app.go(new SettingsScene(this.app, this));
         else if (item === 'MENU PRINCIPAL') this.app.go(new MainMenuScene(this.app));
         else if (item === 'CHANGER DE PERSONNAGES') this.app.go(new SelectScene(this.app, this.setup.mode, this.setup));
         else if (item.startsWith('MANNEQUIN')) {

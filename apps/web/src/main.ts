@@ -7,6 +7,7 @@ import { TitleScene } from './game/scenes';
 import { drawText } from './render/font';
 import { loadAtlas, loadCommon } from './render/sprites';
 import { STAGES, loadStage } from './render/stage';
+import { onSettings, settings } from './settings';
 
 // Vercel Web Analytics: page views only, never touches the game state.
 inject();
@@ -21,12 +22,13 @@ function fit(): void {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const fitScale = Math.min(w / 640, h / 360);
-    const scale = fitScale >= 1 ? Math.max(1, Math.floor(fitScale * 2) / 2) : fitScale;
+    // OPTIONS · AFFICHAGE: "ÉTIRÉ" fills the window, pixels a little uneven.
+    const scale = fitScale >= 1 && settings.display === 'sharp' ? Math.max(1, Math.floor(fitScale * 2) / 2) : fitScale;
     canvas.style.width = `${Math.floor(640 * scale)}px`;
     canvas.style.height = `${Math.floor(360 * scale)}px`;
 }
 window.addEventListener('resize', fit);
-fit();
+onSettings(fit);
 
 async function boot(): Promise<void> {
     const jobs: Promise<void>[] = [
