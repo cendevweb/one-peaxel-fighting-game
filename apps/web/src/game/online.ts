@@ -10,10 +10,11 @@ import { NET_ERROR_TEXT, NetError, hostRoom, joinRoom, type Link, type Room } fr
 import { drawText, textWidth } from '../render/font';
 import { artOf } from '../render/sprites';
 import { STAGES, stageImage } from '../render/stage';
+import { settings, updateSettings } from '../settings';
 import { OptionList, type App, type Scene } from './app';
 import { OnlineFightScene } from './onlineFight';
 import { MainMenuScene, SelectScene, VersusScene, gridStep, gridTop, sceneHooks, type Setup } from './scenes';
-import { COLORS, hint, menuBackdrop, menuItems, panel, title } from './ui';
+import { COLORS, hint, menuBackdrop, menuItems, panel, roundPips, title } from './ui';
 
 /**
  * Online versus: the lobby around a match between two browsers.
@@ -159,9 +160,10 @@ class QuitConfirm {
 
 export class VersusMenuScene implements Scene {
     private t = 0;
-    private list = new OptionList(['MÊME CLAVIER', 'CRÉER UN SALON EN LIGNE', 'REJOINDRE UN SALON']);
+    private list = new OptionList(['MÊME CLAVIER', 'MANCHES À GAGNER', 'CRÉER UN SALON EN LIGNE', 'REJOINDRE UN SALON']);
     private blurbs = [
         'Deux joueurs sur le même clavier ou deux manettes.',
+        'Manches à remporter sur le même clavier (en ligne : toujours 2).',
         'Obtenez un lien à envoyer à votre adversaire, puis attendez-le.',
         'Tapez ou collez le code reçu de votre adversaire.'
     ];
@@ -170,11 +172,20 @@ export class VersusMenuScene implements Scene {
 
     tick(menu: MenuInput[]): void {
         this.t++;
+        // Rounds: ← → set them (kept for next time), confirm cycles 1-2-3.
+        if (this.list.index === 1) {
+            for (const m of menu) {
+                if (m.action !== 'left' && m.action !== 'right') continue;
+                const v = Math.max(1, Math.min(3, settings.versusRounds + (m.action === 'left' ? -1 : 1)));
+                if (v !== settings.versusRounds) { updateSettings({ versusRounds: v }); play('uiMove'); }
+            }
+        }
         const r = this.list.handle(menu);
         if (r === 'back') { this.app.go(this.back); return; }
         if (r !== 'confirm') return;
         if (this.list.index === 0) this.app.go(new SelectScene(this.app, 'versus'));
-        else if (this.list.index === 1) this.app.go(new HostScene(this.app));
+        else if (this.list.index === 1) updateSettings({ versusRounds: (settings.versusRounds % 3) + 1 });
+        else if (this.list.index === 2) this.app.go(new HostScene(this.app));
         else this.app.go(new JoinScene(this.app));
     }
 
@@ -183,9 +194,10 @@ export class VersusMenuScene implements Scene {
         drawText(ctx, 'VERSUS', 44, 34, { color: '#fff', gradient: COLORS.gold, outline: COLORS.ink, scale: 4 });
         drawText(ctx, 'J1 CONTRE J2', 44, 70, { color: COLORS.cream, outline: COLORS.ink, scale: 2 });
         panel(ctx, 30, 96, 330, 150);
-        drawText(ctx, 'EN LIGNE', 52, 150, { color: COLORS.blue, outline: COLORS.ink });
-        menuItems(ctx, this.list.items.slice(0, 1), this.list.index === 0 ? 0 : -1, 52, 118, this.t);
-        menuItems(ctx, this.list.items.slice(1), this.list.index - 1, 52, 168, this.t);
+        drawText(ctx, 'EN LIGNE', 52, 166, { color: COLORS.blue, outline: COLORS.ink });
+        menuItems(ctx, this.list.items.slice(0, 2), this.list.index < 2 ? this.list.index : -1, 52, 114, this.t, 22, 2, 316);
+        this.drawRounds(ctx, 136, this.list.index === 1);
+        menuItems(ctx, this.list.items.slice(2), this.list.index - 2, 52, 182, this.t, 22, 2, 316);
         panel(ctx, 30, 256, 580, 34, COLORS.dim);
         drawText(ctx, this.blurbs[this.list.index], 44, 268, { color: '#e8e0f0' });
         const c = ROSTER[(this.list.index + 3) % ROSTER.length];
@@ -194,7 +206,22 @@ export class VersusMenuScene implements Scene {
             const s = Math.min(2, 220 / art.height);
             ctx.drawImage(art, 610 - art.width * s, 250 - art.height * s, art.width * s, art.height * s);
         }
-        hint(ctx, `${keyLabel(KEYS[0].up[0])}${keyLabel(KEYS[0].down[0])} / ↑↓ : CHOISIR · ${keyLabel(KEYS[0].light[0])} / ENTRÉE : VALIDER · ${keyLabel(KEYS[0].heavy[0])} / ÉCHAP : RETOUR`);
+        const k = KEYS[0];
+        const adjust = this.list.index === 1 ? ` · ${keyLabel(k.left[0])}${keyLabel(k.right[0])} / ← → : RÉGLER` : '';
+        hint(ctx, `${keyLabel(k.up[0])}${keyLabel(k.down[0])} / ↑↓ : CHOISIR${adjust} · ${keyLabel(k.light[0])} / ENTRÉE : VALIDER · ${keyLabel(k.heavy[0])} / ÉCHAP : RETOUR`);
+    }
+
+    /** The rounds value at the right of its row: pips, the number, and arrows when selected. */
+    private drawRounds(ctx: CanvasRenderingContext2D, y: number, sel: boolean): void {
+        const v = settings.versusRounds;
+        const right = 346;
+        const bob = sel ? Math.round(Math.sin(this.t / 8)) : 0;
+        if (sel) {
+            drawText(ctx, '→', right + bob, y + 4, { color: v < 3 ? COLORS.gold : COLORS.dim, outline: COLORS.ink, align: 'right' });
+            drawText(ctx, '←', right - 68 - bob, y + 4, { color: v > 1 ? COLORS.gold : COLORS.dim, outline: COLORS.ink, align: 'right' });
+        }
+        drawText(ctx, String(v), right - 14, y, { color: sel ? '#fff' : '#bdb2cc', gradient: sel ? COLORS.gold : undefined, outline: COLORS.ink, scale: 2, align: 'right' });
+        roundPips(ctx, v, right - 30, y + 4);
     }
 }
 

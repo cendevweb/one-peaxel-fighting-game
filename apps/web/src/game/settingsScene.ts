@@ -6,7 +6,7 @@ import { drawText } from '../render/font';
 import { VOLUME_DEFAULT, VOLUME_MAX, resetSettings, settings, updateSettings, type Settings } from '../settings';
 import { LEVEL_NAMES } from './ai';
 import type { App, Scene } from './app';
-import { COLORS, hint, menuBackdrop, panel, title } from './ui';
+import { COLORS, hint, menuBackdrop, panel, roundPips, title } from './ui';
 
 /**
  * OPTIONS: the sound mix on four gauges (left), the rules and comfort
@@ -16,7 +16,7 @@ import { COLORS, hint, menuBackdrop, panel, title } from './ui';
  */
 
 type VolumeKey = 'master' | 'music' | 'sfx' | 'voice';
-type ChoiceKey = 'rounds' | 'cpuLevel' | 'shake' | 'rumble' | 'display';
+type ChoiceKey = 'rounds' | 'arcadeLevel' | 'shake' | 'rumble' | 'display';
 
 type Item =
     | { kind: 'gauge'; key: VolumeKey; label: string; help: string }
@@ -32,11 +32,11 @@ const ITEMS: Item[] = [
     { kind: 'gauge', key: 'voice', label: 'VOIX', help: 'Les répliques des combattants : sélection, ultimes et victoires.' },
     {
         kind: 'choice', key: 'rounds', label: 'MANCHES À GAGNER', values: [1, 2, 3], name: (v) => `${v} MANCHE${v === 1 ? '' : 'S'}`,
-        help: 'Manches pour remporter un combat hors ligne (dès le prochain combat).'
+        help: 'Arcade et versus ordinateur. J1 contre J2 : se règle dans le menu versus.'
     },
     {
-        kind: 'choice', key: 'cpuLevel', label: 'DIFFICULTÉ CPU', values: [0, 1, 2, 3, 4], name: (v) => LEVEL_NAMES[v as number],
-        help: 'Niveau proposé d\'office en versus contre l\'ordinateur.'
+        kind: 'choice', key: 'arcadeLevel', label: 'DIFFICULTÉ ARCADE', values: [0, 1, 2, 3, 4], name: (v) => LEVEL_NAMES[v as number],
+        help: 'Niveau du premier adversaire en arcade ; il se durcit à chaque combat.'
     },
     { kind: 'choice', key: 'shake', label: 'SECOUSSES D\'ÉCRAN', values: [true, false], name: yesNo, help: 'L\'écran tremble sous les coups les plus lourds.' },
     { kind: 'choice', key: 'rumble', label: 'VIBRATIONS MANETTE', values: [true, false], name: yesNo, help: 'La manette vibre quand votre combattant encaisse un coup.' },
@@ -233,23 +233,12 @@ export class SettingsScene implements Scene {
         if (sel) {
             const bob = Math.round(Math.sin(this.t / 8));
             drawText(ctx, '→', right + bob, y + 4, { color: idx < item.values.length - 1 ? COLORS.gold : COLORS.dim, outline: COLORS.ink, align: 'right' });
-            drawText(ctx, '←', right - (name.length + 2) * 6 - bob, y + 4, { color: idx > 0 ? COLORS.gold : COLORS.dim, outline: COLORS.ink, align: 'right' });
+            drawText(ctx, '←', right - 12 - name.length * 6 - 6 - bob, y + 4, { color: idx > 0 ? COLORS.gold : COLORS.dim, outline: COLORS.ink, align: 'right' });
         }
         const vx = sel ? right - 12 : right;
         drawText(ctx, name, vx, y + 4, { color, outline: COLORS.ink, align: 'right' });
         // Rounds: the win pips of the fight HUD, one per round to take.
-        if (item.key === 'rounds') {
-            const px = vx - name.length * 6 - 10;
-            for (let r = 0; r < (v as number); r++) {
-                const cx = px - r * 10;
-                ctx.fillStyle = COLORS.ink;
-                ctx.fillRect(cx - 4, y + 3, 8, 8);
-                ctx.fillStyle = COLORS.gold;
-                ctx.fillRect(cx - 3, y + 4, 6, 6);
-                ctx.fillStyle = COLORS.goldLight;
-                ctx.fillRect(cx - 3, y + 4, 6, 2);
-            }
-        }
+        if (item.key === 'rounds') roundPips(ctx, v as number, vx - name.length * 6 - 4, y + 3);
     }
 
     private drawButton(ctx: CanvasRenderingContext2D, item: Item, i: number, x: number): void {

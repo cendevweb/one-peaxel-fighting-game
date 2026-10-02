@@ -66,6 +66,16 @@ export function arcadeLadder(p1: string, rand: () => number): string[] {
     return [...road, ...bosses];
 }
 
+/**
+ * Rounds to win: against the CPU, the OPTIONS setting; in local versus, the
+ * versus menu's. Training has no rounds; the online fight keeps the default.
+ */
+export function roundsFor(mode: Mode): number | undefined {
+    if (mode === 'arcade' || mode === 'versusCpu') return settings.rounds;
+    if (mode === 'versus') return settings.versusRounds;
+    return undefined;
+}
+
 const randomStage = () => STAGES[Math.floor(Math.random() * STAGES.length)].id;
 
 /**
@@ -210,7 +220,7 @@ export class SelectScene implements Scene {
     protected cursors: Cursor[];
     /** In one-player modes, player 1 picks both, one after the other. */
     private picking: 0 | 1 = 0;
-    private level = settings.cpuLevel;
+    private level = 2;
     private levelStep = false;
 
     constructor(private app: App, private mode: Mode, private prev?: Setup) {
@@ -527,15 +537,17 @@ export class FightScene implements Scene {
 
     constructor(private app: App, private setup: Setup) {
         const training = setup.mode === 'training';
-        // OPTIONS · MANCHES: offline only, the online fight keeps the default.
-        this.state = createMatch(setup.p1, setup.p2, { training, roundsToWin: settings.rounds });
+        this.state = createMatch(setup.p1, setup.p2, { training, roundsToWin: roundsFor(setup.mode) });
         const stage = STAGES.find((s) => s.id === setup.stage) ?? STAGES[0];
         const names: [string, string] = setup.mode === 'versus' ? ['J1', 'J2'] : ['J1', training ? 'MANNEQUIN' : 'CPU'];
         this.view = new FightView(this.state, stage, { names, training });
         if (setup.mode === 'arcade' || setup.mode === 'versusCpu') {
-            // Arcade climbs from NORMAL to the top level over the whole road.
+            // Arcade climbs from the level set in OPTIONS (NORMAL by default)
+            // to the top over the whole road; VERSUS ORDINATEUR keeps the
+            // level picked on the select screen.
             const road = Math.max(1, (setup.ladder?.length ?? 1) - 1);
-            const level = setup.mode === 'arcade' ? Math.min(LEVELS.length - 1, 1 + Math.round(((setup.beaten ?? 0) * (LEVELS.length - 2)) / road)) : setup.cpuLevel;
+            const climb = Math.round(((setup.beaten ?? 0) * (LEVELS.length - 2)) / road);
+            const level = setup.mode === 'arcade' ? Math.min(LEVELS.length - 1, settings.arcadeLevel + climb) : setup.cpuLevel;
             this.cpu[1] = new Cpu(LEVELS[level], Date.now() & 0xffff);
         }
         this.pauseList = new OptionList(this.pauseItems());
