@@ -211,16 +211,10 @@ const lastActive = (move: MoveDef) => (move.hits.length ? Math.max(...move.hits.
 
 // ——— Reading intent from inputs ———
 
-/**
- * Ultimates depend only on the meter; the two-bar ultimate only from
- * round 2. Training has no round lock; with the normal meter it still needs
- * the bars.
- */
+/** Ultimates depend only on the meter: one bar, or two for the max one. */
 export function ultimateUsable(state: MatchState, f: FighterState, slot: 'ultimate' | 'ultimate2'): boolean {
     if (freeMeter(state)) return true;
-    if (state.training) return f.meter >= (slot === 'ultimate2' ? ULTIMATE2_COST : ULTIMATE_COST);
-    if (slot === 'ultimate2') return state.round >= 2 && f.meter >= ULTIMATE2_COST;
-    return f.meter >= ULTIMATE_COST;
+    return f.meter >= (slot === 'ultimate2' ? ULTIMATE2_COST : ULTIMATE_COST);
 }
 
 function wantsUltimate(f: FighterState, state: MatchState): boolean {
