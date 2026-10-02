@@ -76,6 +76,24 @@ export function menuItems(ctx: CanvasRenderingContext2D, items: string[], index:
     });
 }
 
+/**
+ * Round pips, as on the fight HUD: `n` gold squares (8 px, 10 apart) ending
+ * at `right`, `y` their top. Returns the width drawn.
+ */
+export function roundPips(ctx: CanvasRenderingContext2D, n: number, right: number, y: number, scale = 1): number {
+    const step = 10 * scale;
+    for (let r = 0; r < n; r++) {
+        const x = right - (r + 1) * step + 2 * scale;
+        ctx.fillStyle = COLORS.ink;
+        ctx.fillRect(x, y, 8 * scale, 8 * scale);
+        ctx.fillStyle = COLORS.gold;
+        ctx.fillRect(x + scale, y + scale, 6 * scale, 6 * scale);
+        ctx.fillStyle = COLORS.goldLight;
+        ctx.fillRect(x + scale, y + scale, 6 * scale, 2 * scale);
+    }
+    return n * step;
+}
+
 /** A button glyph: the letter in a coloured box. */
 export function buttonGlyph(ctx: CanvasRenderingContext2D, letter: string, x: number, y: number): number {
     const colors: Record<string, string> = { A: '#4c9aff', B: '#ff5a3c', C: '#ffd23f' };

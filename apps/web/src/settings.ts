@@ -2,8 +2,8 @@
  * Player settings, kept in the browser (localStorage) between visits.
  *
  * Nothing here is read by the engine: volumes, screen shake, rumble and the
- * display scale only change what the view and the speakers do. The two that
- * shape a match (rounds to win, default CPU level) only apply offline; the
+ * display scale only change what the view and the speakers do. The ones
+ * that shape a match (rounds to win, arcade level) only apply offline; the
  * online fight keeps its fixed rules, so both players always agree.
  */
 
@@ -19,10 +19,12 @@ export interface Settings {
     music: number;
     sfx: number;
     voice: number;
-    /** Rounds needed to win an offline match (1 to 3). */
+    /** Rounds needed to win against the CPU: arcade and VERSUS ORDINATEUR (1 to 3). */
     rounds: number;
-    /** CPU level preselected in VERSUS ORDINATEUR (index into LEVELS). */
-    cpuLevel: number;
+    /** Rounds needed to win in local J1 CONTRE J2, chosen in the versus menu (1 to 3). */
+    versusRounds: number;
+    /** Arcade: the CPU level of the first fight (index into LEVELS); it climbs from there. */
+    arcadeLevel: number;
     shake: boolean;
     rumble: boolean;
     /** sharp: whole-pixel scaling only; stretch: fill the window. */
@@ -31,7 +33,7 @@ export interface Settings {
 
 export const DEFAULTS: Readonly<Settings> = {
     master: VOLUME_DEFAULT, music: VOLUME_DEFAULT, sfx: VOLUME_DEFAULT, voice: VOLUME_DEFAULT,
-    rounds: 2, cpuLevel: 2, shake: true, rumble: true, display: 'sharp'
+    rounds: 2, versusRounds: 2, arcadeLevel: 1, shake: true, rumble: true, display: 'sharp'
 };
 
 const KEY = 'opfg.settings';
@@ -49,7 +51,8 @@ export function sanitize(raw: unknown): Settings {
         sfx: clampInt(r.sfx, 0, VOLUME_MAX, d.sfx),
         voice: clampInt(r.voice, 0, VOLUME_MAX, d.voice),
         rounds: clampInt(r.rounds, 1, 3, d.rounds),
-        cpuLevel: clampInt(r.cpuLevel, 0, 4, d.cpuLevel),
+        versusRounds: clampInt(r.versusRounds, 1, 3, d.versusRounds),
+        arcadeLevel: clampInt(r.arcadeLevel, 0, 4, d.arcadeLevel),
         shake: typeof r.shake === 'boolean' ? r.shake : d.shake,
         rumble: typeof r.rumble === 'boolean' ? r.rumble : d.rumble,
         display: r.display === 'stretch' || r.display === 'sharp' ? r.display : d.display

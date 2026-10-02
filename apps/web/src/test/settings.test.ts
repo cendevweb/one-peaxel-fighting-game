@@ -8,8 +8,8 @@ describe('settings', () => {
     });
 
     it('clamps and rounds what was stored, and drops what it does not know', () => {
-        const s = sanitize({ master: 42, music: -3, sfx: 4.6, voice: 'loud', rounds: 9, cpuLevel: -1, shake: 'no', display: 'huge', extra: 1 });
-        expect(s).toEqual({ ...DEFAULTS, master: VOLUME_MAX, music: 0, sfx: 5, rounds: 3, cpuLevel: 0 });
+        const s = sanitize({ master: 42, music: -3, sfx: 4.6, voice: 'loud', rounds: 9, versusRounds: 0, arcadeLevel: -1, shake: 'no', display: 'huge', extra: 1 });
+        expect(s).toEqual({ ...DEFAULTS, master: VOLUME_MAX, music: 0, sfx: 5, rounds: 3, versusRounds: 1, arcadeLevel: 0 });
         expect('extra' in s).toBe(false);
     });
 
