@@ -11,8 +11,6 @@ const { up, down, right, light, heavy, special } = BTN;
 function fight(p2: string): MatchState {
     const s = createMatch('enel', p2);
     while (s.phase !== 'fight') stepMatch(s, [0, 0]);
-    // Round 2: the two-bar ultimate is locked in round 1.
-    s.round = 2;
     return s;
 }
 

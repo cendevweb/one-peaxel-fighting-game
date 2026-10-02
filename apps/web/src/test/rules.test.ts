@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ROSTER } from '../characters';
-import { createMatch, METER_MAX, stepMatch, ULTIMATE2_COST } from '../engine/match';
+import { createMatch, METER_MAX, stepMatch, ULTIMATE_COST, ULTIMATE2_COST } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { BTN, PX, type MatchState } from '../engine/types';
 import { Cpu, LEVELS } from '../game/ai';
@@ -43,17 +43,18 @@ describe('ultimate rules', () => {
         expect(tryMove(s, BTN.ultimate)).toBeNull();
     });
 
-    it('the max ultimate is locked in round 1 and keeps the bars', () => {
+    it('the max ultimate works from round 1 with two bars, not with one', () => {
         const s = fight();
         place(s, 120);
-        s.fighters[0].meter = ULTIMATE2_COST;
+        s.fighters[0].meter = ULTIMATE_COST;
         expect(tryMove(s, ULT2)).not.toBe('ultimate2');
-        expect(s.fighters[0].meter).toBe(ULTIMATE2_COST);
-        // The one-bar ultimate is still there.
-        expect(tryMove(s, ULT)).toBe('ultimate');
+        expect(s.fighters[0].meter).toBeGreaterThanOrEqual(ULTIMATE_COST);
+        place(s, 120);
+        s.fighters[0].meter = ULTIMATE2_COST;
+        expect(tryMove(s, ULT2)).toBe('ultimate2');
     });
 
-    it('the max ultimate opens in round 2, and the meter carries over', () => {
+    it('the meter carries over to the next round', () => {
         const s = fight();
         place(s, 120);
         s.fighters[0].meter = 100;
