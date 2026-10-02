@@ -30,16 +30,17 @@ function tryMove(s: MatchState, input: number, p2 = 0): string | null {
 }
 
 describe('ultimate rules', () => {
-    it('one ultimate per round, whatever the meter', () => {
+    it('ultimates depend only on the meter, not on how many were used', () => {
         const s = fight();
         s.round = 2;
         place(s, 120);
-        s.fighters[0].meter = 200;
+        s.fighters[0].meter = 300;
         expect(tryMove(s, ULT)).toBe('ultimate');
-        s.fighters[0].meter = 200;
-        expect(tryMove(s, ULT)).not.toBe('ultimate');
-        expect(tryMove(s, ULT2)).not.toBe('ultimate2');
-        expect(s.fighters[0].meter).toBe(200);
+        place(s, 120);
+        expect(tryMove(s, ULT2)).toBe('ultimate2');
+        place(s, 120);
+        s.fighters[0].meter = 0;
+        expect(tryMove(s, BTN.ultimate)).toBeNull();
     });
 
     it('the max ultimate is locked in round 1 and keeps the bars', () => {
@@ -52,7 +53,7 @@ describe('ultimate rules', () => {
         expect(tryMove(s, ULT)).toBe('ultimate');
     });
 
-    it('the max ultimate opens in round 2, and the allowance comes back each round', () => {
+    it('the max ultimate opens in round 2, and the meter carries over', () => {
         const s = fight();
         place(s, 120);
         s.fighters[0].meter = 100;
@@ -62,7 +63,6 @@ describe('ultimate rules', () => {
         s.fighters[0].meter = ULTIMATE2_COST;
         for (let t = 0; t < 1200 && !(s.round === 2 && s.phase === 'fight'); t++) stepMatch(s, [0, 0]);
         expect(s.round).toBe(2);
-        expect(s.fighters[0].ultUsed).toBe(false);
         place(s, 120);
         expect(tryMove(s, ULT2)).toBe('ultimate2');
     });
@@ -81,10 +81,11 @@ describe('ultimate rules', () => {
             // One bar: the ultimate.
             s.fighters[0].meter = 100;
             expect(tryMove(s, KEY), def.id).toBe('ultimate');
-            // Already used this round: nothing again, even with the meter.
+            // Again as long as the meter allows it.
+            place(s, 120);
             s.fighters[0].meter = 200;
-            expect(tryMove(s, KEY), def.id).toBeNull();
-            expect(s.fighters[0].meter, def.id).toBe(200);
+            expect(tryMove(s, KEY), def.id).toBe('ultimate');
+            expect(s.fighters[0].meter, def.id).toBeLessThan(200);
         }
     });
 

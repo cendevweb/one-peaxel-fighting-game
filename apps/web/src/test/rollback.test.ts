@@ -230,7 +230,7 @@ describe('rollback session', () => {
     }
 
     it('plays a whole match to the end in sync with 4 frames and 20% loss', () => {
-        const { a, b, ref } = run({ latency: 4, jitter: 2, loss: 0.2, ticks: 16000, seed: 9, seedA: 5, seedB: 6 });
+        const { a, b, ref } = run({ latency: 4, jitter: 2, loss: 0.2, ticks: 20000, seed: 9, seedA: 5, seedB: 6 });
         expect(ref.phase).toBe('matchEnd');
         expect(a.desync).toBeNull();
         expect(b.desync).toBeNull();

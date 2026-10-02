@@ -42,7 +42,7 @@ export class Cpu {
     /** What the CPU saw `reaction` ticks ago: it acts on the past. */
     private memory: { oppMode: string; oppMove: string | null; oppY: number; oppFrame: number; dist: number }[] = [];
     private blocking = 0;
-    /** Which ultimates the rules allow right now (one per round, the max from round 2). */
+    /** Which ultimates the rules allow right now (meter, the max from round 2). */
     private ult = false;
     private ult2 = false;
 
