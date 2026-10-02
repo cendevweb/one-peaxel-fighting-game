@@ -1,0 +1,11 @@
+# Render : le jeu est un site statique (Vite). Le mode en ligne passe par
+# PeerJS, aucun serveur de jeu n'est à héberger.
+services:
+  - type: web
+    name: one-piexel-fighting-game
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: apps/web/dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
