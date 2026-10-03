@@ -1,8 +1,14 @@
 {
   "ace": {
+    "roundLose": [
+      "ace/roundLose-1"
+    ],
     "select": [
       "ace/select-1",
       "ace/select-2"
+    ],
+    "start": [
+      "ace/start-1"
     ],
     "ultimate": [
       "ace/ultimate-1",
@@ -16,8 +22,14 @@
     ]
   },
   "akainu": {
+    "roundLose": [
+      "akainu/roundLose-1"
+    ],
     "select": [
       "akainu/select-1"
+    ],
+    "start": [
+      "akainu/start-1"
     ],
     "ultimate": [
       "akainu/ultimate-1"
@@ -30,8 +42,14 @@
     ]
   },
   "aokiji": {
+    "roundLose": [
+      "aokiji/roundLose-1"
+    ],
     "select": [
       "aokiji/select-1"
+    ],
+    "start": [
+      "aokiji/start-1"
     ],
     "ultimate": [
       "aokiji/ultimate-1",
@@ -46,9 +64,15 @@
     ]
   },
   "blackbeard": {
+    "roundLose": [
+      "blackbeard/roundLose-1"
+    ],
     "select": [
       "blackbeard/select-1",
       "blackbeard/select-2"
+    ],
+    "start": [
+      "blackbeard/start-1"
     ],
     "ultimate": [
       "blackbeard/ultimate-1",
@@ -62,8 +86,14 @@
     ]
   },
   "buggy": {
+    "roundLose": [
+      "buggy/roundLose-1"
+    ],
     "select": [
       "buggy/select-1"
+    ],
+    "start": [
+      "buggy/start-1"
     ],
     "ultimate": [
       "buggy/ultimate-1",
@@ -77,8 +107,14 @@
     ]
   },
   "chopper": {
+    "roundLose": [
+      "chopper/roundLose-1"
+    ],
     "select": [
       "chopper/select-1"
+    ],
+    "start": [
+      "chopper/start-1"
     ],
     "ultimate": [
       "chopper/ultimate-1",
@@ -93,9 +129,29 @@
       "chopper/win-1"
     ]
   },
+  "crocodile": {
+    "roundLose": [
+      "crocodile/roundLose-1"
+    ],
+    "select": [
+      "crocodile/select-1"
+    ],
+    "start": [
+      "crocodile/start-1"
+    ],
+    "win": [
+      "crocodile/win-1"
+    ]
+  },
   "doflamingo": {
+    "roundLose": [
+      "doflamingo/roundLose-1"
+    ],
     "select": [
       "doflamingo/select-1"
+    ],
+    "start": [
+      "doflamingo/start-1"
     ],
     "ultimate": [
       "doflamingo/ultimate-1",
@@ -112,8 +168,14 @@
     ]
   },
   "drake": {
+    "roundLose": [
+      "drake/roundLose-1"
+    ],
     "select": [
       "drake/select-1"
+    ],
+    "start": [
+      "drake/start-1"
     ],
     "ultimate": [
       "drake/ultimate-1"
@@ -126,8 +188,14 @@
     ]
   },
   "enel": {
+    "roundLose": [
+      "enel/roundLose-1"
+    ],
     "select": [
       "enel/select-1"
+    ],
+    "start": [
+      "enel/start-1"
     ],
     "ultimate": [
       "enel/ultimate-1",
@@ -142,8 +210,14 @@
     ]
   },
   "franky": {
+    "roundLose": [
+      "franky/roundLose-1"
+    ],
     "select": [
       "franky/select-1"
+    ],
+    "start": [
+      "franky/start-1"
     ],
     "ultimate": [
       "franky/ultimate-1"
@@ -156,8 +230,14 @@
     ]
   },
   "hancock": {
+    "roundLose": [
+      "hancock/roundLose-1"
+    ],
     "select": [
       "hancock/select-1"
+    ],
+    "start": [
+      "hancock/start-1"
     ],
     "ultimate": [
       "hancock/ultimate-1"
@@ -172,8 +252,14 @@
     ]
   },
   "hody": {
+    "roundLose": [
+      "hody/roundLose-1"
+    ],
     "select": [
       "hody/select-1"
+    ],
+    "start": [
+      "hody/start-1"
     ],
     "ultimate": [
       "hody/ultimate-1"
@@ -186,8 +272,14 @@
     ]
   },
   "ivankov": {
+    "roundLose": [
+      "ivankov/roundLose-1"
+    ],
     "select": [
       "ivankov/select-1"
+    ],
+    "start": [
+      "ivankov/start-1"
     ],
     "ultimate": [
       "ivankov/ultimate-1"
@@ -200,8 +292,14 @@
     ]
   },
   "jinbei": {
+    "roundLose": [
+      "jinbei/roundLose-1"
+    ],
     "select": [
       "jinbei/select-1"
+    ],
+    "start": [
+      "jinbei/start-1"
     ],
     "ultimate": [
       "jinbei/ultimate-1"
@@ -214,8 +312,14 @@
     ]
   },
   "kid": {
+    "roundLose": [
+      "kid/roundLose-1"
+    ],
     "select": [
       "kid/select-1"
+    ],
+    "start": [
+      "kid/start-1"
     ],
     "ultimate": [
       "kid/ultimate-1"
@@ -228,8 +332,14 @@
     ]
   },
   "kizaru": {
+    "roundLose": [
+      "kizaru/roundLose-1"
+    ],
     "select": [
       "kizaru/select-1"
+    ],
+    "start": [
+      "kizaru/start-1"
     ],
     "ultimate": [
       "kizaru/ultimate-1"
@@ -242,8 +352,14 @@
     ]
   },
   "kuma": {
+    "roundLose": [
+      "kuma/roundLose-1"
+    ],
     "select": [
       "kuma/select-1"
+    ],
+    "start": [
+      "kuma/start-1"
     ],
     "ultimate": [
       "kuma/ultimate-1"
@@ -256,8 +372,14 @@
     ]
   },
   "law": {
+    "roundLose": [
+      "law/roundLose-1"
+    ],
     "select": [
       "law/select-1"
+    ],
+    "start": [
+      "law/start-1"
     ],
     "ultimate": [
       "law/ultimate-1"
@@ -270,8 +392,14 @@
     ]
   },
   "lucci": {
+    "roundLose": [
+      "lucci/roundLose-1"
+    ],
     "select": [
       "lucci/select-1"
+    ],
+    "start": [
+      "lucci/start-1"
     ],
     "ultimate": [
       "lucci/ultimate-1"
@@ -285,8 +413,14 @@
     ]
   },
   "luffy": {
+    "roundLose": [
+      "luffy/roundLose-1"
+    ],
     "select": [
       "luffy/select-1"
+    ],
+    "start": [
+      "luffy/start-1"
     ],
     "ultimate": [
       "luffy/ultimate-1",
@@ -302,8 +436,14 @@
     ]
   },
   "magellan": {
+    "roundLose": [
+      "magellan/roundLose-1"
+    ],
     "select": [
       "magellan/select-1"
+    ],
+    "start": [
+      "magellan/start-1"
     ],
     "ultimate": [
       "magellan/ultimate-1",
@@ -318,8 +458,14 @@
     ]
   },
   "marco": {
+    "roundLose": [
+      "marco/roundLose-1"
+    ],
     "select": [
       "marco/select-1"
+    ],
+    "start": [
+      "marco/start-1"
     ],
     "ultimate": [
       "marco/ultimate-1"
@@ -332,8 +478,14 @@
     ]
   },
   "mihawk": {
+    "roundLose": [
+      "mihawk/roundLose-1"
+    ],
     "select": [
       "mihawk/select-1"
+    ],
+    "start": [
+      "mihawk/start-1"
     ],
     "ultimate": [
       "mihawk/ultimate-1",
@@ -347,8 +499,14 @@
     ]
   },
   "nami": {
+    "roundLose": [
+      "nami/roundLose-1"
+    ],
     "select": [
       "nami/select-1"
+    ],
+    "start": [
+      "nami/start-1"
     ],
     "ultimate": [
       "nami/ultimate-1"
@@ -361,8 +519,14 @@
     ]
   },
   "robin": {
+    "roundLose": [
+      "robin/roundLose-1"
+    ],
     "select": [
       "robin/select-1"
+    ],
+    "start": [
+      "robin/start-1"
     ],
     "ultimate": [
       "robin/ultimate-1",
@@ -377,8 +541,14 @@
     ]
   },
   "sanji": {
+    "roundLose": [
+      "sanji/roundLose-1"
+    ],
     "select": [
       "sanji/select-1"
+    ],
+    "start": [
+      "sanji/start-1"
     ],
     "ultimate": [
       "sanji/ultimate-1",
@@ -394,8 +564,14 @@
     ]
   },
   "shanks": {
+    "roundLose": [
+      "shanks/roundLose-1"
+    ],
     "select": [
       "shanks/select-1"
+    ],
+    "start": [
+      "shanks/start-1"
     ],
     "ultimate": [
       "shanks/ultimate-1",
@@ -410,8 +586,14 @@
     ]
   },
   "shiki": {
+    "roundLose": [
+      "shiki/roundLose-1"
+    ],
     "select": [
       "shiki/select-1"
+    ],
+    "start": [
+      "shiki/start-1"
     ],
     "ultimate": [
       "shiki/ultimate-1"
@@ -425,8 +607,14 @@
     ]
   },
   "usopp": {
+    "roundLose": [
+      "usopp/roundLose-1"
+    ],
     "select": [
       "usopp/select-1"
+    ],
+    "start": [
+      "usopp/start-1"
     ],
     "ultimate": [
       "usopp/ultimate-1",
@@ -442,8 +630,14 @@
     ]
   },
   "vivi": {
+    "roundLose": [
+      "vivi/roundLose-1"
+    ],
     "select": [
       "vivi/select-1"
+    ],
+    "start": [
+      "vivi/start-1"
     ],
     "ultimate": [
       "vivi/ultimate-1",
@@ -458,8 +652,14 @@
     ]
   },
   "whitebeard": {
+    "roundLose": [
+      "whitebeard/roundLose-1"
+    ],
     "select": [
       "whitebeard/select-1"
+    ],
+    "start": [
+      "whitebeard/start-1"
     ],
     "ultimate": [
       "whitebeard/ultimate-1"
@@ -469,6 +669,20 @@
     ],
     "win": [
       "whitebeard/win-1"
+    ]
+  },
+  "zoro": {
+    "roundLose": [
+      "zoro/roundLose-1"
+    ],
+    "select": [
+      "zoro/select-1"
+    ],
+    "start": [
+      "zoro/start-1"
+    ],
+    "win": [
+      "zoro/win-1"
     ]
   }
 }

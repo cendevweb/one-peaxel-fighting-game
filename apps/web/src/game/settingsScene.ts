@@ -29,7 +29,7 @@ const ITEMS: Item[] = [
     { kind: 'gauge', key: 'master', label: 'VOLUME GÉNÉRAL', help: 'Le volume de tout le jeu : musique, effets et voix.' },
     { kind: 'gauge', key: 'music', label: 'MUSIQUE', help: 'Les thèmes des menus et de chaque arène.' },
     { kind: 'gauge', key: 'sfx', label: 'EFFETS SONORES', help: 'Coups, gardes, sauts, attaques spéciales et menus.' },
-    { kind: 'gauge', key: 'voice', label: 'VOIX', help: 'Les répliques des combattants : sélection, ultimes et victoires.' },
+    { kind: 'gauge', key: 'voice', label: 'VOIX', help: 'Les répliques des combattants : sélection, début de combat, ultimes, victoires et défaites.' },
     {
         kind: 'choice', key: 'rounds', label: 'MANCHES À GAGNER', values: [1, 2, 3], name: (v) => `${v} MANCHE${v === 1 ? '' : 'S'}`,
         help: 'Arcade et versus ordinateur. J1 contre J2 : se règle dans le menu versus.'

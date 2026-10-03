@@ -2,18 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { ROSTER } from '../characters';
 import manifest from '../generated/voices.json';
 
-/** Fighters left without voices on purpose. */
-const SILENT = ['crocodile', 'zoro'];
+/** Fighters without ultimate lines until their rework. */
+const NO_ULTIMATE = ['crocodile', 'zoro'];
 /** The clips shipped in public/ (the glob only lists them, nothing is loaded). */
 const FILES = new Set(Object.keys(import.meta.glob('../../public/audio/voices/**/*.{ogg,m4a}')).map((p) => p.replace('../../public/audio/voices/', '')));
 
 describe('voices', () => {
     const clips = manifest as Record<string, Record<string, string[]>>;
 
-    it('covers every voiced fighter with the four categories', () => {
+    it('covers every fighter with every category', () => {
         for (const c of ROSTER) {
-            if (SILENT.includes(c.id)) continue;
-            for (const category of ['select', 'win', 'ultimate', 'ultimateMax']) {
+            const all = ['select', 'start', 'win', 'roundLose', 'ultimate', 'ultimateMax'];
+            for (const category of NO_ULTIMATE.includes(c.id) ? all.slice(0, 4) : all) {
                 expect(clips[c.id]?.[category]?.length ?? 0, `${c.id} ${category}`).toBeGreaterThan(0);
             }
         }
