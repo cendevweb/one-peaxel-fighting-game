@@ -7,10 +7,10 @@
  * The source keeps the layout the clips were sorted in:
  *   caractere-selection/<perso>/*.ogg   → select
  *   caractere-win/<perso>/*.ogg         → win
- *   caractere-battle/<perso>/*.ogg      → ultimate, or ultimateMax when the
- *                                         name contains "max"
- *   caractere-lose/<perso>/*.ogg        → roundLose  (planned, optional)
- *   caractere-round-start/<perso>/*.ogg → roundStart (planned, optional)
+ *   caractere-battle/<perso>/*.ogg      → start when the name contains
+ *                                         "start", ultimateMax when it
+ *                                         contains "max", else ultimate
+ *   caractere-lost/<perso>/*.ogg        → roundLose
  * File names are loose (typos, " - Copie", "max-2"…): only the folder, the
  * "max" and the trailing number count. Numbered clips of one category are
  * chained in numeric order when played.
@@ -29,9 +29,7 @@ const source = resolve(process.argv[2] ?? join(root, 'assets/voices'));
 const outDir = join(root, 'apps/web/public/audio/voices');
 const manifestPath = join(root, 'apps/web/src/generated/voices.json');
 
-const FOLDERS = { 'caractere-selection': 'select', 'caractere-win': 'win', 'caractere-battle': 'battle' };
-/** Planned categories: their folders may not exist yet. */
-const LATER = { 'caractere-lose': 'roundLose', 'caractere-round-start': 'roundStart' };
+const FOLDERS = { 'caractere-selection': 'select', 'caractere-win': 'win', 'caractere-battle': 'battle', 'caractere-lost': 'roundLose' };
 
 /** Folder names that differ from the character ids. */
 const IDS = { baggy: 'buggy', 'barbe-blanche': 'whitebeard', 'barbe-noire': 'blackbeard', xdrake: 'drake' };
@@ -45,16 +43,13 @@ function orderOf(name) {
 }
 
 const clips = {}; // id → category → [{ file, order }]
-for (const [folder, kind] of Object.entries({ ...FOLDERS, ...LATER })) {
+for (const [folder, kind] of Object.entries(FOLDERS)) {
     const dir = join(source, folder);
-    if (!existsSync(dir)) {
-        if (folder in LATER) continue;
-        throw new Error(`Dossier introuvable : ${dir}`);
-    }
+    if (!existsSync(dir)) throw new Error(`Dossier introuvable : ${dir}`);
     for (const who of readdirSync(dir)) {
         for (const file of readdirSync(join(dir, who))) {
             if (!/\.ogg$/i.test(file)) continue;
-            const category = kind === 'battle' ? (/max/i.test(file) ? 'ultimateMax' : 'ultimate') : kind;
+            const category = kind !== 'battle' ? kind : /start/i.test(file) ? 'start' : /max/i.test(file) ? 'ultimateMax' : 'ultimate';
             const id = idOf(who);
             ((clips[id] ??= {})[category] ??= []).push({ file: join(dir, who, file), order: orderOf(file) });
         }

@@ -1,6 +1,6 @@
 import { play } from '../audio/sound';
 import { startMusic } from '../audio/music';
-import { playVoice, stopVoice } from '../audio/voices';
+import { playRoundEndVoices, playStartVoices, stopVoice } from '../audio/voices';
 import { createMatch, stepMatch } from '../engine/match';
 import { BTN, type GameEvent, type MatchState } from '../engine/types';
 import { endInputTick, readSolo, rumbleOn, type MenuInput } from '../input/devices';
@@ -151,10 +151,11 @@ export class OnlineFightScene implements Scene {
 
         // The result comes from the confirmed state: it can no longer change.
         for (const e of r.confirmedEvents) {
-            // Our round win, once it is certain (a prediction could be wrong).
-            if (e.type === 'roundEnd' && e.winner === this.session.side) {
-                playVoice(this.rb.confirmedState.fighters[e.winner].char, 'win', voiceChannel(e.winner));
-            }
+            // Both opening lines once, as the first round is called; then our
+            // round won or lost, once it is certain (a prediction could be wrong).
+            const chars = this.rb.confirmedState.fighters.map((f) => f.char);
+            if (e.type === 'round' && e.round === 1) playStartVoices(chars, voiceChannel);
+            if (e.type === 'roundEnd') playRoundEndVoices(chars, e.winner, [this.session.side], voiceChannel);
             if (e.type === 'matchEnd' && !this.endSoundPlayed) {
                 this.endSoundPlayed = true;
                 play(e.winner === this.session.side ? 'win' : e.winner === 2 ? 'win' : 'lose');

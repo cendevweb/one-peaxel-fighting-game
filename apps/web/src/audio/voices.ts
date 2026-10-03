@@ -11,9 +11,9 @@ import { ensureAudio, runningContext, voiceOut } from './sound';
  * engine, so the online fingerprint and the rollback are untouched.
  */
 
-/** `roundLose` and `roundStart` have no clips yet: dropping them in the
- *  source folders and re-running the import is enough to hear them. */
-export type VoiceCategory = 'select' | 'win' | 'ultimate' | 'ultimateMax' | 'roundLose' | 'roundStart';
+/** `start` opens a fight (once, not every round); `roundLose` answers a
+ *  round lost by a human player, as `win` does a round won. */
+export type VoiceCategory = 'select' | 'win' | 'ultimate' | 'ultimateMax' | 'roundLose' | 'start';
 
 type Manifest = Record<string, Partial<Record<VoiceCategory, string[]>>>;
 const CLIPS = manifest as Manifest;
@@ -77,12 +77,18 @@ export function stopVoice(channel: string): void {
     channels.delete(channel);
 }
 
+/** How long a character's line of that category lasts, in seconds (0 when
+ *  it has none or is not loaded yet). */
+export function voiceLength(char: string, category: VoiceCategory): number {
+    return (CLIPS[char]?.[category] ?? []).reduce((t, path) => t + (buffers.get(path)?.duration ?? 0), 0);
+}
+
 /**
  * Plays a character's line of that category, its numbered clips chained in
- * order. `channel` (one per player, say) cuts off the line still playing
- * there. Returns whether anything started.
+ * order, `delay` seconds from now. `channel` (one per player, say) cuts off
+ * the line still playing there. Returns whether anything started.
  */
-export function playVoice(char: string, category: VoiceCategory, channel = char): boolean {
+export function playVoice(char: string, category: VoiceCategory, channel = char, delay = 0): boolean {
     const ac = runningContext();
     const out = voiceOut();
     const list = CLIPS[char]?.[category];
@@ -94,7 +100,7 @@ export function playVoice(char: string, category: VoiceCategory, channel = char)
     }
     stopVoice(channel);
     const sources: AudioBufferSourceNode[] = [];
-    let t = ac.currentTime;
+    let t = ac.currentTime + delay;
     for (const path of list) {
         const buf = buffers.get(path);
         if (!buf) continue;
@@ -110,4 +116,28 @@ export function playVoice(char: string, category: VoiceCategory, channel = char)
     // Forget the channel once its last clip is over (unless replaced since).
     sources[sources.length - 1].onended = () => { if (channels.get(channel) === sources) channels.delete(channel); };
     return true;
+}
+
+/**
+ * Both fighters' opening lines, J1 then J2, once at the start of a fight.
+ * The same fighter twice speaks twice.
+ */
+export function playStartVoices(chars: readonly string[], channel: (side: number) => string): void {
+    let delay = 0;
+    chars.forEach((char, side) => {
+        if (playVoice(char, 'start', channel(side), delay)) delay += voiceLength(char, 'start');
+    });
+}
+
+/**
+ * The end of a round, for the players at the screen: `humans` lists the
+ * sides they play. A human winner gets their victory line, a human loser
+ * their defeat line, the loser speaking after the winner when both are human.
+ */
+export function playRoundEndVoices(chars: readonly string[], winner: number, humans: readonly number[], channel: (side: number) => string): void {
+    if (winner > 1) return;
+    const loser = 1 - winner;
+    let delay = 0;
+    if (humans.includes(winner) && playVoice(chars[winner], 'win', channel(winner))) delay = voiceLength(chars[winner], 'win');
+    if (humans.includes(loser)) playVoice(chars[loser], 'roundLose', channel(loser), delay);
 }
