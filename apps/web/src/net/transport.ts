@@ -99,11 +99,50 @@ export function currentPeerConfig(): PeerConfig {
     return peerConfig(import.meta.env, location.search, location.hostname);
 }
 
+/** Waiting longer than this for the TURN credentials: go on without them. */
+const ICE_FETCH_TIMEOUT = 3_000;
+/** The TURN login lasts 4 h (`api/ice.js`): fetch a fresh one after 1 h. */
+const ICE_REFRESH = 3_600_000;
+let relayIce: Promise<RTCIceServer[]> | null = null;
+let relayIceAt = 0;
+
+/**
+ * The TURN relay from the site's `/api/ice` function (`api/ice.js`), fetched
+ * at most once an hour: without it, players on two different networks often
+ * cannot connect. Empty when the function is missing or not configured.
+ * WebRTC tries the direct routes first; the relay only carries the match
+ * when none of them works.
+ */
+function fetchRelayIce(): Promise<RTCIceServer[]> {
+    if (relayIce && Date.now() - relayIceAt > ICE_REFRESH) relayIce = null;
+    relayIceAt = relayIce ? relayIceAt : Date.now();
+    relayIce ??= (async () => {
+        if (typeof fetch === 'undefined') return [];
+        const ctl = new AbortController();
+        const timer = setTimeout(() => ctl.abort(), ICE_FETCH_TIMEOUT);
+        try {
+            const res = await fetch('/api/ice', { signal: ctl.signal, cache: 'no-store', credentials: 'omit' });
+            if (!res.ok) return [];
+            const data = (await res.json()) as { iceServers?: unknown };
+            return Array.isArray(data.iceServers) ? (data.iceServers as RTCIceServer[]) : [];
+        } catch {
+            return [];
+        } finally {
+            clearTimeout(timer);
+        }
+    })();
+    const p = relayIce;
+    // A failed fetch is tried again at the next connection.
+    void p.then((list) => { if (!list.length && relayIce === p) relayIce = null; });
+    return p;
+}
+
 async function openPeer(id: string | undefined): Promise<Peer> {
     if (typeof RTCPeerConnection === 'undefined') throw new NetError('unsupported');
     const { Peer } = await import('peerjs');
     const cfg = currentPeerConfig();
-    const opts: PeerJSOption = { config: { iceServers: cfg.iceServers }, debug: 1 };
+    const relay = cfg.debugPeer ? [] : await fetchRelayIce();
+    const opts: PeerJSOption = { config: { iceServers: [...relay, ...cfg.iceServers] }, debug: 1 };
     if (cfg.host) { opts.host = cfg.host; opts.port = cfg.port; opts.secure = cfg.secure; }
     if (cfg.path) opts.path = cfg.path;
     if (cfg.key) opts.key = cfg.key;

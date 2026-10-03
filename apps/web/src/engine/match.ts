@@ -66,7 +66,7 @@ function createFighter(side: 0 | 1, char: string, x: number): FighterState {
         crouching: false,
         health: def.health, redHealth: def.health,
         meter: 0, guard: GUARD_MAX, guardRest: 0,
-        combo: 0, comboDamage: 0, superFrom: 0, superRun: false, ultUsed: false, juggle: 0,
+        combo: 0, comboDamage: 0, superFrom: 0, superRun: false, juggle: 0,
         hitstop: 0, invuln: 0, thrownBy: -1, airActions: 0, wins: 0,
         buffer: null, counterHit: false, history: []
     };
@@ -181,7 +181,6 @@ function startMove(state: MatchState, f: FighterState, slot: string, events: Gam
         if (f.meter < move.cost && !freeMeter(state)) return;
         f.meter = Math.max(0, f.meter - move.cost);
         if (freeMeter(state)) f.meter = METER_MAX;
-        if (move.kind === 'ultimate' && !state.training) f.ultUsed = true;
     }
     setMode(f, 'move');
     f.move = slot;
@@ -212,17 +211,10 @@ const lastActive = (move: MoveDef) => (move.hits.length ? Math.max(...move.hits.
 
 // ——— Reading intent from inputs ———
 
-/**
- * One ultimate per player per round, either one; the two-bar ultimate only
- * from round 2. Training has no limit; with the normal meter it still needs
- * the bars.
- */
+/** Ultimates depend only on the meter: one bar, or two for the max one. */
 export function ultimateUsable(state: MatchState, f: FighterState, slot: 'ultimate' | 'ultimate2'): boolean {
     if (freeMeter(state)) return true;
-    if (state.training) return f.meter >= (slot === 'ultimate2' ? ULTIMATE2_COST : ULTIMATE_COST);
-    if (f.ultUsed) return false;
-    if (slot === 'ultimate2') return state.round >= 2 && f.meter >= ULTIMATE2_COST;
-    return f.meter >= ULTIMATE_COST;
+    return f.meter >= (slot === 'ultimate2' ? ULTIMATE2_COST : ULTIMATE_COST);
 }
 
 function wantsUltimate(f: FighterState, state: MatchState): boolean {

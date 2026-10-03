@@ -32,6 +32,9 @@ export const LEVELS: CpuLevel[] = [
     { reaction: 5, block: 0.92, antiAir: 0.88, combo: 0.98, aggression: 0.78 }
 ];
 
+/** The levels as the menus name them. */
+export const LEVEL_NAMES = ['FACILE', 'NORMAL', 'DIFFICILE', 'EXPERT', 'AMIRAL'];
+
 export class Cpu {
     private plan: Step[] = [];
     private wait = 0;
@@ -39,7 +42,7 @@ export class Cpu {
     /** What the CPU saw `reaction` ticks ago: it acts on the past. */
     private memory: { oppMode: string; oppMove: string | null; oppY: number; oppFrame: number; dist: number }[] = [];
     private blocking = 0;
-    /** Which ultimates the rules allow right now (one per round, the max from round 2). */
+    /** Which ultimates the rules allow right now (from the meter). */
     private ult = false;
     private ult2 = false;
 

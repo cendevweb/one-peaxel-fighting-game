@@ -1,3 +1,5 @@
+import { onSettings, settings, volumeGain, type Settings } from '../settings';
+
 /**
  * Every sound effect is synthesised with WebAudio; only the character
  * voices are recorded clips (`voices.ts`). Short envelopes over noise and simple oscillators give the crunchy,
@@ -8,9 +10,11 @@ let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let sfxBus: GainNode | null = null;
 let musicBus: GainNode | null = null;
+let voiceBus: GainNode | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 
-export const volume = { sfx: 0.8, music: 0.45 };
+/** Each bus at the default gauge level (the original mix); the settings scale them. */
+const BASE = { master: 0.7, sfx: 0.8, music: 0.45, voice: 0.8 };
 
 export function unlockAudio(): void {
     const ac = ensureAudio();
@@ -28,17 +32,17 @@ export function ensureAudio(): AudioContext | null {
     if (!AC) return null;
     ctx = new AC();
     master = ctx.createGain();
-    master.gain.value = 0.7;
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -12;
     comp.ratio.value = 4;
     master.connect(comp).connect(ctx.destination);
     sfxBus = ctx.createGain();
-    sfxBus.gain.value = volume.sfx;
     sfxBus.connect(master);
     musicBus = ctx.createGain();
-    musicBus.gain.value = volume.music;
     musicBus.connect(master);
+    voiceBus = ctx.createGain();
+    voiceBus.connect(master);
+    applyVolumes(settings, true);
     noiseBuffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
@@ -49,16 +53,26 @@ export function ensureAudio(): AudioContext | null {
  *  suspended would otherwise all burst out at once when it resumes. */
 export const runningContext = (): AudioContext | null => (ctx?.state === 'running' ? ctx : null);
 
-export function setVolumes(sfx: number, music: number): void {
-    volume.sfx = sfx;
-    volume.music = music;
-    if (sfxBus) sfxBus.gain.value = sfx;
-    if (musicBus) musicBus.gain.value = music;
+/** Sets every bus from the gauges; a short glide, so a slider never clicks. */
+function applyVolumes(s: Readonly<Settings>, now = false): void {
+    if (!ctx) return;
+    const set = (node: GainNode | null, value: number) => {
+        if (!node) return;
+        if (now) node.gain.value = value;
+        else node.gain.setTargetAtTime(value, ctx!.currentTime, 0.02);
+    };
+    set(master, BASE.master * volumeGain(s.master));
+    set(sfxBus, BASE.sfx * volumeGain(s.sfx));
+    set(musicBus, BASE.music * volumeGain(s.music));
+    set(voiceBus, BASE.voice * volumeGain(s.voice));
 }
+
+onSettings((s) => applyVolumes(s));
 
 export const audioContext = () => ctx;
 export const musicOut = () => musicBus;
 export const sfxOut = () => sfxBus;
+export const voiceOut = () => voiceBus;
 
 interface Env { a?: number; d: number; peak?: number }
 

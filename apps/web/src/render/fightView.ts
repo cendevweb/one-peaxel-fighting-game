@@ -3,6 +3,7 @@ import { playVoice } from '../audio/voices';
 import { METER_MAX, ULTIMATE_COST, GUARD_MAX, activeHitBoxes, hurtBoxes, ultimateUsable } from '../engine/match';
 import { getChar } from '../engine/registry';
 import { PX, type FighterState, type GameEvent, type MatchState, type Rect } from '../engine/types';
+import { settings } from '../settings';
 import { drawText, textWidth } from './font';
 import { artOf, drawFrame, frameOf, hasAnim, animAlpha, type Tint } from './sprites';
 import { GROUND_Y, StageRenderer, type StageDef } from './stage';
@@ -263,7 +264,7 @@ export class FightView {
         ctx.setTransform(2, 0, 0, 2, 0, 0);
         // A quick decaying wobble rather than random jumps: readable, and
         // never more than a few pixels.
-        const shake = Math.min(6, this.vfx.shake);
+        const shake = settings.shake ? Math.min(6, this.vfx.shake) : 0;
         const ox = shake ? Math.round(Math.sin(this.t * 2.3) * shake * 2) / 2 : 0;
         const oy = shake ? Math.round(Math.cos(this.t * 3.1) * shake) / 2 : 0;
         const freeze = s.freeze;
@@ -329,7 +330,7 @@ export class FightView {
                 drawFrame(ctx, f.char, f.anim, f.frame, x + dx, y + dy, f.facing, { tint: 'gold', alpha: pulse, additive: true });
             }
         }
-        const meterReady = f.meter >= ULTIMATE_COST && !f.ultUsed && f.mode !== 'ko';
+        const meterReady = f.meter >= ULTIMATE_COST && f.mode !== 'ko';
         if (meterReady && this.t % 60 < 6) {
             drawFrame(ctx, f.char, f.anim, f.frame, x, y, f.facing, { tint: 'gold', alpha: 0.3, additive: true });
         }
@@ -576,9 +577,7 @@ export class FightView {
         const lx = side === 0 ? x0 - 18 : x0 + w + 18;
         drawText(ctx, String(stock), lx, y0 - 6, { color: stock ? '#9ff3ff' : '#6a6a8a', outline: '#1a0b12', scale: 2, align: 'center' });
         const max = ultimateUsable(s, f, 'ultimate2');
-        if (f.ultUsed && stock > 0) {
-            drawText(ctx, 'ULTIME UTILISÉE', side === 0 ? x0 : x0 + w, y0 - 11, { color: '#6a6a8a', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
-        } else if (stock > 0) {
+        if (stock > 0) {
             drawText(ctx, max ? 'ULTIME MAX' : 'ULTIME', side === 0 ? x0 : x0 + w, y0 - 11, { color: this.t % 30 < 20 ? (max ? '#ff7a4a' : '#ffe95e') : '#ffffff', outline: '#1a0b12', align: side === 0 ? 'left' : 'right' });
         }
     }
