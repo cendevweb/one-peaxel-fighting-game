@@ -371,15 +371,17 @@ export class SelectScene implements Scene {
 
     private drawSide(ctx: CanvasRenderingContext2D, c: CharacterDef, side: 0 | 1, locked: boolean): void {
         const art = artOf(c.id, 'art');
-        const x = side === 0 ? 20 : 620;
+        // The art stands next to the stats panel, its inner edge near the
+        // middle of the screen, so wide cards only slip a little under it.
+        const x = side === 0 ? 304 : 336;
         if (art) {
-            const s = Math.min(1.4, 150 / art.height, 220 / art.width);
+            const s = Math.min(1.4, 150 / art.height, 200 / art.width);
             const w = art.width * s;
             const h = art.height * s;
             ctx.save();
             if (side === 1) { ctx.translate(x, 0); ctx.scale(-1, 1); ctx.translate(-x, 0); }
             ctx.globalAlpha = locked ? 1 : 0.9;
-            ctx.drawImage(art, x, gridTop() - 6 - h, w, h);
+            ctx.drawImage(art, x - w, gridTop() - 6 - h, w, h);
             ctx.restore();
         }
         const tx = side === 0 ? 30 : 610;
